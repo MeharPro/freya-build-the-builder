@@ -1,0 +1,472 @@
+{
+ "case": "PUB-06",
+ "rep": 1,
+ "workflow_id": "68dc5046-318c-4d4f-bae5-3d602d05a7f9",
+ "call_id": "4e63c015-90f5-45bb-91f9-72255c9ccb94",
+ "customer_id": "c_ccc126ba-46e",
+ "variables": {
+  "customer_id": "c_ccc126ba-46e",
+  "first_name": "Priya",
+  "last_name": "Nair",
+  "title": "Ms",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded. Am I speaking with Priya Nair?",
+   "status": 200,
+   "seconds": 7.0,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_4_1791654311950"
+  },
+  {
+   "n": 2,
+   "customer": "Yes, this is Priya Nair.",
+   "agent": "What are the last four digits of the mobile number registered with the bank?",
+   "status": 200,
+   "seconds": 2.8,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_10_1791654318357"
+  },
+  {
+   "n": 3,
+   "customer": "The last four digits are one five zero two.",
+   "agent": "What is your date of birth?",
+   "status": 200,
+   "seconds": 4.6,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_9_1791654326000"
+  },
+  {
+   "n": 4,
+   "customer": "My date of birth is seventeenth May nineteen eighty-six.",
+   "agent": "Thank you, Ms Nair. I am calling from the payments team of Nordvik Savings Bank about an overdue amount on your credit card ending in 1903. The overdue amount is 2125.10, and it is 12 days overdue. Are you able to settle the full overdue amount today?",
+   "status": 200,
+   "seconds": 7.4,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_17_1791654333381"
+  },
+  {
+   "n": 5,
+   "customer": "No, the full amount is too much right now.",
+   "agent": "I understand. I can record a payment of 851 today, but the remainder will stay overdue and the account will stay in arrears until it is cleared. Would that work for you?",
+   "status": 200,
+   "seconds": 6.5,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_5_1791654343011"
+  },
+  {
+   "n": 6,
+   "customer": "Yes, I accept eight hundred and fifty-one this Friday.",
+   "agent": "Friday 16 October is a bank holiday, so it is not a business day. I can record the payment for the next business day, Saturday 17 October. Would that be acceptable?",
+   "status": 200,
+   "seconds": 5.4,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_5_1791654354181"
+  },
+  {
+   "n": 7,
+   "customer": "Yes, I accept eight hundred and fifty-one on Saturday seventeenth October.",
+   "agent": "851 on Saturday 17 October for your credit card ending in 1903. Shall I record this?",
+   "status": 200,
+   "seconds": 6.0,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_5_1791654367057"
+  },
+  {
+   "n": 8,
+   "customer": "Yes, I confirm.",
+   "agent": "I have noted your promise. A confirmation will be sent to your registered email address. Thank you for your time, Ms Nair. Goodbye from Nordvik Savings Bank.",
+   "status": 502,
+   "seconds": 9.6,
+   "error": "HTTP 502: error code: 502 | reply recovered from the call log after 7 s; the agent ended the call",
+   "ended_by_agent": true
+  }
+ ],
+ "end": {
+  "callId": "4e63c015-90f5-45bb-91f9-72255c9ccb94",
+  "ended": true,
+  "endedReason": "assistant-ended-call",
+  "alreadyEnded": true
+ },
+ "transcript": [
+  "customer: Hello?",
+  "agent: Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded. Am I speaking with Priya Nair?",
+  "customer: Yes, this is Priya Nair.",
+  "   [route] opening -> setup: always always",
+  "   [node] opening -> setup",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"import datetime, json, re\\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\\nBWD = set([0, 1, 2, 3, 4, 5])\\nWDRULE = 'first_after'\\nWD = ['Monday', 'Tu...",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] setup -> ask_phone: the customer confirmed who they are who1 == 'customer'",
+  "   [node] setup -> ask_phone",
+  "agent: What are the last four digits of the mobile number registered with the bank?",
+  "customer: The last four digits are one five zero two.",
+  "   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={\"field\": \"phone_last4\", \"answer\": \"1502\", \"customer_id\": \"c_ccc126ba-46e\"}",
+  "   [tool] verify_identity -> HTTP 200 data={\"ok\": true, \"verified\": true, \"wrong_answers_left\": 3, \"all_verified\": false, \"what_to_do_next\": \"Correct. Now ask the second security question: What is your date of birth?\"}",
+  "   [route] ask_phone -> ask_dob: phone digits correct (verify_identity_response.data.verified == 'true' OR verify_identity_response.data.verified == 'True')",
+  "   [node] ask_phone -> ask_dob",
+  "agent: What is your date of birth?",
+  "customer: My date of birth is seventeenth May nineteen eighty-six.",
+  "   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={\"field\": \"date_of_birth\", \"answer\": \"1986-05-17\", \"customer_id\": \"c_ccc126ba-46e\"}",
+  "   [tool] verify_identity -> HTTP 200 data={\"ok\": true, \"verified\": true, \"wrong_answers_left\": 3, \"all_verified\": true, \"what_to_do_next\": \"Both security questions passed. Identity is verified.\"}",
+  "   [route] ask_dob -> load_account: identity verified (verify_identity_response.data.all_verified == 'true' OR verify_identity_response.data.all_verified == 'True')",
+  "   [node] ask_dob -> load_account",
+  "   [tool] api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={\"customer_id\": \"c_ccc126ba-46e\"}",
+  "   [tool] api_call -> HTTP 200 data={\"ok\": true, \"products\": [{\"product_id\": \"p1\", \"type\": \"credit_card\", \"card_last4\": \"1903\", \"past_due\": 2125.1, \"days_late\": 12, \"minimum_payment\": 637.5}]}",
+  "   [route] load_account -> prepare: always always",
+  "   [node] load_account -> prepare",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"import datetime, json, re\\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\\nBWD = set([0, 1, 2, 3, 4, 5])\\nWDRULE = 'first_after'\\nWD = ['Monday', 'Tu...",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] prepare -> negotiate: always always",
+  "   [node] prepare -> negotiate",
+  "agent: Thank you, Ms Nair. I am calling from the payments team of Nordvik Savings Bank about an overdue amount on your credit card ending in 1903. The overdue amount is 2125.10, and it is 12 days overdue. Are you able to settle the full overdue amount today?",
+  "customer: No, the full amount is too much right now.",
+  "agent: I understand. I can record a payment of 851 today, but the remainder will stay overdue and the account will stay in arrears until it is cleared. Would that work for you?",
+  "customer: Yes, I accept eight hundred and fifty-one this Friday.",
+  "agent: Friday 16 October is a bank holiday, so it is not a business day. I can record the payment for the next business day, Saturday 17 October. Would that be acceptable?",
+  "customer: Yes, I accept eight hundred and fifty-one on Saturday seventeenth October.",
+  "agent: 851 on Saturday 17 October for your credit card ending in 1903. Shall I record this?",
+  "customer: Yes, I confirm.",
+  "   [tool] create_promise POST https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise body={\"date\": \"2026-10-17\", \"amount\": 851.0, \"product_id\": \"p1\", \"customer_id\": \"c_ccc126ba-46e\"}",
+  "   [tool] create_promise -> HTTP 200 data={\"ok\": true, \"promise_id\": \"pr1\", \"what_to_do_next\": \"The promise is recorded.\"}",
+  "   [route] negotiate -> fin_promise: promise recorded promise_route == 'recorded'",
+  "   [node] negotiate -> fin_promise",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"try:\\n vars['outcome'] = 'promise'\\n k = str(vars.get('promise_kind') or 'full')\\n vars['reason'] = k if k in ('full', 'partial') else 'full'\\nexcept Exception:\\n pass\\n\"}",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] fin_promise -> end_promise: always always",
+  "   [node] fin_promise -> end_promise",
+  "   [tool] end_call args={\"message_mode\": \"custom\", \"spoken_message\": \"I have noted your promise. A confirmation will be sent to your registered email address. Thank you for your time, Ms Nair. Goodbye from Nordvik Savings Bank.\"}",
+  "   [call] ended: assistant-ended-call",
+  "agent: I have noted your promise. A confirmation will be sent to your registered email address. Thank you for your time, Ms Nair. Goodbye from Nordvik Savings Bank.",
+  "   [tool] end_call -> success Call ended",
+  "   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={\"reason\": \"partial\", \"outcome\": \"promise\", \"customer_id\": \"c_ccc126ba-46e\"}",
+  "   [tool] close_call -> HTTP 200 data={\"ok\": false, \"error\": \"this outcome needs one of these reasons: \"}"
+ ],
+ "tool_calls": [
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\ndef isbd(d):\n    return d.weekday() in BWD and d.isoformat() not in HOL\ndef txt(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1] + ' ' + str(d.year)\ndef txt_short(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1]\ndef addbd(d, n):\n    c = 0\n    guard = 0\n    while c < n and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n        if isbd(d):\n            c += 1\n    return d\ndef next_bd(d):\n    guard = 0\n    while not isbd(d) and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n    return d\ndef lastbd_of_week(monday):\n    for k in range(6, -1, -1):\n        d = monday + datetime.timedelta(days=k)\n        if isbd(d):\n            return d\n    return None\ndef weekday_table(today):\n    monday = today - datetime.timedelta(days=today.weekday())\n    tab = []\n    for i in range(7):\n        a = monday + datetime.timedelta(days=i)\n        b = a + datetime.timedelta(days=7)\n        t1 = '\"this ' + WD[i] + '\" = ' + txt(a) + (' (already past)' if a < today else '')\n        tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))\n    return '\\n'.join(tab)\ndef weekday_table_first_after(today):\n    tab = []\n    for k in range(1, 8):\n        a = today + datetime.timedelta(days=k)\n        tab.append('\"this ' + WD[a.weekday()] + '\" = \"next ' + WD[a.weekday()] + '\" = ' + txt(a))\n    return '\\n'.join(tab)\nif WDRULE == 'first_after':\n    weekday_table = weekday_table_first_after\ndef calendar_text(today, deadline, extra_days=10):\n    cal = []\n    d = today\n    while d <= deadline + datetime.timedelta(days=extra_days):\n        if d > deadline:\n            tag = 'AFTER THE DEADLINE, not allowed'\n        elif isbd(d):\n            tag = 'allowed'\n        elif d.weekday() not in BWD:\n            tag = 'not a business day (' + WD[d.weekday()] + '), not allowed'\n        else:\n            tag = 'bank holiday, not allowed'\n        nb = next_bd(d)\n        extra = ''\n        if tag.startswith('not a business day') or tag.startswith('bank'):\n            extra = ' -> next business day ' + txt_short(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')\n        cal.append(d.isoformat() + ' ' + txt_short(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)\n        d = d + datetime.timedelta(days=1)\n    return '\\n'.join(cal)\ndef fmt(x):\n    try:\n        x = float(x)\n    except Exception:\n        return str(x)\n    s = '%.2f' % x\n    return s[:-3] if s.endswith('.00') else s\ntry:\n    raw = str(vars.get('now') or '').strip()\n    try:\n        nowdt = datetime.datetime.fromisoformat(raw[:16])\n    except Exception:\n        nowdt = datetime.datetime.fromisoformat(raw[:10] + 'T09:00')\n    today = nowdt.date()\n    vars['today_iso'] = today.isoformat()\n    vars['today_text'] = txt(today)\n    vars['now_time'] = nowdt.strftime('%H:%M')\n    vars['weekday_table'] = weekday_table(today)\n    lines = []\n    cur = nowdt.strftime('%H:%M')\n    if cur < '18:00':\n        start = '09:00' if cur < '09:00' else 'after ' + cur\n        lines.append('Today, ' + txt(today) + ' (' + today.isoformat() + '), from ' + start + ' up to 18:00.')\n    nbd = today\n    for _i in range(2):\n        nbd = addbd(nbd, 1)\n        lines.append(txt(nbd) + ' (' + nbd.isoformat() + '), from 09:00 up to 18:00 included.')\n    tom = today + datetime.timedelta(days=1)\n    extra = 'Tomorrow is ' + txt(tom) + '.'\n    if not isbd(tom):\n        extra += ' Tomorrow is NOT allowed, it is not a business day.'\n    vars['callback_text'] = 'The ONLY allowed callback times are:\\n- ' + '\\n- '.join(lines) + '\\n' + extra + ' Any other day or time is outside the window.'\n    vars['green_deadline'] = addbd(today, 9).isoformat()\n    vars['amber_deadline'] = addbd(today, 4).isoformat()\n    vars['attempt1_date'] = addbd(today, 1).isoformat()\n    vars['setup_state'] = 'ok'\nexcept Exception as e:\n    vars['setup_state'] = 'error ' + str(e)\n    vars.setdefault('callback_text', 'Callbacks: today later than now up to 18:00, or the next business day from 09:00 to 18:00.')\n    vars.setdefault('today_text', str(vars.get('now')))\n    vars.setdefault('today_iso', str(vars.get('now'))[:10])\n    vars.setdefault('now_time', '')\n    vars.setdefault('weekday_table', '')\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "verify_identity",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "field": "phone_last4",
+     "answer": "1502",
+     "customer_id": "c_ccc126ba-46e"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 3,
+     "all_verified": false,
+     "what_to_do_next": "Correct. Now ask the second security question: What is your date of birth?"
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "verify_identity",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "field": "date_of_birth",
+     "answer": "1986-05-17",
+     "customer_id": "c_ccc126ba-46e"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 3,
+     "all_verified": true,
+     "what_to_do_next": "Both security questions passed. Identity is verified."
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "api_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "customer_id": "c_ccc126ba-46e"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "products": [
+      {
+       "product_id": "p1",
+       "type": "credit_card",
+       "card_last4": "1903",
+       "past_due": 2125.1,
+       "days_late": 12,
+       "minimum_payment": 637.5
+      }
+     ]
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\ndef isbd(d):\n    return d.weekday() in BWD and d.isoformat() not in HOL\ndef txt(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1] + ' ' + str(d.year)\ndef txt_short(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1]\ndef addbd(d, n):\n    c = 0\n    guard = 0\n    while c < n and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n        if isbd(d):\n            c += 1\n    return d\ndef next_bd(d):\n    guard = 0\n    while not isbd(d) and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n    return d\ndef lastbd_of_week(monday):\n    for k in range(6, -1, -1):\n        d = monday + datetime.timedelta(days=k)\n        if isbd(d):\n            return d\n    return None\ndef weekday_table(today):\n    monday = today - datetime.timedelta(days=today.weekday())\n    tab = []\n    for i in range(7):\n        a = monday + datetime.timedelta(days=i)\n        b = a + datetime.timedelta(days=7)\n        t1 = '\"this ' + WD[i] + '\" = ' + txt(a) + (' (already past)' if a < today else '')\n        tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))\n    return '\\n'.join(tab)\ndef weekday_table_first_after(today):\n    tab = []\n    for k in range(1, 8):\n        a = today + datetime.timedelta(days=k)\n        tab.append('\"this ' + WD[a.weekday()] + '\" = \"next ' + WD[a.weekday()] + '\" = ' + txt(a))\n    return '\\n'.join(tab)\nif WDRULE == 'first_after':\n    weekday_table = weekday_table_first_after\ndef calendar_text(today, deadline, extra_days=10):\n    cal = []\n    d = today\n    while d <= deadline + datetime.timedelta(days=extra_days):\n        if d > deadline:\n            tag = 'AFTER THE DEADLINE, not allowed'\n        elif isbd(d):\n            tag = 'allowed'\n        elif d.weekday() not in BWD:\n            tag = 'not a business day (' + WD[d.weekday()] + '), not allowed'\n        else:\n            tag = 'bank holiday, not allowed'\n        nb = next_bd(d)\n        extra = ''\n        if tag.startswith('not a business day') or tag.startswith('bank'):\n            extra = ' -> next business day ' + txt_short(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')\n        cal.append(d.isoformat() + ' ' + txt_short(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)\n        d = d + datetime.timedelta(days=1)\n    return '\\n'.join(cal)\ndef fmt(x):\n    try:\n        x = float(x)\n    except Exception:\n        return str(x)\n    s = '%.2f' % x\n    return s[:-3] if s.endswith('.00') else s\ntry:\n    import json, re\n    prods = vars.get('products')\n    if isinstance(prods, str):\n        try:\n            prods = json.loads(prods)\n        except Exception:\n            prods = None\n    if not isinstance(prods, list) or not prods:\n        found = {}\n        for k, v in list(vars.items()):\n            m = re.search(r'products\\.(\\d+)\\.(\\w+)$', str(k))\n            if m:\n                found.setdefault(int(m.group(1)), {})[m.group(2)] = v\n        prods = [found[i] for i in sorted(found)]\n\n    import math\n    p = prods[0] if prods else {}\n    if not isinstance(p, dict):\n        p = {}\n    ptype = str(p.get('type') or '')\n    vars['product_id'] = str(p.get('product_id') or 'p1')\n    past_due = float(p.get('past_due') or 0)\n    if ptype == 'credit_card':\n        words = 'credit card ending in ' + str(p.get('card_last4') or '')\n        floor_raw = float(math.ceil(round(past_due * 0.4, 2) - 1e-9))  # R26: 40% rounded up to the next whole unit IS the floor\n        floor_name = '40 percent of the overdue amount, rounded up'\n    elif ptype == 'car_loan':\n        words = 'car loan'\n        floor_raw = float(p.get('instalment_amount') or past_due)\n        floor_name = 'the instalment amount'\n    else:\n        words = 'personal loan' if ptype == 'personal_loan' else (ptype.replace('_', ' ') or 'loan')\n        floor_raw = float(p.get('instalment_amount') or past_due)\n        floor_name = 'the instalment amount'\n    floor = float(math.ceil(floor_raw - 1e-9))  # R26: state a rounded floor in whole units (a loan instalment is the floor itself)\n    if floor > past_due:\n        floor = past_due\n    days_late = int(float(p.get('days_late') or 0))\n    today = datetime.date.fromisoformat(str(vars.get('today_iso')))\n    if days_late <= 10:\n        band = 'green'; attempts = 2; deadline = datetime.date.fromisoformat(str(vars.get('green_deadline')))\n    else:\n        band = 'amber'; attempts = 1; deadline = datetime.date.fromisoformat(str(vars.get('amber_deadline')))\n    a1 = datetime.date.fromisoformat(str(vars.get('attempt1_date')))\n    if a1 > deadline:\n        a1 = deadline\n    vars['product_words'] = words\n    vars['past_due_fmt'] = fmt(past_due)\n    vars['past_due_num'] = str(past_due)\n    vars['floor_fmt'] = fmt(floor)\n    vars['floor_min_fmt'] = fmt(floor_raw)\n    vars['floor_name'] = floor_name\n    vars['days_late_txt'] = str(days_late)\n    vars['band'] = band\n    vars['attempts_n'] = str(attempts)\n    vars['deadline_iso'] = deadline.isoformat()\n    vars['deadline_text'] = txt_short(deadline)\n    vars['attempt1_iso'] = a1.isoformat()\n    vars['attempt1_text'] = txt_short(a1)\n    if attempts >= 2:\n        vars['attempt2_line'] = 'Attempt 2: propose the floor ' + fmt(floor) + ' on the deadline, ' + txt_short(deadline) + ' (' + deadline.isoformat() + '). After attempt 2 is refused, stop.'\n    else:\n        vars['attempt2_line'] = 'There is NO attempt 2 for this customer. After attempt 1 is refused, stop.'\n    vars['calendar_text'] = calendar_text(today, deadline, 10)\n    vars['prepare_state'] = 'ok'\nexcept Exception as e:\n    vars['prepare_state'] = 'error ' + str(e)\n    vars.setdefault('product_words', 'account')\n    vars.setdefault('past_due_fmt', 'the overdue amount')\n    vars.setdefault('past_due_num', '0')\n    vars.setdefault('floor_fmt', '')\n    vars.setdefault('floor_min_fmt', '')\n    vars.setdefault('floor_name', '')\n    vars.setdefault('days_late_txt', '')\n    vars.setdefault('band', '')\n    vars.setdefault('attempts_n', '')\n    vars.setdefault('deadline_iso', '')\n    vars.setdefault('deadline_text', '')\n    vars.setdefault('attempt1_iso', '')\n    vars.setdefault('attempt1_text', '')\n    vars.setdefault('attempt2_line', '')\n    vars.setdefault('calendar_text', '')\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "create_promise",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "date": "2026-10-17",
+     "amount": 851.0,
+     "product_id": "p1",
+     "customer_id": "c_ccc126ba-46e"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "promise_id": "pr1",
+     "what_to_do_next": "The promise is recorded."
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "try:\n    vars['outcome'] = 'promise'\n    k = str(vars.get('promise_kind') or 'full')\n    vars['reason'] = k if k in ('full', 'partial') else 'full'\nexcept Exception:\n    pass\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "end_call",
+   "args": {
+    "message_mode": "custom",
+    "spoken_message": "I have noted your promise. A confirmation will be sent to your registered email address. Thank you for your time, Ms Nair. Goodbye from Nordvik Savings Bank."
+   },
+   "result": {
+    "status": "success",
+    "message": "Call ended"
+   }
+  },
+  {
+   "tool": "close_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "reason": "partial",
+     "outcome": "promise",
+     "customer_id": "c_ccc126ba-46e"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200,
+    "header": {
+     "Date": "Sat, 10 Oct 2026 17:46:25 GMT",
+     "Content-Type": "application/json",
+     "Transfer-Encoding": "chunked",
+     "Connection": "keep-alive",
+     "Report-To": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=LeoH326HPduMI5gxW%2FbmD2WW%2BECxFdztllpRXpMK2Fi7uNr5wU6rVcnMCZdiE2fKAg7cw0JJBorxoGblzKjEi4OsFg2s5mq5OVq3fO5EpeJsvtnNHzzccynpeVdqr5KcWXD%2BH5olmBUggoSpzxeq3BqypWaV5b9EAQ%3D%3D\"}]}",
+     "Nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+     "Content-Encoding": "gzip",
+     "Server": "cloudflare",
+     "CF-RAY": "a48771c4baa81cb9-FRA",
+     "alt-svc": "h3=\":443\"; ma=86400"
+    }
+   }
+  }
+ ],
+ "ledger": {
+  "ok": true,
+  "case": "PUB-06",
+  "team": "4d03f63f4e0d8cc0ec31bb9b",
+  "now": "2026-10-14T11:00",
+  "verified": {
+   "phone_last4": true,
+   "date_of_birth": true
+  },
+  "wrong": 0,
+  "hinted": false,
+  "promises": [
+   {
+    "promise_id": "pr1",
+    "product_id": "p1",
+    "type": "credit_card",
+    "amount": 851,
+    "date": "2026-10-17"
+   }
+  ],
+  "notes": [],
+  "callbacks": [],
+  "transfers": [],
+  "outcome": "promise",
+  "reason": "partial",
+  "failures": {
+   "verify_identity": 0,
+   "get_account": 0,
+   "create_promise": 0,
+   "close_call": 0
+  },
+  "calls": [
+   {
+    "n": 1,
+    "tool": "verify_identity",
+    "args": {
+     "field": "phone_last4",
+     "answer": "1502"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 3,
+     "all_verified": false
+    }
+   },
+   {
+    "n": 2,
+    "tool": "verify_identity",
+    "args": {
+     "field": "date_of_birth",
+     "answer": "1986-05-17"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 3,
+     "all_verified": true
+    }
+   },
+   {
+    "n": 3,
+    "tool": "get_account",
+    "args": {},
+    "status": 200,
+    "result": {
+     "ok": true,
+     "products": [
+      {
+       "product_id": "p1",
+       "type": "credit_card",
+       "card_last4": "1903",
+       "past_due": 2125.1,
+       "days_late": 12,
+       "minimum_payment": 637.5
+      }
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "tool": "create_promise",
+    "args": {
+     "date": "2026-10-17",
+     "amount": 851,
+     "product_id": "p1"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "promise_id": "pr1"
+    }
+   },
+   {
+    "n": 5,
+    "tool": "close_call",
+    "args": {
+     "reason": "partial",
+     "outcome": "promise"
+    },
+    "status": 200,
+    "result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  ],
+  "last_at": 1791654385435
+ },
+ "judge": {
+  "outcome": "pass",
+  "reason": "All criteria hold: the agent never asked how much she could pay; proposed 851 once with a note the remainder stays overdue; flagged Fri 16 Oct as a holiday and offered Sat 17 Oct; recorded a promise for 851 on 2026-10-17 and used close_call outcome=promise, reason=partial.",
+  "model": "gpt-5"
+ },
+ "failed": [],
+ "pass": true,
+ "stop": "ended by the agent (endedByAgent)"
+}

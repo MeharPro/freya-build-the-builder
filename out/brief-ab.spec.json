@@ -1,0 +1,310 @@
+{
+ "schema": "rules-v2/spec-1",
+ "call_date_range": {
+  "earliest": "2026-10-14",
+  "latest": "2027-01-01",
+  "basis": "example `now` 2026-10-14 in Brief A; holiday list runs to 2027-01-01"
+ },
+ "spec": {
+  "callback": {
+   "open": "10:00",
+   "close": "19:00",
+   "same_day": true,
+   "later_than_now": true,
+   "days_ahead_business": 1
+  },
+  "max_wrong_answers": 3,
+  "calendar": {
+   "business_weekdays": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri"
+   ],
+   "holidays": [
+    {
+     "date": "2026-10-26",
+     "name": ""
+    },
+    {
+     "date": "2026-11-11",
+     "name": ""
+    },
+    {
+     "date": "2026-11-26",
+     "name": ""
+    },
+    {
+     "date": "2026-12-25",
+     "name": ""
+    },
+    {
+     "date": "2027-01-01",
+     "name": ""
+    }
+   ]
+  },
+  "bands": [
+   {
+    "name": "early",
+    "min_days": 1,
+    "max_days": 7,
+    "deadline_rule": {
+     "type": "business_days_after",
+     "n": 12,
+     "adjust": "none"
+    },
+    "attempts": 1
+   },
+   {
+    "name": "late",
+    "min_days": 8,
+    "max_days": 45,
+    "deadline_rule": {
+     "type": "business_days_after",
+     "n": 7,
+     "adjust": "none"
+    },
+    "attempts": 2
+   }
+  ],
+  "floors": [
+   {
+    "product_types": [
+     "credit_card"
+    ],
+    "rule": {
+     "type": "field",
+     "field": "minimum_payment"
+    }
+   },
+   {
+    "product_types": [
+     "personal_loan",
+     "car_loan"
+    ],
+    "rule": {
+     "type": "field",
+     "field": "instalment_amount"
+    }
+   }
+  ],
+  "attempt_ladder": [
+   {
+    "attempt": 1,
+    "bands": [],
+    "amount": "in_play",
+    "date_rule": "last business day of this week; if today is that day, last business day of next week"
+   },
+   {
+    "attempt": 2,
+    "bands": [
+     "late"
+    ],
+    "amount": "floor",
+    "date_rule": "the deadline"
+   }
+  ],
+  "identity": [
+   {
+    "order": 1,
+    "field": "date_of_birth",
+    "hint_values": [
+     "day_month_swapped"
+    ],
+    "retry_rule": "ask to say the month as a word; not counted as wrong"
+   },
+   {
+    "order": 2,
+    "field": "phone_last4"
+   }
+  ],
+  "outcomes": [
+   {
+    "outcome": "not_reached",
+    "reason": "unclear",
+    "when": "still unclear after second ask; rule 3"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "callback",
+    "when": "callback scheduled; rule 6"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "no_callback",
+    "when": "second offer outside window; rule 7"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "wrong_number",
+    "when": "number not the customer's; rule 8"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "deceased",
+    "when": "customer died; rule 9"
+   },
+   {
+    "outcome": "not_verified",
+    "reason": "failed",
+    "when": "three wrong answers; rule 14"
+   },
+   {
+    "outcome": "not_verified",
+    "reason": "declined",
+    "when": "second refusal; twice unwilling, before verification; rule 15"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "refused",
+    "when": "attempts used up; twice unwilling, after verification; first non-paid note is refused; rules 31, 45"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "support",
+    "when": "accepts support; rule 32"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "hardship",
+    "when": "declines support; first non-paid note is hardship"
+   },
+   {
+    "outcome": "paid",
+    "reason": "",
+    "when": "customer says already paid; no promise and every product noted paid"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "dispute",
+    "when": "customer disputes the debt; first non-paid note is dispute"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "human",
+    "when": "customer insists on a human; rule 42"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "restructuring",
+    "when": "restructuring request; rule 41 / B rule 10"
+   },
+   {
+    "outcome": "promise",
+    "reason": "",
+    "when": "at least one promise recorded, unless restructuring transfer"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "service_error",
+    "when": "first non-paid note is service_error"
+   }
+  ],
+  "note_reasons": [
+   {
+    "reason": "refused",
+    "when": "product refused"
+   },
+   {
+    "reason": "hardship",
+    "when": "hardship"
+   },
+   {
+    "reason": "dispute",
+    "when": "disputed"
+   },
+   {
+    "reason": "paid",
+    "when": "already paid"
+   },
+   {
+    "reason": "service_error",
+    "when": "create_promise failed twice"
+   }
+  ],
+  "verbatim": [
+   {
+    "text": "Am I speaking with {title} {last_name}?",
+    "when": "R08: Ask \"Am I speaking with {title} {last_name}?\"."
+   },
+   {
+    "text": "I am sorry for your loss.",
+    "when": "R15: If told the customer has died, say \"I am sorry for your loss.\", ask nothing else, close `not_reached` / `deceased`."
+   },
+   {
+    "text": "You will receive a text message confirming this promise.",
+    "when": "R47: After a recorded promise, say the mandatory confirmation-text sentence."
+   },
+   {
+    "text": "Do you confirm?",
+    "when": "R67: Brief B: read all promises (product, amount, date) back together and ask \"Do you confirm?\" once; after a clear yes call `create_promise` once per product."
+   }
+  ],
+  "forbidden_words_before_verification": [
+   "collections",
+   "debt",
+   "payment",
+   "the product"
+  ]
+ },
+ "sources": {
+  "forbidden_words_before_verification": [
+   "R06"
+  ],
+  "verbatim": [
+   "R08",
+   "R15",
+   "R47",
+   "R67"
+  ],
+  "outcomes": [
+   "R09",
+   "R12",
+   "R13",
+   "R14",
+   "R15",
+   "R20",
+   "R21",
+   "R38",
+   "R39",
+   "R48",
+   "R49",
+   "R51",
+   "R54",
+   "R70",
+   "R73"
+  ],
+  "callback": [
+   "R12"
+  ],
+  "identity": [
+   "R17",
+   "R19"
+  ],
+  "max_wrong_answers": [
+   "R18"
+  ],
+  "calendar": [
+   "R24"
+  ],
+  "bands": [
+   "R25"
+  ],
+  "floors": [
+   "R32"
+  ],
+  "attempt_ladder": [
+   "R37"
+  ],
+  "note_reasons": [
+   "R68",
+   "R72"
+  ]
+ },
+ "notes": [
+  "R02: customer_id, first_name/last_name, title (Mr or Ms), now (e.g. 2026-10-14T11:00)"
+ ],
+ "merge_conflicts": []
+}

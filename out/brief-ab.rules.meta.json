@@ -1,0 +1,68 @@
+{
+ "model": "claude-opus-5-5",
+ "sample_models": {
+  "A": "claude-opus-5-5",
+  "B": "claude-opus-5-5",
+  "C": "claude-opus-5-5"
+ },
+ "seconds": 101.65202522277832,
+ "cost_usd": 1.2802734,
+ "calls": 9,
+ "self_check": {
+  "missing_numbers": {},
+  "missing_tokens": []
+ },
+ "samples": {
+  "A": 75,
+  "B": 73,
+  "C": 73
+ },
+ "stages": {
+  "extract": {
+   "seconds": 51.969374656677246,
+   "cost_usd": 0.7801942,
+   "calls": 6
+  },
+  "merge": {
+   "seconds": 27.99395775794983,
+   "cost_usd": 0.2694684,
+   "calls": 1
+  },
+  "decide": {
+   "seconds": 0.0,
+   "cost_usd": 0.11292699999999999,
+   "calls": 1
+  },
+  "verify": {
+   "seconds": 0.0,
+   "cost_usd": 0.11768379999999999,
+   "calls": 1
+  },
+  "verify+decide": {
+   "seconds": 21.675976514816284
+  }
+ },
+ "briefs": [
+  "briefs/brief-a.md",
+  "briefs/brief-b.md"
+ ],
+ "api": "tools/openapi.json",
+ "spec": "brief-ab.spec.json",
+ "conflicts": "brief-ab.rules.conflicts.md",
+ "n_conflicts": 3,
+ "call_date_range": {
+  "earliest": "2026-10-14",
+  "latest": "2027-01-01",
+  "basis": "example `now` 2026-10-14 in Brief A; holiday list runs to 2027-01-01"
+ },
+ "n_rules": 77,
+ "n_in_force": 70,
+ "n_low": 2,
+ "n_low_in_force": 2,
+ "verification": {
+  "ok": 21
+ },
+ "decision_blocks": 7,
+ "spec_errors": 0,
+ "spec_warnings": 0
+}

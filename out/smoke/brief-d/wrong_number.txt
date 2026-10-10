@@ -1,0 +1,3 @@
+smoke scripted | workflow de5f944a-d43d-4a7e-80fc-405ee4c53649 | out/smoke/brief-d/wrong_number.script.json
+script: wrong number: nobody by that name; no debt talk, close politely
+variables: {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00"}

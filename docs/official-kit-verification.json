@@ -1,0 +1,72 @@
+{
+  "url": "https://www.freyavoice.ai/hackathon/build-the-builder-v3.zip",
+  "sha256": "655cbe581b0b0a7fba1f62ebd7d8c806edcfcc43f4d4fd47a27dca1e2534413a",
+  "files": [
+    {
+      "path": "tools/run_cases.py",
+      "matches": true
+    },
+    {
+      "path": "tools/openapi.json",
+      "matches": true
+    },
+    {
+      "path": "tools/score.py",
+      "matches": true
+    },
+    {
+      "path": "freya.py",
+      "matches": false,
+      "reason": "Bounded simulation polling accepts completed iterations when parent status lags; model configuration unchanged"
+    },
+    {
+      "path": "public-test-set.json",
+      "matches": true
+    },
+    {
+      "path": ".claude/skills/build-phone-agent/SKILL.md",
+      "matches": false,
+      "reason": "Custom builder instructions"
+    },
+    {
+      "path": "docs/api.md",
+      "matches": true
+    },
+    {
+      "path": "docs/tools-and-code.md",
+      "matches": true
+    },
+    {
+      "path": "docs/workflow-format.md",
+      "matches": true
+    },
+    {
+      "path": "docs/kit-README.md",
+      "matches": true
+    },
+    {
+      "path": "VERSION",
+      "matches": true
+    },
+    {
+      "path": "examples/agent_builder.py",
+      "matches": true
+    },
+    {
+      "path": "examples/base-agent.json",
+      "matches": true
+    },
+    {
+      "path": "env.example",
+      "matches": true
+    },
+    {
+      "path": "briefs/brief-a.md",
+      "matches": true
+    },
+    {
+      "path": "briefs/brief-b.md",
+      "matches": true
+    }
+  ]
+}

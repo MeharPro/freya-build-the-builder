@@ -1,0 +1,675 @@
+{
+ "runner": "sim",
+ "workflow_id": "f523ddf6-4d31-419d-9b6e-c68d58e59ad8",
+ "agent_id": "753337bb-8c02-4185-be89-3c0024aadc2a",
+ "simulation_id": null,
+ "iteration_id": null,
+ "seconds": 401,
+ "passed": 4,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Happy path",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-04",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-09",
+   "family": "Restructuring",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "easy",
+   "family": "Happy path",
+   "pass": true,
+   "failed": [],
+   "call_id": "6a8c988b-8e48-40f5-8a2c-1687b9325de7",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_d2516dee-fb5",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-01.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "Both security questions (date of birth, phone last 4) were verified before get_account. 'Collections' was first said after verification. create_promise was called once. The text-message sentence came after the promise was recorded.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/6a8c988b-8e48-40f5-8a2c-1687b9325de7",
+   "slowest_turn_s": 1.5,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": false,
+   "failed": [
+    "conversation: The callback was scheduled for 2026-10-15 (Thursday) at 11:00, not the next business day. The customer said 'tomorrow' (Sunday the 11th), so the next business day is Monday 12 October. The agent also did not correct the date after the customer objected."
+   ],
+   "call_id": "7364c2ee-a0bf-467d-8a82-dd40be6a5e65",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_c0dbff33-d5c",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-02.txt",
+   "turns": 3,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The callback was scheduled for 2026-10-15 (Thursday) at 11:00, not the next business day. The customer said 'tomorrow' (Sunday the 11th), so the next business day is Monday 12 October. The agent also did not correct the date after the customer objected.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/7364c2ee-a0bf-467d-8a82-dd40be6a5e65",
+   "slowest_turn_s": 1.3,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": false,
+   "failed": [
+    "outcome ('no_promise', 'dispute'), expected ('not_verified', 'failed')",
+    "conversation: The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch."
+   ],
+   "call_id": "9578cdf2-f913-423e-935d-f64cce136468",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_22980e66-f81",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-03.txt",
+   "turns": 5,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/9578cdf2-f913-423e-935d-f64cce136468",
+   "slowest_turn_s": 2.3,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-04",
+   "level": "medium",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('promise', None)",
+    "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+    "conversation: The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds."
+   ],
+   "call_id": "9e554ce0-167c-43da-bc01-fee8f0751e03",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_ff1b3bdc-c94",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-04.txt",
+   "turns": 5,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/9e554ce0-167c-43da-bc01-fee8f0751e03",
+   "slowest_turn_s": 2.0,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": false,
+   "failed": [
+    "conversation: The support team was offered twice (\"Would you like me to connect you with our customer support team?\" in the first reply and again after the customer's second message), which breaks the 'offered once' criterion."
+   ],
+   "call_id": "e94cab17-5bef-4618-839c-50fe809b4bb5",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_ec485d3d-6c8",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-05.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The support team was offered twice (\"Would you like me to connect you with our customer support team?\" in the first reply and again after the customer's second message), which breaks the 'offered once' criterion.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/e94cab17-5bef-4618-839c-50fe809b4bb5",
+   "slowest_turn_s": 5.6,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "promises [('p1', 2125.1, '2026-10-16')], expected [('p1', 637.5, '2026-10-16')]",
+    "conversation: The promise was recorded and confirmed for 2125.10 on Friday 16 October, not the required 637.50. The agent never offered the minimum payment or said the rest stays overdue; the customer raised the minimum, and the agent ignored it. It did not ask how much she could pay, so that criterion held."
+   ],
+   "call_id": "9f2da110-2925-49ed-8baf-83d296fcdf15",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_b45d36f3-52f",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-06.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The promise was recorded and confirmed for 2125.10 on Friday 16 October, not the required 637.50. The agent never offered the minimum payment or said the rest stays overdue; the customer raised the minimum, and the agent ignored it. It did not ask how much she could pay, so that criterion held.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/9f2da110-2925-49ed-8baf-83d296fcdf15",
+   "slowest_turn_s": 4.2,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-07",
+   "level": "hard",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('promise', None)",
+    "promises [], expected [('p1', 540.0, '2026-10-27')]",
+    "conversation: The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October."
+   ],
+   "call_id": "1320f1c4-9c46-4153-b383-da25714a0a33",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_f103b551-ccc",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-07.txt",
+   "turns": 4,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/1320f1c4-9c46-4153-b383-da25714a0a33",
+   "slowest_turn_s": 0.7,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-08",
+   "level": "medium",
+   "family": "Already paid",
+   "pass": true,
+   "failed": [],
+   "call_id": "474cad86-fe86-46a1-b94c-2fb9c223d013",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_986f02b5-2cf",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-08.txt",
+   "turns": 6,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "The agent said 'Payments can take one business day to appear' in its closing message, and it did not record a promise: it said it would not take one, and close_call was sent with outcome 'paid' only.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/474cad86-fe86-46a1-b94c-2fb9c223d013",
+   "slowest_turn_s": 2.9,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Restructuring",
+   "pass": true,
+   "failed": [],
+   "call_id": "240f5a1d-f5d1-498f-adb6-82cafdf332db",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "customer_id": "c_493e0b99-4d6",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-09.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "The agent called transfer_to_agent with queue 'restructuring' once the customer asked for lower instalments. It said it could not set up a plan itself and described no plan of its own. No promise-recording tool was called; close_call recorded only the transfer.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/240f5a1d-f5d1-498f-adb6-82cafdf332db",
+   "slowest_turn_s": 10.1,
+   "ended_how": "end_call in the call log after HTTP 504"
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": true,
+   "failed": [],
+   "call_id": "b7a498c7-cea2-41a9-820e-28467f1e47ac",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_09cf2321-9ba",
+   "transcript": "out/sim/rehearsal-hidden/pub/PUB-10.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "The first create_promise call failed with 'nothing was recorded', and the retry succeeded, so the ledger holds exactly one promise (pr1). The agent said 'recorded' only after that successful call.",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/b7a498c7-cea2-41a9-820e-28467f1e47ac",
+   "slowest_turn_s": 7.1,
+   "ended_how": "end_call in the call log after HTTP 504"
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "easy",
+    "family": "Happy path",
+    "pass": true,
+    "failed": [],
+    "call_id": "6a8c988b-8e48-40f5-8a2c-1687b9325de7",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_d2516dee-fb5",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-01.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "Both security questions (date of birth, phone last 4) were verified before get_account. 'Collections' was first said after verification. create_promise was called once. The text-message sentence came after the promise was recorded.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/6a8c988b-8e48-40f5-8a2c-1687b9325de7",
+    "slowest_turn_s": 1.5,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": false,
+    "failed": [
+     "conversation: The callback was scheduled for 2026-10-15 (Thursday) at 11:00, not the next business day. The customer said 'tomorrow' (Sunday the 11th), so the next business day is Monday 12 October. The agent also did not correct the date after the customer objected."
+    ],
+    "call_id": "7364c2ee-a0bf-467d-8a82-dd40be6a5e65",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_c0dbff33-d5c",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-02.txt",
+    "turns": 3,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The callback was scheduled for 2026-10-15 (Thursday) at 11:00, not the next business day. The customer said 'tomorrow' (Sunday the 11th), so the next business day is Monday 12 October. The agent also did not correct the date after the customer objected.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/7364c2ee-a0bf-467d-8a82-dd40be6a5e65",
+    "slowest_turn_s": 1.3,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": false,
+    "failed": [
+     "outcome ('no_promise', 'dispute'), expected ('not_verified', 'failed')",
+     "conversation: The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch."
+    ],
+    "call_id": "9578cdf2-f913-423e-935d-f64cce136468",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_22980e66-f81",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-03.txt",
+    "turns": 5,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/9578cdf2-f913-423e-935d-f64cce136468",
+    "slowest_turn_s": 2.3,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-04",
+    "level": "medium",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('promise', None)",
+     "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+     "conversation: The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds."
+    ],
+    "call_id": "9e554ce0-167c-43da-bc01-fee8f0751e03",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_ff1b3bdc-c94",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-04.txt",
+    "turns": 5,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/9e554ce0-167c-43da-bc01-fee8f0751e03",
+    "slowest_turn_s": 2.0,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": false,
+    "failed": [
+     "conversation: The support team was offered twice (\"Would you like me to connect you with our customer support team?\" in the first reply and again after the customer's second message), which breaks the 'offered once' criterion."
+    ],
+    "call_id": "e94cab17-5bef-4618-839c-50fe809b4bb5",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_ec485d3d-6c8",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-05.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The support team was offered twice (\"Would you like me to connect you with our customer support team?\" in the first reply and again after the customer's second message), which breaks the 'offered once' criterion.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/e94cab17-5bef-4618-839c-50fe809b4bb5",
+    "slowest_turn_s": 5.6,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "promises [('p1', 2125.1, '2026-10-16')], expected [('p1', 637.5, '2026-10-16')]",
+     "conversation: The promise was recorded and confirmed for 2125.10 on Friday 16 October, not the required 637.50. The agent never offered the minimum payment or said the rest stays overdue; the customer raised the minimum, and the agent ignored it. It did not ask how much she could pay, so that criterion held."
+    ],
+    "call_id": "9f2da110-2925-49ed-8baf-83d296fcdf15",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_b45d36f3-52f",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-06.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The promise was recorded and confirmed for 2125.10 on Friday 16 October, not the required 637.50. The agent never offered the minimum payment or said the rest stays overdue; the customer raised the minimum, and the agent ignored it. It did not ask how much she could pay, so that criterion held.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/9f2da110-2925-49ed-8baf-83d296fcdf15",
+    "slowest_turn_s": 4.2,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-07",
+    "level": "hard",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('promise', None)",
+     "promises [], expected [('p1', 540.0, '2026-10-27')]",
+     "conversation: The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October."
+    ],
+    "call_id": "1320f1c4-9c46-4153-b383-da25714a0a33",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_f103b551-ccc",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-07.txt",
+    "turns": 4,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/1320f1c4-9c46-4153-b383-da25714a0a33",
+    "slowest_turn_s": 0.7,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-08",
+    "level": "medium",
+    "family": "Already paid",
+    "pass": true,
+    "failed": [],
+    "call_id": "474cad86-fe86-46a1-b94c-2fb9c223d013",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_986f02b5-2cf",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-08.txt",
+    "turns": 6,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "The agent said 'Payments can take one business day to appear' in its closing message, and it did not record a promise: it said it would not take one, and close_call was sent with outcome 'paid' only.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/474cad86-fe86-46a1-b94c-2fb9c223d013",
+    "slowest_turn_s": 2.9,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Restructuring",
+    "pass": true,
+    "failed": [],
+    "call_id": "240f5a1d-f5d1-498f-adb6-82cafdf332db",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "transfer_to_agent",
+     "close_call"
+    ],
+    "customer_id": "c_493e0b99-4d6",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-09.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "The agent called transfer_to_agent with queue 'restructuring' once the customer asked for lower instalments. It said it could not set up a plan itself and described no plan of its own. No promise-recording tool was called; close_call recorded only the transfer.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/240f5a1d-f5d1-498f-adb6-82cafdf332db",
+    "slowest_turn_s": 10.1,
+    "ended_how": "end_call in the call log after HTTP 504"
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": true,
+    "failed": [],
+    "call_id": "b7a498c7-cea2-41a9-820e-28467f1e47ac",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_09cf2321-9ba",
+    "transcript": "out/sim/rehearsal-hidden/pub/PUB-10.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "The first create_promise call failed with 'nothing was recorded', and the retry succeeded, so the ledger holds exactly one promise (pr1). The agent said 'recorded' only after that successful call.",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/b7a498c7-cea2-41a9-820e-28467f1e47ac",
+    "slowest_turn_s": 7.1,
+    "ended_how": "end_call in the call log after HTTP 504"
+   }
+  ]
+ ],
+ "customer_model": "claude-haiku-5-5",
+ "judge_model": "claude-sonnet-5-5",
+ "provider": "claude",
+ "counts": {
+  "chat_turns": 58,
+  "customer_calls": 48,
+  "judge_calls": 10,
+  "judge_retries": 0,
+  "ledger_polls": 58,
+  "ledger_errors": 0,
+  "call_fetches": 20
+ }
+}

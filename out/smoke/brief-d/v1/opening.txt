@@ -1,0 +1,61 @@
+smoke scripted | workflow de5f944a-d43d-4a7e-80fc-405ee4c53649 | out/smoke/brief-d/opening.script.json
+script: opening: the customer answers; no debt talk before identity, then a security question
+variables: {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00"}
+--- turn 1
+customer: Hello?
+agent (2.8s): Hello. Am I speaking with Daniel Reyes?
+   [extract] who1 = 'unclear'
+   [route] stays in opening (no transition matched)
+--- turn 2
+customer: Yes, this is me
+agent (5.0s): Thank you, Mr Reyes. For security, could you please tell me the last four digits of your phone number?
+   [extract] who1 = 'customer'
+   [route] opening -> setup: always always
+   [node] opening -> setup (always always)
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wedn...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_phone: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_phone (the customer confirmed who they are who1 == 'customer')
+--- POST /api/v2/chat/end -> {"callId": "004b1601-b035-4d0e-bbef-8ee3917b358a", "ended": true, "endedReason": "customer-ended-call"}
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "UNC", "outcome": "not_reached", "customer_id": "c_smoke"}
+   [tool] close_call -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+== tool calls (2) from GET /api/v2/call/004b1601-b035-4d0e-bbef-8ee3917b358a
+ 1. turn 2  code_exec          args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['...
+    -> HTTP 200 data=null
+ 2. end     close_call         POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "UNC", "outcome": "not_reached", "customer_id": "c_smoke"}
+    -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+== variables after the last routing (25): {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00", "who1": "customer", "today_iso": "2026-10-14", "today_text": "Wednesday 14 October 2026", "now_time": "11:00", "weekday_table": "\"Monday\" or \"this Monday\" = Monday 19 October 2026 (2026-10-19); \"next Monday\" = Monday 19 October 2026 (2026-10-19)\n\"Tuesday\" or \"this Tuesday\" = Tuesday 20 October 2026 (2026-10-20); \"next Tuesday\" = Tuesday 20 October 2026 (2026-10-20)\n\"Wednesday\" or \"this Wednesday\" = Wednesday 14 October 2026 (2026-10-14); \"next Wednesday\" = Wednesday 21 October 2026 (2026-10-21)\n\"Thursday\" or \"this Thursday\" = Thursday 15 October 2026 (2026-10-15); \"next Thursday\" = Thursday 15 October 2026 (2026-10-15)\n\"Friday\" or \"this Friday\" = Friday 16 October 2026 (2026-10-16); \"next Friday\" = Friday 16 October 2026 (2026-10-16)\n\"S...
+== expectations (32)
+ FAIL turn 1 contains_any ["Kestrel Bank"] -> none found in: 'Hello. Am I speaking with Daniel Reyes?'
+ PASS turn 1 not_contains 'debt'
+ PASS turn 1 not_contains 'collection'
+ PASS turn 1 not_contains 'payment'
+ PASS turn 1 not_contains 'amount'
+ PASS turn 1 not_contains 'overdue'
+ PASS turn 1 not_contains 'past due'
+ PASS turn 1 not_contains 're:\\bowes?\\b'
+ PASS turn 1 not_contains 're:\\blate\\b'
+ PASS turn 1 not_contains 'loan'
+ PASS turn 1 not_contains 'credit card'
+ PASS turn 1 not_contains 'balance'
+ PASS turn 1 contains_any ["Reyes", "Daniel"] -> 'Reyes'
+ PASS turns 1-2 not_contains 'debt'
+ PASS turns 1-2 not_contains 'collection'
+ PASS turns 1-2 not_contains 'payment'
+ PASS turns 1-2 not_contains 'amount'
+ PASS turns 1-2 not_contains 'overdue'
+ PASS turns 1-2 not_contains 'past due'
+ PASS turns 1-2 not_contains 're:\\bowes?\\b'
+ PASS turns 1-2 not_contains 're:\\blate\\b'
+ PASS turns 1-2 not_contains 'loan'
+ PASS turns 1-2 not_contains 'credit card'
+ PASS turns 1-2 not_contains 'balance'
+ PASS turn 2 contains_any ["date of birth", "re:\\bborn\\b", "birth", "last four", "last 4", "postcode", "post code", "company number", "founded", "security", "identity", "re:\\bverif",  -> 'last four'
+ PASS turn 2 tool verify_identity not called
+ PASS turn 2 tool get_account not called
+ PASS turn 2 tool create_promise not called
+ PASS turn 2 tool schedule_callback not called
+ PASS turn 2 tool add_note not called
+ PASS turn 2 tool transfer_to_agent not called
+ PASS turn 2 tool close_call not called
+RESULT: FAIL | 31/32 checks passed | call 004b1601-b035-4d0e-bbef-8ee3917b358a

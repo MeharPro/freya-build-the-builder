@@ -1,0 +1,61 @@
+# GEN-C-07 Two deflections instead of the date of birth: declined
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call f886be55-d0ad-4969-95c9-f1c127512bd4 | customer c_047a3db4-fb2 | 2026-10-10 20:28:27
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/f886be55-d0ad-4969-95c9-f1c127512bd4
+# RESULT: PASS
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Ms Nair?
+customer: Yes, this is Priya Nair. What is this call about?
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_dob
+agent: I can explain that right after the security questions, Ms Nair. What is your date of birth?
+customer: Ms Nair, I'd rather not discuss anything until the security questions are done.
+   [route] ask_dob -> count_decline_dob: customer refused refusal_dob == 'refused'
+   [node] ask_dob -> count_decline_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_dob -> ask_dob: always always
+   [node] count_decline_dob -> ask_dob
+agent: These questions protect your account, Ms Nair. What is your date of birth?
+customer: Ms Nair, I'd still like to know what this call is about before I give my date of birth.
+   [route] ask_dob -> qb_dob: asks a question back refusal_dob == 'question'
+   [node] ask_dob -> qb_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('question_count_dob') or 0)) + 1\n vars['question_count_dob'] = n\n vars['refusal_dob'] = 'none'\n vars['qb_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\n vars['qb_route'] = 'retry'...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] qb_dob -> ask_dob: always always
+   [node] qb_dob -> ask_dob
+agent: I can explain everything right after the security questions, Ms Nair. What is your date of birth?
+customer: Ms Nair, I'd still like to know what this call is about first.
+   [route] ask_dob -> qb_dob: asks a question back refusal_dob == 'question'
+   [node] ask_dob -> qb_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('question_count_dob') or 0)) + 1\n vars['question_count_dob'] = n\n vars['refusal_dob'] = 'none'\n vars['qb_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\n vars['qb_route'] = 'retry'...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] qb_dob -> fin_declined: a second question back instead of an answer qb_route == 'close'
+   [node] qb_dob -> fin_declined
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_declined -> end_declined: always always
+   [node] fin_declined -> end_declined
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I understand. Without the security questions I cannot continue. Thank you for your time, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_047a3db4-fb2"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (7)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+3. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('question_count_dob') or 0)) + 1\n vars['question_count_dob'] = n\n vars['refusal_dob'] = 'none'\n vars['qb_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\n vars['qb_route'] = 'retry'... -> HTTP 200 data=null
+4. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('question_count_dob') or 0)) + 1\n vars['question_count_dob'] = n\n vars['refusal_dob'] = 'none'\n vars['qb_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\n vars['qb_route'] = 'retry'... -> HTTP 200 data=null
+5. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+6. end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."} -> success Call ended
+7. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_047a3db4-fb2"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_verified reason=declined promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): pass - The agent said once that 'These questions protect your account', never named collections, debt, payment or card, and closed after the second question-back deflection without calling verify_identity or get_account.

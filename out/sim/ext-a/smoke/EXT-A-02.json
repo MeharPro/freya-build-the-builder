@@ -1,0 +1,19 @@
+{
+ "case": "EXT-A-02",
+ "rep": 1,
+ "workflow_id": "4045179c-42e8-436d-9fe2-c21c616c71fc",
+ "call_id": null,
+ "customer_id": null,
+ "variables": null,
+ "turns": [],
+ "end": null,
+ "transcript": [],
+ "tool_calls": [],
+ "ledger": null,
+ "judge": null,
+ "failed": [
+  "harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+ ],
+ "pass": false,
+ "stop": null
+}

@@ -1,0 +1,29 @@
+sim | workflow 68dc5046-318c-4d4f-bae5-3d602d05a7f9 (slot brief-c) | 10 case(s) x 1 rep(s) | concurrency 2 | customer gpt-5-mini, judge gpt-5 (openai)
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'scheduled')
+FAIL PUB-01 easy   Happy path     | verify > verify > get_account > promise > close_call
+       - outcome (None, None), expected ('promise', 'full')
+       - conversation: The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just “Hello. Am I speaking with Daniel Reyes?” All other criteria are met.
+FAIL PUB-03 medium Identity       | verify > verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'exhausted')
+FAIL PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+       - outcome (None, None), expected ('promise', 'full')
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > close_call
+       - outcome (None, None), expected ('no_promise', 'financial_distress')
+       - conversation: The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied.
+FAIL PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+       - outcome (None, None), expected ('promise', 'partial')
+       - conversation: The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial.
+FAIL PUB-08 medium Already paid   | verify > verify > get_account > close_call
+       - outcome (None, None), expected ('paid', 'self_reported')
+FAIL PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+       - outcome (None, None), expected ('promise', 'full')
+FAIL PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'plan_review')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+       - outcome (None, None), expected ('promise', 'full')
+
+slowest agent turn per call: median 7 s, worst 21 s (chat-route timing, not a simulation's).
+
+0 / 10 passed (bank records and conversation checks). Local chat-route simulation, 700 s.
+cost: 61 chat turns, 61 model calls (51 customer on gpt-5-mini, 10 judge on gpt-5), 74 ledger polls, 28 call fetches.

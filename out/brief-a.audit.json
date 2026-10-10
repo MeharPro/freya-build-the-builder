@@ -1,0 +1,567 @@
+{
+ "rules": [
+  {
+   "id": "R01",
+   "status": "implemented",
+   "where": "flow setup -> opening -> ask_dob -> ask_phone -> load_account -> prepare (prods[0]) -> negotiate -> fin_* nodes",
+   "evidence": "p = prods[0] if prods else {}",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R02",
+   "status": "implemented",
+   "where": "system_prompt / setup code / test_variables use customer_id, first_name, last_name, title, now",
+   "evidence": "\"test_variables\": {\"customer_id\": \"c_test\", \"first_name\": \"Daniel\", \"last_name\": \"Reyes\", \"title\": \"Mr\", \"now\": \"2026-10-14T11:00\"}",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R03",
+   "status": "implemented",
+   "where": "api_tool(): body.customer_id default on every tool (schedule_callback, verify_identity, transfer_to_agent, get_account, create_promise, close_call)",
+   "evidence": "body.customer_id (string): default \"{{customer_id}}\"",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R04",
+   "status": "implemented",
+   "where": "system_prompt",
+   "evidence": "Address the customer as {{title}} {{last_name}}.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R05",
+   "status": "implemented",
+   "where": "setup code: nowdt parsed from vars['now'], all dates derived from it",
+   "evidence": "raw = str(vars.get('now') or '').strip()",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R06",
+   "status": "implemented",
+   "where": "opening on_enter tts",
+   "evidence": "Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with {{title}} {{last_name}}?",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R07",
+   "status": "implemented",
+   "where": "opening/opening_retry/third_party/ask_dob/ask_phone task_messages",
+   "evidence": "Never mention the bank account, a product, a debt, an amount, a payment or collections, even if they ask or offer to pay or help.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R08",
+   "status": "implemented",
+   "where": "opening on_enter tts; opening_retry task_message",
+   "evidence": "Then ask exactly: \"Am I speaking with {{title}} {{last_name}}?\"",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R09",
+   "status": "implemented",
+   "where": "opening extraction who1 + transition always -> opening_retry",
+   "evidence": "unclear = anything else: 'hello', 'go ahead', 'who is this?', 'what is this about?', a question, silence.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R10",
+   "status": "implemented",
+   "where": "opening_retry task_message (answer question first) + transition always -> fin_unclear (not_reached/unclear)",
+   "evidence": "If the person asked a question, answer it briefly first: who you are -> you are Freya Bank's digital assistant;",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R11",
+   "status": "implemented",
+   "where": "system_prompt; opening_retry task_message",
+   "evidence": "- If asked whether you are a robot or an AI: say you are Freya Bank's digital assistant, then continue.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R12",
+   "status": "implemented",
+   "where": "third_party task_message",
+   "evidence": "STRICT: Never say why you are calling.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R13",
+   "status": "implemented",
+   "where": "setup code: callback_text; third_party.task_message; transition schedule_callback_response.data.ok -> fin_callback (not_reached/callback)",
+   "evidence": "lines.append(txt(nbd) + ' (' + nbd.isoformat() + '), from 10:00 up to 19:00 included.')",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R14",
+   "status": "implemented",
+   "where": "third_party.task_message + tool-call transition -> fin_no_callback",
+   "evidence": "- If the second answer is also outside the window, or they cannot say when, do not book: call transition_to_fin_no_callback.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R15",
+   "status": "implemented",
+   "where": "third_party transition tp_status=wrong_number -> fin_wrong_number",
+   "evidence": "3. -> fin_wrong_number  if (tp_status equals \"wrong_number\")  [\"wrong number\"]",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R16",
+   "status": "implemented",
+   "where": "third_party transition tp_status=deceased -> fin_deceased; end_deceased terminal spoken_message",
+   "evidence": "terminal: endedReason=not_reached_deceased, spoken_message=\"I am sorry for your loss. Goodbye.\"",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R17",
+   "status": "implemented",
+   "where": "third_party.task_message STRICT line",
+   "evidence": "Never mention the bank account, a product, a debt, an amount, a payment or collections, even if they ask or offer to pay or help. ... Do not ask them any security question.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R18",
+   "status": "implemented",
+   "where": "ask_dob (verify_identity field date_of_birth) -> ask_phone (verify_identity#2 field phone_last4)",
+   "evidence": "You must check identity with two security questions, one at a time. Now ask the first: their date of birth.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R19",
+   "status": "implemented",
+   "where": "ask_dob.task_message; verify_identity answer description",
+   "evidence": "A date said only as numbers is day, then month, then year (05/03/1990 = 1990-03-05).",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R20",
+   "status": "implemented",
+   "where": "verify_identity post_process_code; ask_dob/ask_phone transition wrong_answers_left=0 -> fin_failed",
+   "evidence": "1. -> fin_failed  if (verify_identity_response.data.wrong_answers_left equals \"0\")  [\"three wrong answers\"]",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R21",
+   "status": "implemented",
+   "where": "verify_identity post_process_code hint branch",
+   "evidence": "Day and month look swapped. This is NOT a wrong answer. Ask the customer to say the date of birth again with the month as a word, for example 14 March 1988.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R22",
+   "status": "implemented",
+   "where": "fin_failed (not_verified/failed); end_failed terminal spoken_message; verify_identity post_process_code",
+   "evidence": "I am sorry, I could not verify your identity, so I cannot continue. Please use the Freya Bank mobile app or visit a branch. Thank you, goodbye.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R23",
+   "status": "implemented",
+   "where": "ask_dob/ask_phone task_message + refusal extraction -> count_decline_* code (n>=2 -> fin_declined)",
+   "evidence": "vars['decline_route'] = 'close' if n >= 2 else 'retry'",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R24",
+   "status": "implemented",
+   "where": "ask_phone transition all_verified -> load_account (pre_action get_account)",
+   "evidence": "1. -> load_account  if (verify_identity_response.data.all_verified equals \"true\" OR verify_identity_response.data.all_verified equals \"True\")",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R25",
+   "status": "implemented",
+   "where": "negotiate on_enter tts; prepare code: product_words",
+   "evidence": "I am calling from the collections team about a late payment on your {{product_words}}. The past-due amount is {{past_due_fmt}}, and it is {{days_late_txt}} days late.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R26",
+   "status": "implemented",
+   "where": "setup/prepare code: HOL and isbd",
+   "evidence": "HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R27",
+   "status": "implemented",
+   "where": "setup code: early_deadline/late_deadline; prepare code: band/attempts",
+   "evidence": "if days_late <= 7:\n        band = 'early'; attempts = 1; deadline = datetime.date.fromisoformat(str(vars.get('early_deadline')))",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R28",
+   "status": "implemented",
+   "where": "negotiate.task_message DATES; prepare code: calendar_text",
+   "evidence": "- A promise date must be a business day (Monday to Friday, not a bank holiday) from today up to the deadline.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R29",
+   "status": "implemented",
+   "where": "negotiate.task_message item 3 (Date); prepare code calendar next business day",
+   "evidence": "Weekend or bank holiday not after the deadline -> say that day is not possible and offer the next business day shown.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R30",
+   "status": "implemented",
+   "where": "negotiate.task_message item 3 (vague period)",
+   "evidence": "A vague period ('next week', 'the week after next', 'end of the month', 'when my salary comes') -> ask once for the exact day. If they still give none, propose the deadline {{deadline_text}}.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R31",
+   "status": "implemented",
+   "where": "setup code: weekday_table; negotiate.task_message item 3",
+   "evidence": "tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R32",
+   "status": "implemented",
+   "where": "negotiate.task_message item 3 (Date)",
+   "evidence": "After the deadline (for example a salary date later) -> say the latest date you can record is {{deadline_text}} and offer it; if they refuse that, it is a flat refusal.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R33",
+   "status": "implemented",
+   "where": "negotiate.task_message item 1",
+   "evidence": "1. You propose every amount. NEVER ask how much they can pay. If they ask you to choose, propose an amount yourself. Start with the full past-due amount.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R34",
+   "status": "implemented",
+   "where": "prepare code: floor",
+   "evidence": "floor = p.get('minimum_payment')",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R35",
+   "status": "implemented",
+   "where": "negotiate.task_message item 4; prepare code attempt2_line",
+   "evidence": "4. If they say the full amount is too much: offer the floor {{floor_fmt}} once, and say the rest stays overdue. If they refuse the floor, it is a flat refusal.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R36",
+   "status": "implemented",
+   "where": "negotiate.task_message item 3 (Amount)",
+   "evidence": "Amount from the floor up to the full amount, both included -> accept it. Below the floor -> say it cannot be recorded and offer the floor {{floor_fmt}} once; if they do not accept, it is a flat refusal.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R37",
+   "status": "implemented",
+   "where": "negotiate on_enter tts",
+   "evidence": "The past-due amount is {{past_due_fmt}}, and it is {{days_late_txt}} days late. Can you make this payment today?",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R38",
+   "status": "implemented",
+   "where": "negotiate.task_message item 3 (CALENDAR, floor/deadline checks)",
+   "evidence": "3. A date or an amount the customer proposes is never a refusal. Check it:",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R39",
+   "status": "implemented",
+   "where": "negotiate.task_message item 5",
+   "evidence": "Attempt 1: propose paying on {{attempt1_text}} - the full amount, or the floor {{floor_fmt}} if they already said the full amount is too much.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R40",
+   "status": "implemented",
+   "where": "setup code: attempt1_date (lastbd); prepare code: attempt2_line (late band only)",
+   "evidence": "vars['attempt2_line'] = 'Attempt 2: propose the floor amount ' + fmt(floor) + ' on the deadline, ' + txt(deadline) + ' (' + deadline.isoformat() + ').'",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R41",
+   "status": "implemented",
+   "where": "negotiate.task_message item 5; negotiate transition -> fin_refused (no_promise/refused)",
+   "evidence": "When the allowed attempts are used up and they refuse again, stop: call transition_to_fin_refused. Never repeat an offer they already refused.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R42",
+   "status": "implemented",
+   "where": "negotiate transition topic=hardship -> hardship node; hardship transitions -> xfer_support (queue support) / fin_hardship",
+   "evidence": "On your first turn here: say one short sentence of sympathy, then offer to connect them with the customer support team. Offer it only once.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R43",
+   "status": "implemented",
+   "where": "system_prompt; negotiate.task_message OTHER; hardship.task_message",
+   "evidence": "- Never offer a discount, waiver, payment plan or any term you were not given.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R44",
+   "status": "implemented",
+   "where": "negotiate.task_message item 6; tool create_promise description",
+   "evidence": "6. When amount and date are agreed, read back: \"{{product_words}}, <amount>, on <weekday day month>. Do you confirm?\" Call create_promise only after a clear yes",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R45",
+   "status": "implemented",
+   "where": "negotiate.task_message item 6",
+   "evidence": "If they change the date or amount, check it again and read back again.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R46",
+   "status": "implemented",
+   "where": "negotiate.task_message OTHER; transition create_promise ok -> fin_promise ends call",
+   "evidence": "- If they ask to change or cancel a promise: they can do it in the mobile app.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R47",
+   "status": "implemented",
+   "where": "create_promise post_process_code; negotiate item 7; transition -> fin_service_error; end_service_error spoken_message",
+   "evidence": "7. After create_promise: if it failed, call create_promise once more with the same values. Never say the promise is recorded unless the result has ok true.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R48",
+   "status": "implemented",
+   "where": "end_promise terminal spoken_message",
+   "evidence": "Your payment promise is recorded. You will receive a text message confirming this promise. Thank you for your time, {{title}} {{last_name}}. Goodbye.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R49",
+   "status": "implemented",
+   "where": "negotiate transition topic=already_paid -> fin_paid; end_paid terminal spoken_message",
+   "evidence": "Thank you for letting me know. Payments can take one business day to appear, so I will not take a promise today.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R50",
+   "status": "implemented",
+   "where": "negotiate extraction topic (dispute) -> fin_dispute; end_dispute terminal",
+   "evidence": "dispute = says the debt or product is not theirs, they never had it, or it was closed or paid off in the past.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R51",
+   "status": "implemented",
+   "where": "negotiate transition topic=new_plan -> xfer_restructuring (transfer_to_agent#2 queue restructuring) -> fin_transferred_restructuring",
+   "evidence": "I cannot set up a new plan myself, but I will transfer you to the team that can help with that.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R52",
+   "status": "partial",
+   "where": "ask_dob / ask_phone / negotiate task_message + transfer_to_agent (queue general) + transition -> fin_transferred_human",
+   "evidence": "- If they ask for a human: the first time, ask whether you can help them yourself. If they insist, call transfer_to_agent.",
+   "fix_hint": "Add the transfer_to_agent tool (queue general), the human-request instruction and a transfer_to_agent_success_count > 0 -> fin_transferred_human transition to the hardship node, which has none of these.",
+   "evidence_found": true
+  },
+  {
+   "id": "R53",
+   "status": "implemented",
+   "where": "system_prompt 'Always' list; opening_retry task_message",
+   "evidence": "- If asked whether this is a scam: say they can verify this call by phoning Freya Bank's customer service number, then continue.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R54",
+   "status": "implemented",
+   "where": "system_prompt; negotiate.task_message OTHER",
+   "evidence": "- Never invent figures, dates or reasons. If you do not have the information, say so.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R55",
+   "status": "implemented",
+   "where": "negotiate task_message + transition_to_fin_refused; count_decline_dob/phone code (n >= 2 -> fin_declined); opening_retry refuses -> fin_declined",
+   "evidence": "- If they say twice that they do not want to talk: call transition_to_fin_refused.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R56",
+   "status": "implemented",
+   "where": "global tool close_call alwaysRunsAt end_of_call; fin_* code nodes set outcome/reason; pre_process_code drops empty reason",
+   "evidence": "close_call[\"config\"][\"alwaysRunsAt\"] = [\"end_of_call\"]",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R57",
+   "status": "partial",
+   "where": "negotiate/hardship transition create_promise ok -> fin_promise",
+   "evidence": "1. -> fin_promise  if (create_promise_response.data.ok equals \"true\" OR create_promise_response.data.ok equals \"True\")  [\"promise recorded\"]",
+   "fix_hint": "A recorded promise ends the call straight away, so no transfer can follow it. Example: in hardship, a promise recorded before the support offer closes the call as promise. Either offer support/transfer before routing to fin_promise, or add a post-promise node where a transfer sets outcome transferred with that transfer's reason.",
+   "evidence_found": true
+  },
+  {
+   "id": "R58",
+   "status": "implemented",
+   "where": "tool definitions (no add_note tool defined)",
+   "evidence": "\"tools\": [close_call],",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R59",
+   "status": "partial",
+   "where": "end_* terminal spoken_message",
+   "evidence": "I am sorry for your loss. Goodbye.",
+   "fix_hint": "Add a thank-you to end_deceased spoken_message, e.g. 'I am sorry for your loss. Thank you, goodbye.'",
+   "evidence_found": true
+  },
+  {
+   "id": "R60",
+   "status": "implemented",
+   "where": "tools verify_identity / verify_identity#2 baked field defaults, answer description, post_process_code",
+   "evidence": "d['what_to_do_next'] = 'The answer could not be read. It does not count as wrong. Ask again: What are the last four digits of the phone number on file?'",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R61",
+   "status": "implemented",
+   "where": "ask_phone transition -> load_account (all_verified); load_account pre_action get_account; prepare code (type/card_last4/minimum_payment/instalment_amount)",
+   "evidence": "if ptype == 'credit_card':\n        words = 'credit card ending ' + str(p.get('card_last4') or '')",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R62",
+   "status": "implemented",
+   "where": "tool create_promise body (customer_id/product_id baked defaults, amount number, date YYYY-MM-DD) + pre_process_code",
+   "evidence": "body.product_id (string): default \"{{product_id}}\"",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R63",
+   "status": "implemented",
+   "where": "tool schedule_callback body (date*, time* HH:MM, customer_id baked)",
+   "evidence": "body.time* (string): default \"{{time}}\"; Callback time as HH:MM, 24 hour, between 10:00 and 19:00.",
+   "fix_hint": "",
+   "evidence_found": true
+  },
+  {
+   "id": "R64",
+   "status": "partial",
+   "where": "global tool close_call config.alwaysRunsAt end_of_call + pre_process_code; fin_* code nodes set outcome/reason",
+   "evidence": "config: {\"maxRetries\": 0, \"alwaysRunsAt\": [\"end_of_call\"]}",
+   "fix_hint": "Add to system_prompt: 'Never call close_call yourself; it runs automatically when the call ends.' This makes sure no tool call can come after close_call.",
+   "evidence_found": true
+  }
+ ],
+ "summary": {
+  "implemented": 60,
+  "partial": 4,
+  "missing": 0,
+  "contradicted": 0,
+  "superseded": 0,
+  "total": 64,
+  "evidence_unverified": 0
+ },
+ "top_fixes": [
+  {
+   "id": "R52",
+   "status": "partial",
+   "rule": "A request for a human: ask once whether you can help first. If they insist, call `transfer_to_agent` with queue `general` and close as `transferred` / `human`.",
+   "why": "If a customer in hardship asks for a human, the call can't transfer because that node has no transfer_to_agent tool and no route out. The case then fails on the missing tool call and on the transferred/human close.",
+   "fix": "hardship node: add the transfer_to_agent tool with queue baked to \"general\". Add this line to the task_message: \"If they ask for a human: the first time, ask whether you can help them yourself. If they insist, call transfer_to_agent with queue general.\" Add the transition transfer_to_agent_success_count greater_than 0 -> fin_transferred_human (outcome transferred, reason human). Check that every other conversation node after verification has the same tool and route."
+  },
+  {
+   "id": "R57",
+   "status": "partial",
+   "rule": "If a transfer follows a recorded promise, close as `transferred` with that transfer's reason.",
+   "why": "After create_promise succeeds, the call goes straight to fin_promise. So if the customer then asks for a human or support, there is no transfer and the close is promise instead of transferred with that transfer's reason.",
+   "fix": "negotiate/hardship: send the create_promise ok route to a new conversation node post_promise instead of fin_promise. post_promise task_message: \"Confirm the promise (amount and date). If the customer asks for a human or support, call transfer_to_agent; otherwise thank them and say goodbye.\" Give it the transfer_to_agent tool. Its transitions: transfer_to_agent_success_count > 0 -> the fin_transferred_<reason> node that matches the queue (human -> fin_transferred_human, hardship -> fin_transferred_hardship), and matches_intent 'customer has nothing more / says goodbye' -> fin_promise. In the hardship node, make the support offer before calling create_promise."
+  },
+  {
+   "id": "R64",
+   "status": "partial",
+   "rule": "`close_call` is always the last tool call; nothing is accepted after it. `reason` is required for every outcome except `promise` and `paid`.",
+   "why": "If the model calls close_call itself, or calls another tool after it, the case fails because of an extra tool call or an out-of-order call.",
+   "fix": "system_prompt: add \"Never call close_call yourself; it runs automatically when the call ends. Do not call any tool after the farewell.\" In the close_call pre_process_code, add a check that reason is set whenever outcome is not promise or paid (fallback reason from the fin_* node)."
+  },
+  {
+   "id": "R59",
+   "status": "partial",
+   "rule": "Thank the customer and say goodbye before `close_call`.",
+   "why": "The deceased farewell has no thank-you, which breaks the mandatory 'thank and say goodbye' closing in those cases.",
+   "fix": "end_deceased terminal spoken_message: change to \"I am sorry for your loss. Thank you for letting us know. Goodbye.\" Check that every other end_* spoken_message contains both a thank-you and a goodbye."
+  }
+ ],
+ "meta": {
+  "model": "claude-opus-5-5",
+  "seconds": 56.6,
+  "cost_usd": 0.3368,
+  "calls": 7,
+  "batches": 6,
+  "rules": "out/brief-a.rules.json",
+  "workflow": "out/brief-a.workflow.json",
+  "generator": "out/gen_brief-a.py",
+  "digest_chars": 45866,
+  "generator_chars": 40992
+ }
+}

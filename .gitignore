@@ -1,0 +1,26 @@
+# secrets and workspace-specific state (the organisers rerun the builder in their own workspace)
+env.sh
+.env
+.freya-agents.json
+.personas.json
+
+# practice run outputs
+results/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+.DS_Store
+
+# editor swap files and any env variants
+*.swp
+*.swo
+.env*
+env.*.sh
+
+# Local provenance and private work history
+build-history/
+.builder.lock
+results-*.png

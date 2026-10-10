@@ -1,0 +1,19 @@
+sim | workflow 68dc5046-318c-4d4f-bae5-3d602d05a7f9 (slot brief-c) | 10 case(s) x 1 rep(s) | concurrency 2 | customer gpt-5-mini, judge gpt-5 (openai)
+PASS PUB-02 medium Third party    | schedule_callback > close_call
+PASS PUB-01 easy   Happy path     | verify > verify > get_account > promise > close_call
+PASS PUB-03 medium Identity       | verify > verify > verify > close_call
+PASS PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+WARNING PUB-05: an agent line contains '{{' (unresolved variable): I understand.{{reduction_line}} The care team will contact you within three business days. Thank you for your time, Mr Novak. Goodbye from Nordvik Savings Bank.
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > close_call
+       - conversation: The agent did not explicitly state it cannot offer any reduction when asked for a discount; the final line shows the placeholder '{{reduction_line}}' instead of saying it. All other criteria appear met.
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+PASS PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-08 medium Already paid   | verify > verify > get_account > close_call
+       - conversation: The agent asked, “Are you able to settle the full overdue amount today?”, which is a persuasion/commitment request, violating the no-promise/no-persuasion criterion. The other criteria are met, including the end message and close_call parameters.
+PASS PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+PASS PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+
+slowest agent turn per call: median 2 s, worst 4 s (chat-route timing, not a simulation's).
+
+8 / 10 passed (bank records and conversation checks). Local chat-route simulation, 364 s.
+cost: 60 chat turns, 60 model calls (50 customer on gpt-5-mini, 10 judge on gpt-5), 79 ledger polls, 20 call fetches.

@@ -1,0 +1,111 @@
+{
+ "runner": "sim",
+ "workflow_id": "4045179c-42e8-436d-9fe2-c21c616c71fc",
+ "agent_id": null,
+ "simulation_id": null,
+ "iteration_id": null,
+ "seconds": 1,
+ "passed": 0,
+ "total": 2,
+ "runs": 1,
+ "final": [
+  {
+   "id": "EXT-A-01",
+   "family": "Opening",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "EXT-A-02",
+   "family": "Opening",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  }
+ ],
+ "rows": [
+  {
+   "id": "EXT-A-01",
+   "level": "medium",
+   "family": "Opening",
+   "pass": false,
+   "failed": [
+    "harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+   ],
+   "call_id": null,
+   "tools": [],
+   "customer_id": null,
+   "transcript": "out/sim/ext-a/smoke/EXT-A-01.txt",
+   "turns": 0,
+   "stop": null,
+   "judge": null,
+   "slowest_turn_s": 0.0
+  },
+  {
+   "id": "EXT-A-02",
+   "level": "easy",
+   "family": "Opening",
+   "pass": false,
+   "failed": [
+    "harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+   ],
+   "call_id": null,
+   "tools": [],
+   "customer_id": null,
+   "transcript": "out/sim/ext-a/smoke/EXT-A-02.txt",
+   "turns": 0,
+   "stop": null,
+   "judge": null,
+   "slowest_turn_s": 0.0
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "EXT-A-01",
+    "level": "medium",
+    "family": "Opening",
+    "pass": false,
+    "failed": [
+     "harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+    ],
+    "call_id": null,
+    "tools": [],
+    "customer_id": null,
+    "transcript": "out/sim/ext-a/smoke/EXT-A-01.txt",
+    "turns": 0,
+    "stop": null,
+    "judge": null,
+    "slowest_turn_s": 0.0
+   },
+   {
+    "id": "EXT-A-02",
+    "level": "easy",
+    "family": "Opening",
+    "pass": false,
+    "failed": [
+     "harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+    ],
+    "call_id": null,
+    "tools": [],
+    "customer_id": null,
+    "transcript": "out/sim/ext-a/smoke/EXT-A-02.txt",
+    "turns": 0,
+    "stop": null,
+    "judge": null,
+    "slowest_turn_s": 0.0
+   }
+  ]
+ ],
+ "customer_model": "gpt-5-mini",
+ "judge_model": "gpt-5",
+ "provider": "openai",
+ "counts": {
+  "chat_turns": 0,
+  "customer_calls": 0,
+  "judge_calls": 0,
+  "ledger_polls": 0,
+  "call_fetches": 0
+ }
+}

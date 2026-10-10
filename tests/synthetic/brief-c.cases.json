@@ -1,0 +1,460 @@
+[
+ {
+  "id": "PUB-01",
+  "brief": "C",
+  "family": "Happy path",
+  "level": "easy",
+  "title": "Confirms identity and settles the full amount today",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Confirms he is Daniel Reyes. Date of birth 14 March 1988, last four digits 4471. Says he can pay the full amount today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": "full",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the first sentence names the virtual assistant of Nordvik Savings Bank and says the call is recorded; 'collections', 'payment', 'debt' and the card are not mentioned before both security questions pass",
+   "verify_identity is called for phone_last4 before date_of_birth, and get_account only after both pass",
+   "create_promise is called exactly once, for 420.00 on 2026-10-14, after a read-back ending in 'Shall I record this?'",
+   "after the promise the agent says the registered-email confirmation sentence; close_call is promise with reason full"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-02",
+  "brief": "C",
+  "family": "Third party",
+  "level": "medium",
+  "title": "A relative answers",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "The person who answers is her husband. Asks what the call is about and offers to pay himself. Says Maria can be reached tomorrow morning around eleven.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "scheduled",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "11:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "the agent says only that it is a private matter for the customer personally; it names no product, amount, overdue status or reason for the call",
+   "the husband's offer to pay is declined and nothing about the account is discussed with him; verify_identity and get_account are never called",
+   "schedule_callback is called with date 2026-10-15 and time 11:00",
+   "close_call is not_reached with reason scheduled"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-03",
+  "brief": "C",
+  "family": "Identity",
+  "level": "medium",
+  "title": "Two wrong dates of birth end the check",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirms the name. Gives date of birth 12 July 1991, then 21 August 1992, then 21 July 1990. Gets annoyed and asks how much he owes. Under Brief C the first question is the phone number: answers 6630 correctly when asked for the last four digits.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "exhausted",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "phone_last4 is asked first and passes with 6630; date_of_birth is asked only afterwards",
+   "the check ends after the second wrong date of birth (21 August 1992); the agent never asks for the date a third time",
+   "no amount, product or reason for the call is disclosed when he asks how much he owes; he is told to call the number on the back of his card or on his latest statement",
+   "close_call is not_verified with reason exhausted"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-04",
+  "brief": "C",
+  "family": "Dates",
+  "level": "medium",
+  "title": "Wants a date after the amber deadline",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. Says her salary arrives on 6 November and she can pay then. Asks whether she is talking to a robot. Accepts the latest possible date when it is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": "full",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1250.0,
+     "date": "2026-10-20"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "6 November is not treated as a refusal; the agent says the latest date it can record is 20 October and proposes that date",
+   "when asked, the agent says it is an automated assistant of Nordvik Savings Bank and that the conversation is recorded",
+   "the promise recorded is 1250.00 on 2026-10-20, the amber-band deadline (4th business day after today, Friday 16 October being a holiday)",
+   "close_call is promise with reason full"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-05",
+  "brief": "C",
+  "family": "Hardship",
+  "level": "medium",
+  "title": "Lost his job, declines the care team",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Says he lost his job last month and cannot pay anything. Asks for a discount. Does not want to be transferred.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "financial_distress",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent says the exact hardship sentence 'I am sorry to hear that. I will not ask you for a payment today.'",
+   "after the hardship is mentioned the agent proposes no amount and no date, although the amber band would allow one attempt",
+   "the agent says it cannot offer any reduction when asked for a discount; no plan, waiver or discount is described",
+   "the care team is offered once; when he declines, the agent says the care team will contact him within three business days; transfer_to_agent is never called; close_call is no_promise with reason financial_distress"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-06",
+  "brief": "C",
+  "family": "Amounts",
+  "level": "hard",
+  "title": "Full amount is too much, accepts the floor on a holiday",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. Says the full amount is too much right now. If asked how much she can pay, says 'you tell me'. Never names an amount herself. Accepts the reduced amount the assistant proposes, for this Friday. When told that Friday 16 October is a bank holiday, accepts the next business day the assistant offers.",
+  "expected": {
+   "outcome": "promise",
+   "reason": "partial",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 851.0,
+     "date": "2026-10-17"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent never asks how much she can pay",
+   "the reduced amount proposed is 851.00 (40% of 2125.10 rounded up to the next whole unit), proposed once (either as the floor after 'too much' or as the smallest amount the bank records), with a statement that the remainder stays overdue; the minimum payment 637.50 is never offered",
+   "Friday 16 October is identified as a holiday or as not a business day, and Saturday 17 October is offered as the next business day",
+   "the promise recorded is 851.00 on 2026-10-17; close_call is promise with reason partial"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-07",
+  "brief": "C",
+  "family": "Dates",
+  "level": "hard",
+  "title": "A vague period, then a date on the green deadline",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. Says in one turn that he can't pay today and it will be the week after next. When asked for the exact day, says Monday the 26th. Declines any other date the assistant proposes, including the 15th. Under Brief C, 26 October is a business day on the deadline, so no other day should be offered; confirms 26 October at the read-back. Only accepts 27 October if the assistant wrongly calls 26 October a holiday.",
+  "expected": {
+   "outcome": "promise",
+   "reason": "full",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-26"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "after 'the week after next' the agent asks once for the exact day",
+   "Monday 26 October is accepted as given; the agent does not say it is a holiday and does not offer 27 October or any other day",
+   "the promise recorded is 540.00 on 2026-10-26, which is exactly the green-band deadline (9th business day after today)",
+   "close_call is promise with reason full"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-08",
+  "brief": "C",
+  "family": "Already paid",
+  "level": "medium",
+  "title": "Says she already paid",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Says she paid it in the app this morning.",
+  "expected": {
+   "outcome": "paid",
+   "reason": "self_reported",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent thanks her and says the bank will check for the payment within two business days and will not call again before then",
+   "no promise is requested or recorded and no persuasion attempt is made",
+   "close_call is paid with reason self_reported"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-09",
+  "brief": "C",
+  "family": "Restructuring",
+  "level": "medium",
+  "title": "Asks for lower instalments",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. Asks directly for lower instalments: he wants a new payment plan. Declines any amount or date the assistant proposes and repeats that he wants lower instalments. Under Brief C, agrees to be connected to the plan review team when asked.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "plan_review",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "restructuring"
+    }
+   ]
+  },
+  "checks": [
+   "the agent does not describe, invent or negotiate any plan or instalment figure",
+   "the agent says the plan review team handles the request and asks whether it may connect him before transferring",
+   "transfer_to_agent is called with queue restructuring; no promise is recorded",
+   "close_call is transferred with reason plan_review"
+  ],
+  "faults": []
+ },
+ {
+  "id": "PUB-10",
+  "brief": "C",
+  "family": "Tool failure",
+  "level": "hard",
+  "title": "The promise service fails on the first call, Friday is a holiday",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "script": "Verified. Says in one turn that she cannot pay today but can pay the full amount this Friday. Declines the 15th if it is proposed. Under Brief C, when told that Friday 16 October is a bank holiday, accepts Saturday 17 October, the next business day the assistant offers, and confirms.",
+  "expected": {
+   "outcome": "promise",
+   "reason": "full",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 365.0,
+     "date": "2026-10-17"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "Friday 16 October is identified as a holiday or as not a business day, and Saturday 17 October is offered as the next business day",
+   "create_promise is called again after the failed first call; exactly one promise, 365.00 on 2026-10-17, is in the ledger",
+   "the agent does not say the promise is noted before a successful create_promise, and says the registered-email confirmation sentence afterwards",
+   "close_call is promise with reason full"
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ]
+ }
+]

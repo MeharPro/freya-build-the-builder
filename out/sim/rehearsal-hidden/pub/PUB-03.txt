@@ -1,0 +1,67 @@
+# PUB-03 Three wrong answers
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 9578cdf2-f913-423e-935d-f64cce136468 | customer c_22980e66-f81 | 2026-10-10 20:42:17
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/9578cdf2-f913-423e-935d-f64cce136468
+# RESULT: FAIL | outcome ('no_promise', 'dispute'), expected ('not_verified', 'failed') | conversation: The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Park?
+customer: Yes, this is Owen Park.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_dob
+agent: Thank you, Mr Park. For security, could you please tell me your date of birth?
+customer: Sorry, I'm not sure what you mean. Could you explain, please? I'm Owen Park, and my date of birth is 21 July 1992.
+   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1992-07-21", "customer_id": "c_22980e66-f81"}
+   [tool] verify_identity -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Ask the next security question."}
+   [route] ask_dob -> ask_phone: date of birth correct (verify_identity_response.data.verified == 'true' OR verify_identity_response.data.verified == 'True')
+   [node] ask_dob -> ask_phone
+agent: Thank you, Mr Park. What are the last four digits of the phone number we have on file for you?
+customer: The last four digits are 6630.
+   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "phone_last4", "answer": "6630", "customer_id": "c_22980e66-f81"}
+   [tool] verify_identity -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": true, "what_to_do_next": "Both answers are correct. Identity verified."}
+   [route] ask_phone -> load_account: identity verified (verify_identity_response.data.all_verified == 'true' OR verify_identity_response.data.all_verified == 'True')
+   [node] ask_phone -> load_account
+   [tool] api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={"customer_id": "c_22980e66-f81"}
+   [tool] api_call -> HTTP 200 data={"ok": true, "products": [{"product_id": "p1", "type": "credit_card", "card_last4": "0377", "past_due": 95, "days_late": 4, "minimum_payment": 28.5}]}
+   [route] load_account -> prepare: always always
+   [node] load_account -> prepare
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n import datetime, json, re\n HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\n BWD = set([0, 1, 2, 3, 4])\n WDRULE = 'this_week'\n WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] prepare -> negotiate: always always
+   [node] prepare -> negotiate
+agent: Thank you, Mr Park. I am calling from the collections team about a late payment on your credit card ending 0377. The past-due amount is 95, and it is 4 days late. Can you make this payment today?
+customer: This is getting frustrating. I'm not sure I owe that amount. How much do I owe, exactly?
+   [route] negotiate -> pol_dispute: topic dispute topic == 'dispute'
+   [node] negotiate -> pol_dispute
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n import datetime, json, re\n HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\n BWD = set([0, 1, 2, 3, 4])\n WDRULE = 'this_week'\n WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] pol_dispute -> fin_dispute: the call ends with dispute (route == 'fin' AND final_route == 'dispute')
+   [node] pol_dispute -> fin_dispute
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'no_promise'\n vars['reason'] = 'dispute'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_dispute -> end_dispute: always always
+   [node] fin_dispute -> end_dispute
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "Thank you for telling me. I will not take a payment promise today. Thank you for your time, Mr Park. Goodbye."}
+   [call] ended: assistant-ended-call
+agent: Thank you for telling me. I will not take a payment promise today. Thank you for your time, Mr Park. Goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "dispute", "outcome": "no_promise", "customer_id": "c_22980e66-f81"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (9)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1992-07-21", "customer_id": "c_22980e66-f81"} -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Ask the next security question."}
+3. verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "phone_last4", "answer": "6630", "customer_id": "c_22980e66-f81"} -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": true, "what_to_do_next": "Both answers are correct. Identity verified."}
+4. api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={"customer_id": "c_22980e66-f81"} -> HTTP 200 data={"ok": true, "products": [{"product_id": "p1", "type": "credit_card", "card_last4": "0377", "past_due": 95, "days_late": 4, "minimum_payment": 28.5}]}
+5. code_exec args={"timeout_ms": 10000, "code": "try:\n import datetime, json, re\n HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\n BWD = set([0, 1, 2, 3, 4])\n WDRULE = 'this_week'\n WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr... -> HTTP 200 data=null
+6. code_exec args={"timeout_ms": 10000, "code": "try:\n import datetime, json, re\n HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\n BWD = set([0, 1, 2, 3, 4])\n WDRULE = 'this_week'\n WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr... -> HTTP 200 data=null
+7. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'no_promise'\n vars['reason'] = 'dispute'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+8. end_call args={"message_mode": "custom", "spoken_message": "Thank you for telling me. I will not take a payment promise today. Thank you for your time, Mr Park. Goodbye."} -> success Call ended
+9. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "dispute", "outcome": "no_promise", "customer_id": "c_22980e66-f81"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=no_promise reason=dispute promises=[] notes=[] callbacks=[] transfers=[] calls=['verify_identity', 'verify_identity', 'get_account', 'close_call']
+
+## judge (claude-sonnet-5-5): fail - The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the customer to use the app or a branch.

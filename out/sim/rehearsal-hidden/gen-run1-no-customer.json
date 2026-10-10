@@ -1,0 +1,1271 @@
+{
+ "runner": "sim",
+ "workflow_id": "f523ddf6-4d31-419d-9b6e-c68d58e59ad8",
+ "agent_id": "753337bb-8c02-4185-be89-3c0024aadc2a",
+ "simulation_id": null,
+ "iteration_id": null,
+ "seconds": 193,
+ "passed": 0,
+ "total": 20,
+ "runs": 1,
+ "final": [
+  {
+   "id": "GEN-C-01",
+   "family": "opening",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-02",
+   "family": "third_party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-03",
+   "family": "third_party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-04",
+   "family": "third_party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-05",
+   "family": "third_party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-06",
+   "family": "identity",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-07",
+   "family": "identity",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-08",
+   "family": "identity_then_topic",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-09",
+   "family": "topic",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-11",
+   "family": "topic",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-12",
+   "family": "hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-C-13",
+   "family": "hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-01",
+   "family": "promise_date",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-02",
+   "family": "promise_date_amount",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-03",
+   "family": "readback_change",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-04",
+   "family": "promise_date",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-05",
+   "family": "promise_amount_date",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-06",
+   "family": "persuasion",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-07",
+   "family": "persuasion_calendar",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "GEN-P-08",
+   "family": "service_fault",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  }
+ ],
+ "rows": [
+  {
+   "id": "GEN-C-01",
+   "level": "medium",
+   "family": "opening",
+   "pass": false,
+   "failed": [
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "f3b3738d-62b6-448f-a38d-2f92992cc78e",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_573b666e-5b5",
+   "transcript": "results/rehearsal-a-gen/GEN-C-01.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/f3b3738d-62b6-448f-a38d-2f92992cc78e",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-02",
+   "level": "hard",
+   "family": "third_party",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_reached', 'callback')",
+    "callbacks [], expected [{'date': '2026-10-27', 'time': '10:00'}]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "b35840b2-e64d-4bb4-b0c0-eecc3d253459",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_25799007-9b5",
+   "transcript": "results/rehearsal-a-gen/GEN-C-02.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/b35840b2-e64d-4bb4-b0c0-eecc3d253459",
+   "slowest_turn_s": 0.4,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-03",
+   "level": "hard",
+   "family": "third_party",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_reached', 'no_callback')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "42503c9d-894a-4831-96f9-544a6fcf134e",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_a62f99b4-a30",
+   "transcript": "results/rehearsal-a-gen/GEN-C-03.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/42503c9d-894a-4831-96f9-544a6fcf134e",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-04",
+   "level": "easy",
+   "family": "third_party",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_reached', 'wrong_number')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "1e33adde-f11a-43c6-ab82-1f4e4b911996",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_bb056cc7-06a",
+   "transcript": "results/rehearsal-a-gen/GEN-C-04.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/1e33adde-f11a-43c6-ab82-1f4e4b911996",
+   "slowest_turn_s": 4.1,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-05",
+   "level": "medium",
+   "family": "third_party",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_reached', 'deceased')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "c3936938-791c-425e-bbf8-ee1b719c5bef",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_6374d9e6-a35",
+   "transcript": "results/rehearsal-a-gen/GEN-C-05.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/c3936938-791c-425e-bbf8-ee1b719c5bef",
+   "slowest_turn_s": 0.3,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-06",
+   "level": "hard",
+   "family": "identity",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_verified', 'failed')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "667009d1-3c62-407f-aa9c-ba23389b473e",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_eb656ed2-a94",
+   "transcript": "results/rehearsal-a-gen/GEN-C-06.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/667009d1-3c62-407f-aa9c-ba23389b473e",
+   "slowest_turn_s": 0.5,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-07",
+   "level": "medium",
+   "family": "identity",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('not_verified', 'declined')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "f9e594d1-6218-4e8c-906e-2b0ff035e053",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_8e89a2d1-836",
+   "transcript": "results/rehearsal-a-gen/GEN-C-07.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/f9e594d1-6218-4e8c-906e-2b0ff035e053",
+   "slowest_turn_s": 0.7,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-08",
+   "level": "hard",
+   "family": "identity_then_topic",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('paid', None)",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "c6421aeb-bbad-4165-b83d-f5ab9bc36ef0",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_2987addf-499",
+   "transcript": "results/rehearsal-a-gen/GEN-C-08.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/c6421aeb-bbad-4165-b83d-f5ab9bc36ef0",
+   "slowest_turn_s": 0.3,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-09",
+   "level": "hard",
+   "family": "topic",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('no_promise', 'dispute')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "8fae42f2-7296-464f-b842-1ee7495f3d3d",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_0a4b4b11-e96",
+   "transcript": "results/rehearsal-a-gen/GEN-C-09.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/8fae42f2-7296-464f-b842-1ee7495f3d3d",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-11",
+   "level": "hard",
+   "family": "topic",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('transferred', 'human')",
+    "transfers [], expected [{'queue': 'general'}]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "5e3e5fd1-96d2-43db-98cb-14c7830a19cd",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_556febd0-e3a",
+   "transcript": "results/rehearsal-a-gen/GEN-C-11.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/5e3e5fd1-96d2-43db-98cb-14c7830a19cd",
+   "slowest_turn_s": 0.6,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-12",
+   "level": "medium",
+   "family": "hardship",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('transferred', 'support')",
+    "transfers [], expected [{'queue': 'support'}]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "513ef39b-bda5-481b-ad9a-25ab37803b5d",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_09e88089-21f",
+   "transcript": "results/rehearsal-a-gen/GEN-C-12.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/513ef39b-bda5-481b-ad9a-25ab37803b5d",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-C-13",
+   "level": "medium",
+   "family": "hardship",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('no_promise', 'hardship')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "78d10e5b-7468-4d9f-b393-41397f326286",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_a34ddb09-009",
+   "transcript": "results/rehearsal-a-gen/GEN-C-13.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/78d10e5b-7468-4d9f-b393-41397f326286",
+   "slowest_turn_s": 0.9,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-01",
+   "level": "medium",
+   "family": "promise_date",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('transferred', 'restructuring')",
+    "promises [], expected [('p1', 420.0, '2026-10-19')]",
+    "transfers [], expected [{'queue': 'restructuring'}]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "e8041e16-b9c9-4da4-a10d-ded156ddcaf4",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_42c77b0a-164",
+   "transcript": "results/rehearsal-a-gen/GEN-P-01.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/e8041e16-b9c9-4da4-a10d-ded156ddcaf4",
+   "slowest_turn_s": 0.5,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-02",
+   "level": "hard",
+   "family": "promise_date_amount",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 400.0, '2026-10-27')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "787f4df0-3e7a-4db6-a269-9673c3bd07b3",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_fa1515f5-504",
+   "transcript": "results/rehearsal-a-gen/GEN-P-02.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/787f4df0-3e7a-4db6-a269-9673c3bd07b3",
+   "slowest_turn_s": 0.3,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-03",
+   "level": "hard",
+   "family": "readback_change",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 2125.1, '2026-10-23')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "31e7be72-c8d2-4222-b9ed-7e11f655d97a",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_dc7fe4b4-dcd",
+   "transcript": "results/rehearsal-a-gen/GEN-P-03.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/31e7be72-c8d2-4222-b9ed-7e11f655d97a",
+   "slowest_turn_s": 0.3,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-04",
+   "level": "medium",
+   "family": "promise_date",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 540.0, '2026-11-02')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "881e40d7-9952-4fb6-9588-64441bc38559",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_57f680fa-474",
+   "transcript": "results/rehearsal-a-gen/GEN-P-04.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/881e40d7-9952-4fb6-9588-64441bc38559",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-05",
+   "level": "hard",
+   "family": "promise_amount_date",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 54.0, '2026-10-23')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "469fd4b7-fd43-44de-a5d6-6a870b213f69",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_0df0c84b-134",
+   "transcript": "results/rehearsal-a-gen/GEN-P-05.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/469fd4b7-fd43-44de-a5d6-6a870b213f69",
+   "slowest_turn_s": 0.6,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-06",
+   "level": "medium",
+   "family": "persuasion",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('no_promise', 'refused')",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "1821c150-d792-4973-acdd-4d400f751f75",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_cc5973ff-34f",
+   "transcript": "results/rehearsal-a-gen/GEN-P-06.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/1821c150-d792-4973-acdd-4d400f751f75",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-07",
+   "level": "hard",
+   "family": "persuasion_calendar",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 95.0, '2026-12-24')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "01e90170-fbaa-477e-a03b-9af7b114a917",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_0c42c867-83e",
+   "transcript": "results/rehearsal-a-gen/GEN-P-07.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/01e90170-fbaa-477e-a03b-9af7b114a917",
+   "slowest_turn_s": 0.2,
+   "ended_how": null
+  },
+  {
+   "id": "GEN-P-08",
+   "level": "medium",
+   "family": "service_fault",
+   "pass": false,
+   "failed": [
+    "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+    "promises [], expected [('p1', 365.0, '2026-10-14')]",
+    "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+   ],
+   "call_id": "6829a691-58a4-4cfc-95f0-922b562aef30",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_73c89d72-ea7",
+   "transcript": "results/rehearsal-a-gen/GEN-P-08.txt",
+   "turns": 1,
+   "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+   "judge": {
+    "outcome": "fail",
+    "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "model": "claude-sonnet-5-5"
+   },
+   "ended": "customer-ended-call",
+   "transcript_source": "GET /api/v2/call/6829a691-58a4-4cfc-95f0-922b562aef30",
+   "slowest_turn_s": 0.5,
+   "ended_how": null
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "GEN-C-01",
+    "level": "medium",
+    "family": "opening",
+    "pass": false,
+    "failed": [
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "f3b3738d-62b6-448f-a38d-2f92992cc78e",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_573b666e-5b5",
+    "transcript": "results/rehearsal-a-gen/GEN-C-01.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/f3b3738d-62b6-448f-a38d-2f92992cc78e",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-02",
+    "level": "hard",
+    "family": "third_party",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_reached', 'callback')",
+     "callbacks [], expected [{'date': '2026-10-27', 'time': '10:00'}]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "b35840b2-e64d-4bb4-b0c0-eecc3d253459",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_25799007-9b5",
+    "transcript": "results/rehearsal-a-gen/GEN-C-02.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/b35840b2-e64d-4bb4-b0c0-eecc3d253459",
+    "slowest_turn_s": 0.4,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-03",
+    "level": "hard",
+    "family": "third_party",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_reached', 'no_callback')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "42503c9d-894a-4831-96f9-544a6fcf134e",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_a62f99b4-a30",
+    "transcript": "results/rehearsal-a-gen/GEN-C-03.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/42503c9d-894a-4831-96f9-544a6fcf134e",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-04",
+    "level": "easy",
+    "family": "third_party",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_reached', 'wrong_number')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "1e33adde-f11a-43c6-ab82-1f4e4b911996",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_bb056cc7-06a",
+    "transcript": "results/rehearsal-a-gen/GEN-C-04.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/1e33adde-f11a-43c6-ab82-1f4e4b911996",
+    "slowest_turn_s": 4.1,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-05",
+    "level": "medium",
+    "family": "third_party",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_reached', 'deceased')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "c3936938-791c-425e-bbf8-ee1b719c5bef",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_6374d9e6-a35",
+    "transcript": "results/rehearsal-a-gen/GEN-C-05.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/c3936938-791c-425e-bbf8-ee1b719c5bef",
+    "slowest_turn_s": 0.3,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-06",
+    "level": "hard",
+    "family": "identity",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_verified', 'failed')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "667009d1-3c62-407f-aa9c-ba23389b473e",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_eb656ed2-a94",
+    "transcript": "results/rehearsal-a-gen/GEN-C-06.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/667009d1-3c62-407f-aa9c-ba23389b473e",
+    "slowest_turn_s": 0.5,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-07",
+    "level": "medium",
+    "family": "identity",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('not_verified', 'declined')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "f9e594d1-6218-4e8c-906e-2b0ff035e053",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_8e89a2d1-836",
+    "transcript": "results/rehearsal-a-gen/GEN-C-07.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/f9e594d1-6218-4e8c-906e-2b0ff035e053",
+    "slowest_turn_s": 0.7,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-08",
+    "level": "hard",
+    "family": "identity_then_topic",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('paid', None)",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "c6421aeb-bbad-4165-b83d-f5ab9bc36ef0",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_2987addf-499",
+    "transcript": "results/rehearsal-a-gen/GEN-C-08.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/c6421aeb-bbad-4165-b83d-f5ab9bc36ef0",
+    "slowest_turn_s": 0.3,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-09",
+    "level": "hard",
+    "family": "topic",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('no_promise', 'dispute')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "8fae42f2-7296-464f-b842-1ee7495f3d3d",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_0a4b4b11-e96",
+    "transcript": "results/rehearsal-a-gen/GEN-C-09.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/8fae42f2-7296-464f-b842-1ee7495f3d3d",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-11",
+    "level": "hard",
+    "family": "topic",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('transferred', 'human')",
+     "transfers [], expected [{'queue': 'general'}]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "5e3e5fd1-96d2-43db-98cb-14c7830a19cd",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_556febd0-e3a",
+    "transcript": "results/rehearsal-a-gen/GEN-C-11.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/5e3e5fd1-96d2-43db-98cb-14c7830a19cd",
+    "slowest_turn_s": 0.6,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-12",
+    "level": "medium",
+    "family": "hardship",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('transferred', 'support')",
+     "transfers [], expected [{'queue': 'support'}]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "513ef39b-bda5-481b-ad9a-25ab37803b5d",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_09e88089-21f",
+    "transcript": "results/rehearsal-a-gen/GEN-C-12.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/513ef39b-bda5-481b-ad9a-25ab37803b5d",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-C-13",
+    "level": "medium",
+    "family": "hardship",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('no_promise', 'hardship')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "78d10e5b-7468-4d9f-b393-41397f326286",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_a34ddb09-009",
+    "transcript": "results/rehearsal-a-gen/GEN-C-13.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/78d10e5b-7468-4d9f-b393-41397f326286",
+    "slowest_turn_s": 0.9,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-01",
+    "level": "medium",
+    "family": "promise_date",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('transferred', 'restructuring')",
+     "promises [], expected [('p1', 420.0, '2026-10-19')]",
+     "transfers [], expected [{'queue': 'restructuring'}]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "e8041e16-b9c9-4da4-a10d-ded156ddcaf4",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_42c77b0a-164",
+    "transcript": "results/rehearsal-a-gen/GEN-P-01.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/e8041e16-b9c9-4da4-a10d-ded156ddcaf4",
+    "slowest_turn_s": 0.5,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-02",
+    "level": "hard",
+    "family": "promise_date_amount",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 400.0, '2026-10-27')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "787f4df0-3e7a-4db6-a269-9673c3bd07b3",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_fa1515f5-504",
+    "transcript": "results/rehearsal-a-gen/GEN-P-02.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/787f4df0-3e7a-4db6-a269-9673c3bd07b3",
+    "slowest_turn_s": 0.3,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-03",
+    "level": "hard",
+    "family": "readback_change",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 2125.1, '2026-10-23')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "31e7be72-c8d2-4222-b9ed-7e11f655d97a",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_dc7fe4b4-dcd",
+    "transcript": "results/rehearsal-a-gen/GEN-P-03.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/31e7be72-c8d2-4222-b9ed-7e11f655d97a",
+    "slowest_turn_s": 0.3,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-04",
+    "level": "medium",
+    "family": "promise_date",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 540.0, '2026-11-02')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "881e40d7-9952-4fb6-9588-64441bc38559",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_57f680fa-474",
+    "transcript": "results/rehearsal-a-gen/GEN-P-04.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/881e40d7-9952-4fb6-9588-64441bc38559",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-05",
+    "level": "hard",
+    "family": "promise_amount_date",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 54.0, '2026-10-23')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "469fd4b7-fd43-44de-a5d6-6a870b213f69",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_0df0c84b-134",
+    "transcript": "results/rehearsal-a-gen/GEN-P-05.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/469fd4b7-fd43-44de-a5d6-6a870b213f69",
+    "slowest_turn_s": 0.6,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-06",
+    "level": "medium",
+    "family": "persuasion",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('no_promise', 'refused')",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "1821c150-d792-4973-acdd-4d400f751f75",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_cc5973ff-34f",
+    "transcript": "results/rehearsal-a-gen/GEN-P-06.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/1821c150-d792-4973-acdd-4d400f751f75",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-07",
+    "level": "hard",
+    "family": "persuasion_calendar",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 95.0, '2026-12-24')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "01e90170-fbaa-477e-a03b-9af7b114a917",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_0c42c867-83e",
+    "transcript": "results/rehearsal-a-gen/GEN-P-07.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/01e90170-fbaa-477e-a03b-9af7b114a917",
+    "slowest_turn_s": 0.2,
+    "ended_how": null
+   },
+   {
+    "id": "GEN-P-08",
+    "level": "medium",
+    "family": "service_fault",
+    "pass": false,
+    "failed": [
+     "outcome ('not_reached', 'unclear'), expected ('promise', None)",
+     "promises [], expected [('p1', 365.0, '2026-10-14')]",
+     "conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'"
+    ],
+    "call_id": "6829a691-58a4-4cfc-95f0-922b562aef30",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_73c89d72-ea7",
+    "transcript": "results/rehearsal-a-gen/GEN-P-08.txt",
+    "turns": 1,
+    "stop": "customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+    "judge": {
+     "outcome": "fail",
+     "reason": "judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'",
+     "model": "claude-sonnet-5-5"
+    },
+    "ended": "customer-ended-call",
+    "transcript_source": "GET /api/v2/call/6829a691-58a4-4cfc-95f0-922b562aef30",
+    "slowest_turn_s": 0.5,
+    "ended_how": null
+   }
+  ]
+ ],
+ "customer_model": "claude-haiku-5-5",
+ "judge_model": "claude-sonnet-5-5",
+ "provider": "claude",
+ "counts": {
+  "chat_turns": 20,
+  "customer_calls": 20,
+  "judge_calls": 20,
+  "judge_retries": 0,
+  "ledger_polls": 96,
+  "ledger_errors": 0,
+  "call_fetches": 20
+ }
+}

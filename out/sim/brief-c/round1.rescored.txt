@@ -1,0 +1,11 @@
+round1 rescored with --close-from-args semantics (ledger outcome taken from the close_call args the agent sent)
+FAIL PUB-01 ledger: ok | judge: fail The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just “Hello. Am I speaking with Daniel Reyes?” All other criteria are met.
+PASS PUB-02 ledger: ok | judge: pass 
+PASS PUB-03 ledger: ok | judge: pass 
+PASS PUB-04 ledger: ok | judge: pass 
+FAIL PUB-05 ledger: ok | judge: fail The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied.
+FAIL PUB-06 ledger: ok | judge: fail The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial.
+PASS PUB-07 ledger: ok | judge: pass 
+PASS PUB-08 ledger: ok | judge: pass 
+PASS PUB-09 ledger: ok | judge: pass 
+PASS PUB-10 ledger: ok | judge: pass 

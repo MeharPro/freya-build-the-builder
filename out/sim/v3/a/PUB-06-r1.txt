@@ -1,0 +1,14 @@
+# PUB-06 Full amount is too much, accepts the floor
+# workflow 9cf0839d-66c4-4f9f-91df-8f9f2698b2d1 | call None | customer c_4248cb04-e15 | 2026-10-10 18:20:10
+# customer model gpt-5-mini | judge model gpt-5 (openai) | stop: no call started: HTTP 504: error code: 504 | transcript from: harness log (the call route did not serve the chat callId)
+# RESULT: FAIL | outcome (None, None), expected ('promise', None) | promises [], expected [('p1', 637.5, '2026-10-16')] | the call was not closed with close_call | conversation: no call was started, nothing to judge
+
+customer: Hello?
+agent: (no reply: HTTP 504: error code: 504)
+
+## tool calls (0)
+(none)
+
+## ledger: outcome=None reason=None promises=[] notes=[] callbacks=[] transfers=[] calls=[]
+
+## chat route warnings: first turn retried 3 time(s) after a 502/503/504/no answer; practice customer(s) c_186318d5-346, c_eefeb558-3b0, c_ece74b87-b7e may hold an orphan call on the engine (no callId to end it with), harmless to this case's ledger

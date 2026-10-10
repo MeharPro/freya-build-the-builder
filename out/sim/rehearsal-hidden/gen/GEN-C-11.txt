@@ -1,0 +1,52 @@
+# GEN-C-11 Insists on a human before identity is verified
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 855e97d2-b523-4c7e-afc3-19af4c1743f1 | customer c_6a6de486-677 | 2026-10-10 20:29:43
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/855e97d2-b523-4c7e-afc3-19af4c1743f1
+# RESULT: FAIL | outcome ('not_verified', 'declined'), expected ('transferred', 'human') | transfers [], expected [{'queue': 'general'}] | conversation: The agent asked once if it could help ('Could I try to help you myself first'), but it never called transfer_to_agent with queue general. It ended the call and closed it as not_verified, which violates the third criterion.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Park?
+customer: Yes, this is Mr Park.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_dob
+agent: To start, could you please tell me your date of birth, Mr Park?
+customer: I'd rather speak to a real person.
+   [route] ask_dob -> count_decline_dob: customer refused refusal_dob == 'refused'
+   [node] ask_dob -> count_decline_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_dob -> ask_dob: always always
+   [node] count_decline_dob -> ask_dob
+agent: Could I try to help you myself first, Mr Park?
+customer: No, I want a human, please transfer me.
+   [route] ask_dob -> count_decline_dob: customer refused refusal_dob == 'refused'
+   [node] ask_dob -> count_decline_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_dob -> fin_declined: second refusal decline_route == 'close'
+   [node] count_decline_dob -> fin_declined
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_declined -> end_declined: always always
+   [node] fin_declined -> end_declined
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I understand. Without the security questions I cannot continue. Thank you for your time, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_6a6de486-677"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (6)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+3. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+4. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+5. end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."} -> success Call ended
+6. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_6a6de486-677"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_verified reason=declined promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): fail - The agent asked once if it could help ('Could I try to help you myself first'), but it never called transfer_to_agent with queue general. It ended the call and closed it as not_verified, which violates the third criterion.

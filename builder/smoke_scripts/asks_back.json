@@ -1,0 +1,27 @@
+{
+ "name": "asks_back: 'why do you need that?' once at a security question, 'which account is this about?' once at the first payment question; identity passes with each value sent once, the account is named, nothing closed or recorded",
+ "note": "Run with a practice customer: --case <id> --practice (generated cases: --cases <file>). {{answer1}}/{{answer2}} are the case's security answers in the order of its identity block (--answers '[...]' overrides). A question back is answered and the question asked again; whether a brief counts it as a deflection, one question never closes the call.",
+ "turns": [
+  "Hello?",
+  "Yes, this is me.",
+  "Why do you need that?",
+  "{{answer1}}",
+  "{{answer2}}",
+  "Which account is this about?"
+ ],
+ "expect": [
+  {"after_turn": 3, "cumulative": true,
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance", "arrears"],
+   "note": "the question back gets no hint of the debt before identity"},
+  {"after_turn": 3, "contains_any": ["date of birth", "re:\\bborn\\b", "birth", "last four", "last 4", "digits", "postcode", "post code", "company number", "founded", "security", "identity", "protect", "re:\\bverif", "re:\\bconfirm"],
+   "no_tool_calls": true, "tools_not_called": ["close_call", "transfer_to_agent"],
+   "note": "explain and ask again; no tool call with the question as an answer, no close on one question"},
+  {"after_turn": 4, "tool": {"name": "verify_identity", "count": 1, "values_in_order": ["{{answer1_raw}}"], "results_true": ["ok", "verified"]}},
+  {"after_turn": 5, "tool": {"name": "verify_identity", "count": 2, "values_in_order": ["{{answer1_raw}}", "{{answer2_raw}}"], "results_true": ["ok", "verified"]}},
+  {"after_turn": 5, "tools_called_any": ["get_account"], "tools_not_called": ["close_call", "transfer_to_agent"]},
+  {"after_turn": 6, "contains_any": ["card", "loan", "account", "overdraft", "mortgage", "ending", "re:\\d{4}"],
+   "note": "the agent names the account it calls about (the verified customer may be told)"},
+  {"after_turn": 6, "tools_not_called": ["close_call", "transfer_to_agent", "create_promise"],
+   "note": "a question at the payment question is not a refusal, an acceptance or a request for a person"}
+ ]
+}

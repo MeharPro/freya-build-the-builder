@@ -1,0 +1,533 @@
+{
+ "reference": [
+  {
+   "ref": "R01",
+   "status": "covered",
+   "inventory_ids": [
+    "R01"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R02",
+   "status": "covered",
+   "inventory_ids": [
+    "R02",
+    "R03"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R03",
+   "status": "covered",
+   "inventory_ids": [
+    "R02",
+    "R03"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R04",
+   "status": "covered",
+   "inventory_ids": [
+    "R04"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R05",
+   "status": "covered",
+   "inventory_ids": [
+    "R05"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R06",
+   "status": "covered",
+   "inventory_ids": [
+    "R06"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R07",
+   "status": "covered",
+   "inventory_ids": [
+    "R07"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R08",
+   "status": "covered",
+   "inventory_ids": [
+    "R08"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R09",
+   "status": "covered",
+   "inventory_ids": [
+    "R09"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R10",
+   "status": "covered",
+   "inventory_ids": [
+    "R09"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R11",
+   "status": "covered",
+   "inventory_ids": [
+    "R10"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R12",
+   "status": "covered",
+   "inventory_ids": [
+    "R11"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R13",
+   "status": "covered",
+   "inventory_ids": [
+    "R12"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R14",
+   "status": "covered",
+   "inventory_ids": [
+    "R13"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R15",
+   "status": "covered",
+   "inventory_ids": [
+    "R14"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R16",
+   "status": "covered",
+   "inventory_ids": [
+    "R15"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R17",
+   "status": "covered",
+   "inventory_ids": [
+    "R16"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R18",
+   "status": "covered",
+   "inventory_ids": [
+    "R17"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R19",
+   "status": "covered",
+   "inventory_ids": [
+    "R17",
+    "R22"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R20",
+   "status": "covered",
+   "inventory_ids": [
+    "R18"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R21",
+   "status": "covered",
+   "inventory_ids": [
+    "R19"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R22",
+   "status": "covered",
+   "inventory_ids": [
+    "R20"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R23",
+   "status": "covered",
+   "inventory_ids": [
+    "R21"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R24",
+   "status": "covered",
+   "inventory_ids": [
+    "R23"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R25",
+   "status": "covered",
+   "inventory_ids": [
+    "R24"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R26",
+   "status": "covered",
+   "inventory_ids": [
+    "R25"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R27",
+   "status": "covered",
+   "inventory_ids": [
+    "R26"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R28",
+   "status": "covered",
+   "inventory_ids": [
+    "R27"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R29",
+   "status": "covered",
+   "inventory_ids": [
+    "R28"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R30",
+   "status": "covered",
+   "inventory_ids": [
+    "R29"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R31",
+   "status": "covered",
+   "inventory_ids": [
+    "R30"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R32",
+   "status": "covered",
+   "inventory_ids": [
+    "R31"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R33",
+   "status": "covered",
+   "inventory_ids": [
+    "R32"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R34",
+   "status": "covered",
+   "inventory_ids": [
+    "R33"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R35",
+   "status": "covered",
+   "inventory_ids": [
+    "R34"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R36",
+   "status": "covered",
+   "inventory_ids": [
+    "R35"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R37",
+   "status": "covered",
+   "inventory_ids": [
+    "R36"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R38",
+   "status": "covered",
+   "inventory_ids": [
+    "R37"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R39",
+   "status": "covered",
+   "inventory_ids": [
+    "R38"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R40",
+   "status": "covered",
+   "inventory_ids": [
+    "R38"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R41",
+   "status": "covered",
+   "inventory_ids": [
+    "R39"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R42",
+   "status": "covered",
+   "inventory_ids": [
+    "R40"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R43",
+   "status": "covered",
+   "inventory_ids": [
+    "R41"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R44",
+   "status": "covered",
+   "inventory_ids": [
+    "R42"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R45",
+   "status": "covered",
+   "inventory_ids": [
+    "R43"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R46",
+   "status": "covered",
+   "inventory_ids": [
+    "R44"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R47",
+   "status": "covered",
+   "inventory_ids": [
+    "R45"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R48",
+   "status": "covered",
+   "inventory_ids": [
+    "R46"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R49",
+   "status": "covered",
+   "inventory_ids": [
+    "R47"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R50",
+   "status": "covered",
+   "inventory_ids": [
+    "R48"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R51",
+   "status": "covered",
+   "inventory_ids": [
+    "R49"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R52",
+   "status": "covered",
+   "inventory_ids": [
+    "R50"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R53",
+   "status": "covered",
+   "inventory_ids": [
+    "R51"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R54",
+   "status": "covered",
+   "inventory_ids": [
+    "R52"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R55",
+   "status": "covered",
+   "inventory_ids": [
+    "R53"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R56",
+   "status": "covered",
+   "inventory_ids": [
+    "R54",
+    "R55"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R57",
+   "status": "covered",
+   "inventory_ids": [
+    "R56"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R58",
+   "status": "covered",
+   "inventory_ids": [
+    "R57"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R59",
+   "status": "covered",
+   "inventory_ids": [
+    "R58"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R60",
+   "status": "covered",
+   "inventory_ids": [
+    "R22",
+    "R17"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R61",
+   "status": "partial",
+   "inventory_ids": [
+    "R23"
+   ],
+   "note": "Refusal before verification stated; returned product fields and type enum missing."
+  },
+  {
+   "ref": "R62",
+   "status": "covered",
+   "inventory_ids": [
+    "R60"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "R63",
+   "status": "partial",
+   "inventory_ids": [
+    "R12"
+   ],
+   "note": "Date and time mentioned; required fields and HH:MM format missing."
+  },
+  {
+   "ref": "R64",
+   "status": "covered",
+   "inventory_ids": [
+    "R59",
+    "R54"
+   ],
+   "note": ""
+  }
+ ],
+ "wrongly_in_force": [],
+ "extra_in_force": 0,
+ "summary": {
+  "reference_rules": 64,
+  "covered": 62,
+  "partial": 2,
+  "wrongly_in_force": 0,
+  "extra_in_force": 0,
+  "cost_usd": 0.16887239999999998,
+  "seconds": 22.68184518814087
+ }
+}

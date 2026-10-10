@@ -1,0 +1,81 @@
+WARN nodes.end_paid.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_paid.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_declined_offer.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_declined_offer.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_financial_distress.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_financial_distress.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_system_fault.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_system_fault.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_financial_distress_reduction.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_financial_distress_reduction.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_promise.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_promise.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_plan_review.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_plan_review.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_care_team.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_care_team.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_contested.terminal.spoken_message: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.end_contested.terminal.spoken_message: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.opening.on_enter.text: {{first_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.opening.on_enter.text: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.opening.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.setup.pre_actions[code_exec].code: code has statements outside try/except (Assign, If); wrap the whole body
+WARN nodes.opening_retry.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening_retry.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening_retry.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening_retry.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening_retry.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.opening_retry.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.third_party.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.third_party.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.third_party.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.third_party.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.ask_phone.task_message: {{first_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.ask_phone.task_message: {{last_name}} is never set by test_variables, extraction, mapping, code or tool results: the model sees the literal placeholder
+WARN nodes.ask_phone.transitions[0].condition.conditions[0]: variable 'id_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.ask_phone.transitions[1].condition.conditions[0].conditions[1]: variable 'hint_day_month_swapped' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.ask_dob.transitions[1].condition.conditions[0]: variable 'id_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.ask_dob.transitions[2].condition.conditions[0].conditions[1]: variable 'hint_day_month_swapped' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.load_account.pre_actions[get_account].parameters.body.customer_id: engine-run call: {{customer_id}} is never set, so the field is dropped from the request
+WARN nodes.prepare.pre_actions[code_exec].code: code has statements outside try/except (Assign, If); wrap the whole body
+WARN nodes.negotiate.on_enter.text: {{title}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.negotiate.on_enter.text: {{last_name}} is never set: the agent would say the literal placeholder aloud
+WARN nodes.negotiate.transitions[0].condition.conditions[0]: variable 'promise_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.negotiate.transitions[2].condition.conditions[0]: variable 'promise_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.hardship.transitions[0].condition.conditions[0]: variable 'promise_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.hardship.transitions[2].condition.conditions[0]: variable 'promise_route' is not set by anything in the workflow (test_variables, extraction, mapping, code, tool results)
+WARN nodes.xfer_plan.pre_actions[transfer_to_agent].parameters.body.customer_id: engine-run call: {{customer_id}} is never set, so the field is dropped from the request
+WARN nodes.xfer_care.pre_actions[transfer_to_agent].parameters.body.customer_id: engine-run call: {{customer_id}} is never set, so the field is dropped from the request
+WARN nodes.xfer_contested.pre_actions[transfer_to_agent].parameters.body.customer_id: engine-run call: {{customer_id}} is never set, so the field is dropped from the request
+WARN nodes.xfer_agent.pre_actions[transfer_to_agent].parameters.body.customer_id: engine-run call: {{customer_id}} is never set, so the field is dropped from the request
+INFO nodes.opening.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.opening_retry.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.third_party.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.third_party.tools[schedule_callback].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.ask_phone.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_phone.transitions[1]: second transition to 'fin_exhausted': the engine merges them with OR at load time
+INFO nodes.ask_phone.tools[verify_identity].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.ask_phone.tools[transfer_to_agent].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.ask_dob.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_dob.transitions[2]: second transition to 'fin_exhausted': the engine merges them with OR at load time
+INFO nodes.ask_dob.tools[verify_identity].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.ask_dob.tools[transfer_to_agent].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.negotiate.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.negotiate.transitions[1]: second transition to 'fin_promise': the engine merges them with OR at load time
+INFO nodes.negotiate.transitions[3]: second transition to 'fin_system_fault': the engine merges them with OR at load time
+INFO nodes.negotiate.tools[create_promise].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.negotiate.tools[create_promise].parameters.body.product_id: field product_id is baked by code in node 'prepare' ({{product_id}}): the model never fills it
+INFO nodes.negotiate.tools[transfer_to_agent].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.hardship.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.hardship.transitions[1]: second transition to 'fin_promise': the engine merges them with OR at load time
+INFO nodes.hardship.transitions[3]: second transition to 'fin_system_fault': the engine merges them with OR at load time
+INFO nodes.hardship.tools[create_promise].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.hardship.tools[create_promise].parameters.body.product_id: field product_id is baked by code in node 'prepare' ({{product_id}}): the model never fills it
+INFO nodes.hardship.tools[transfer_to_agent].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO nodes.plan_offer.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.plan_offer.tools[transfer_to_agent].parameters.body.customer_id: {{customer_id}} is not set by test_variables, extraction, mapping or code: unless it is a call variable, the model fills it with no description
+INFO tools[close_call].parameters.body.customer_id: lifecycle tool: {{customer_id}} is never set; one model call fills the parameter at run time
+-- 0 error(s), 53 warning(s), 27 info

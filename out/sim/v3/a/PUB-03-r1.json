@@ -1,0 +1,57 @@
+{
+ "case": "PUB-03",
+ "rep": 1,
+ "workflow_id": "9cf0839d-66c4-4f9f-91df-8f9f2698b2d1",
+ "call_id": null,
+ "customer_id": "c_e5c89c29-5b6",
+ "variables": {
+  "customer_id": "c_e5c89c29-5b6",
+  "first_name": "Owen",
+  "last_name": "Park",
+  "title": "Mr",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "",
+   "status": 504,
+   "seconds": 228.7,
+   "error": "HTTP 504: error code: 504",
+   "ended_by_agent": false,
+   "first_turn_retries": 3
+  }
+ ],
+ "end": null,
+ "transcript": [
+  "customer: Hello?",
+  "agent: (no reply: HTTP 504: error code: 504)"
+ ],
+ "tool_calls": [],
+ "ledger": {
+  "ok": true,
+  "case": "PUB-03",
+  "team": "4d03f63f4e0d8cc0ec31bb9b",
+  "now": "2026-10-14T11:00",
+  "verified": {},
+  "wrong": 0,
+  "hinted": false,
+  "promises": [],
+  "notes": [],
+  "callbacks": [],
+  "transfers": [],
+  "outcome": null,
+  "reason": null,
+  "failures": {},
+  "calls": []
+ },
+ "judge": null,
+ "failed": [
+  "outcome (None, None), expected ('not_verified', 'failed')",
+  "the call was not closed with close_call",
+  "conversation: no call was started, nothing to judge"
+ ],
+ "pass": false,
+ "stop": "no call started: HTTP 504: error code: 504"
+}

@@ -1,0 +1,116 @@
+{
+ "model": "claude-opus-5-5",
+ "seconds": 84.6,
+ "cost_usd": 1.279,
+ "calls": 4,
+ "briefs": [
+  "tests/synthetic/brief-c.md"
+ ],
+ "api": "tools/openapi.json",
+ "rules": "out/brief-c.rules.json",
+ "multi_product": false,
+ "outcome_rows": [
+  {
+   "outcome": "promise",
+   "reason": "full"
+  },
+  {
+   "outcome": "promise",
+   "reason": "partial"
+  },
+  {
+   "outcome": "paid",
+   "reason": "self_reported"
+  },
+  {
+   "outcome": "transferred",
+   "reason": "plan_review"
+  },
+  {
+   "outcome": "transferred",
+   "reason": "agent_request"
+  },
+  {
+   "outcome": "transferred",
+   "reason": "care_team"
+  },
+  {
+   "outcome": "transferred",
+   "reason": "contested"
+  },
+  {
+   "outcome": "no_promise",
+   "reason": "declined_offer"
+  },
+  {
+   "outcome": "no_promise",
+   "reason": "financial_distress"
+  },
+  {
+   "outcome": "no_promise",
+   "reason": "system_fault"
+  },
+  {
+   "outcome": "not_verified",
+   "reason": "exhausted"
+  },
+  {
+   "outcome": "not_verified",
+   "reason": "withheld"
+  },
+  {
+   "outcome": "not_reached",
+   "reason": "scheduled"
+  },
+  {
+   "outcome": "not_reached",
+   "reason": "no_slot"
+  },
+  {
+   "outcome": "not_reached",
+   "reason": "wrong_party"
+  },
+  {
+   "outcome": "not_reached",
+   "reason": "estate"
+  },
+  {
+   "outcome": "not_reached",
+   "reason": "unconfirmed"
+  }
+ ],
+ "calendar_notes": [],
+ "iso_dates_in_brief": [
+  "2026-10-16",
+  "2026-11-02",
+  "2026-11-21",
+  "2026-12-08",
+  "2026-12-24",
+  "2026-12-25",
+  "2026-12-26",
+  "2026-12-31"
+ ],
+ "dropped": {},
+ "n_cases": 40,
+ "scenarios": "out/cases-eval/brief-c.reference.cases.json",
+ "calendar": {
+  "holidays": [
+   "2026-10-16",
+   "2026-11-02",
+   "2026-11-21",
+   "2026-12-08",
+   "2026-12-24",
+   "2026-12-25",
+   "2026-12-26",
+   "2026-12-31"
+  ],
+  "business_weekdays": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ]
+ }
+}

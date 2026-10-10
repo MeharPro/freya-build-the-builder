@@ -1,0 +1,675 @@
+{
+ "runner": "sim",
+ "workflow_id": "68dc5046-318c-4d4f-bae5-3d602d05a7f9",
+ "agent_id": "01b1a04f-fecb-4f14-915f-c63145296333",
+ "simulation_id": null,
+ "iteration_id": null,
+ "seconds": 700,
+ "passed": 0,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Happy path",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-04",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-09",
+   "family": "Restructuring",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "easy",
+   "family": "Happy path",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'full')",
+    "conversation: The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just \u201cHello. Am I speaking with Daniel Reyes?\u201d All other criteria are met."
+   ],
+   "call_id": "fe962573-c81d-4ae2-829c-32a0732c8f1e",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_1ae991dd-5ce",
+   "transcript": "out/sim/brief-c/round1/PUB-01.txt",
+   "turns": 6,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just \u201cHello. Am I speaking with Daniel Reyes?\u201d All other criteria are met.",
+    "model": "gpt-5"
+   },
+   "ended": null,
+   "transcript_source": "GET /api/v2/call/fe962573-c81d-4ae2-829c-32a0732c8f1e",
+   "slowest_turn_s": 5.7
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('not_reached', 'scheduled')"
+   ],
+   "call_id": "edf007c8-0144-473a-aefb-cf1c16e49aba",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_394dd995-ab1",
+   "transcript": "out/sim/brief-c/round1/PUB-02.txt",
+   "turns": 3,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "The agent only stated it was a private matter for the customer personally, discussed no account details, did not call verify_identity or get_account, scheduled a callback for 2026-10-15 at 11:00, and called close_call with outcome not_reached and reason scheduled.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/edf007c8-0144-473a-aefb-cf1c16e49aba",
+   "slowest_turn_s": 7.4
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('not_verified', 'exhausted')"
+   ],
+   "call_id": "914d43e8-04d6-4b32-9b45-615dcec767f4",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_ded26a8b-009",
+   "transcript": "out/sim/brief-c/round1/PUB-03.txt",
+   "turns": 5,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "Phone last4 was asked first and passed with 6630, DOB was asked after; after the second wrong DOB (21 Aug 1992) the check ended with no third ask; no amounts/products/reasons were disclosed and the agent told him to call the number on the card/statement; outcome set to not_verified with reason exhausted.",
+    "model": "gpt-5"
+   },
+   "ended": null,
+   "transcript_source": "GET /api/v2/call/914d43e8-04d6-4b32-9b45-615dcec767f4",
+   "slowest_turn_s": 5.3
+  },
+  {
+   "id": "PUB-04",
+   "level": "medium",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'full')"
+   ],
+   "call_id": "b38bbc3c-32c1-4b1f-a765-02c0540aea05",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_d34a1c16-2e7",
+   "transcript": "out/sim/brief-c/round1/PUB-04.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: the agent proposed 20 Oct after the customer mentioned 6 Nov, the promise was recorded for 1250.00 on 2026-10-20, and close_call is promise with reason full; there was no instance of being asked about automation/recording.",
+    "model": "gpt-5"
+   },
+   "ended": null,
+   "transcript_source": "GET /api/v2/call/b38bbc3c-32c1-4b1f-a765-02c0540aea05",
+   "slowest_turn_s": 7.8
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('no_promise', 'financial_distress')",
+    "conversation: The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied."
+   ],
+   "call_id": "77da8280-2de8-4527-9b8c-682078ce967a",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_b4aecfb7-2e1",
+   "transcript": "out/sim/brief-c/round1/PUB-05.txt",
+   "turns": 6,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/77da8280-2de8-4527-9b8c-682078ce967a",
+   "slowest_turn_s": 5.3
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'partial')",
+    "conversation: The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial."
+   ],
+   "call_id": "e133bf55-cb12-4d23-a12a-58e35cf3ccc1",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_2cb90fc7-fd7",
+   "transcript": "out/sim/brief-c/round1/PUB-06.txt",
+   "turns": 8,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial.",
+    "model": "gpt-5"
+   },
+   "ended": null,
+   "transcript_source": "GET /api/v2/call/e133bf55-cb12-4d23-a12a-58e35cf3ccc1",
+   "slowest_turn_s": 8.5
+  },
+  {
+   "id": "PUB-07",
+   "level": "hard",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'full')"
+   ],
+   "call_id": "c6bc987e-8bea-4716-bbf5-bcd668276927",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_16c35861-78c",
+   "transcript": "out/sim/brief-c/round1/PUB-07.txt",
+   "turns": 7,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "Agent asked once for the exact day after \u201cthe week after next,\u201d accepted Monday 26 October without offering alternatives, recorded a promise for 540.00 on 2026-10-26 (the 9th business day/green-band), and closed the call with outcome promise and reason full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/c6bc987e-8bea-4716-bbf5-bcd668276927",
+   "slowest_turn_s": 20.9
+  },
+  {
+   "id": "PUB-08",
+   "level": "medium",
+   "family": "Already paid",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('paid', 'self_reported')"
+   ],
+   "call_id": "dbbf6350-63af-4e29-b506-8773e0ec96fe",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_0f5230e0-8b8",
+   "transcript": "out/sim/brief-c/round1/PUB-08.txt",
+   "turns": 5,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "The agent thanked her and stated the bank would check within two business days and not call again before then; no promise was requested or persuasion made; and close_call was sent with outcome paid and reason self_reported.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/dbbf6350-63af-4e29-b506-8773e0ec96fe",
+   "slowest_turn_s": 5.9
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Restructuring",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('transferred', 'plan_review')"
+   ],
+   "call_id": "72977217-acd6-4ace-8864-8c3a6544d219",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "customer_id": "c_6d235b42-c0f",
+   "transcript": "out/sim/brief-c/round1/PUB-09.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria are met: the agent did not negotiate any plan, stated the plan review team handles it and asked permission to connect, transferred via restructuring with no promise recorded, and closed the call with outcome transferred and reason plan_review.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/72977217-acd6-4ace-8864-8c3a6544d219",
+   "slowest_turn_s": 5.3
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'full')"
+   ],
+   "call_id": "8fc0185f-867a-4aa8-aead-6c02ca7666e0",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_b68d0061-7c0",
+   "transcript": "out/sim/brief-c/round1/PUB-10.txt",
+   "turns": 7,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: Friday 16 Oct was identified as a holiday and Saturday 17 Oct offered; the failed create_promise was retried and exactly one 365.00 promise for 2026-10-17 was recorded. The agent only noted the promise and mentioned registered-email confirmation after the successful create_promise, and close_call used outcome=promise with reason=full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/8fc0185f-867a-4aa8-aead-6c02ca7666e0",
+   "slowest_turn_s": 10.8
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "easy",
+    "family": "Happy path",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'full')",
+     "conversation: The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just \u201cHello. Am I speaking with Daniel Reyes?\u201d All other criteria are met."
+    ],
+    "call_id": "fe962573-c81d-4ae2-829c-32a0732c8f1e",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_1ae991dd-5ce",
+    "transcript": "out/sim/brief-c/round1/PUB-01.txt",
+    "turns": 6,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The first sentence did not name the virtual assistant of Nordvik Savings Bank or say the call is recorded; it was just \u201cHello. Am I speaking with Daniel Reyes?\u201d All other criteria are met.",
+     "model": "gpt-5"
+    },
+    "ended": null,
+    "transcript_source": "GET /api/v2/call/fe962573-c81d-4ae2-829c-32a0732c8f1e",
+    "slowest_turn_s": 5.7
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('not_reached', 'scheduled')"
+    ],
+    "call_id": "edf007c8-0144-473a-aefb-cf1c16e49aba",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_394dd995-ab1",
+    "transcript": "out/sim/brief-c/round1/PUB-02.txt",
+    "turns": 3,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "The agent only stated it was a private matter for the customer personally, discussed no account details, did not call verify_identity or get_account, scheduled a callback for 2026-10-15 at 11:00, and called close_call with outcome not_reached and reason scheduled.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/edf007c8-0144-473a-aefb-cf1c16e49aba",
+    "slowest_turn_s": 7.4
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('not_verified', 'exhausted')"
+    ],
+    "call_id": "914d43e8-04d6-4b32-9b45-615dcec767f4",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_ded26a8b-009",
+    "transcript": "out/sim/brief-c/round1/PUB-03.txt",
+    "turns": 5,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "Phone last4 was asked first and passed with 6630, DOB was asked after; after the second wrong DOB (21 Aug 1992) the check ended with no third ask; no amounts/products/reasons were disclosed and the agent told him to call the number on the card/statement; outcome set to not_verified with reason exhausted.",
+     "model": "gpt-5"
+    },
+    "ended": null,
+    "transcript_source": "GET /api/v2/call/914d43e8-04d6-4b32-9b45-615dcec767f4",
+    "slowest_turn_s": 5.3
+   },
+   {
+    "id": "PUB-04",
+    "level": "medium",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'full')"
+    ],
+    "call_id": "b38bbc3c-32c1-4b1f-a765-02c0540aea05",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_d34a1c16-2e7",
+    "transcript": "out/sim/brief-c/round1/PUB-04.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: the agent proposed 20 Oct after the customer mentioned 6 Nov, the promise was recorded for 1250.00 on 2026-10-20, and close_call is promise with reason full; there was no instance of being asked about automation/recording.",
+     "model": "gpt-5"
+    },
+    "ended": null,
+    "transcript_source": "GET /api/v2/call/b38bbc3c-32c1-4b1f-a765-02c0540aea05",
+    "slowest_turn_s": 7.8
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('no_promise', 'financial_distress')",
+     "conversation: The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied."
+    ],
+    "call_id": "77da8280-2de8-4527-9b8c-682078ce967a",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_b4aecfb7-2e1",
+    "transcript": "out/sim/brief-c/round1/PUB-05.txt",
+    "turns": 6,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The agent did not say it cannot offer any reduction when the customer asked about discounts; it only offered the care team and ended. All other criteria appear satisfied.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/77da8280-2de8-4527-9b8c-682078ce967a",
+    "slowest_turn_s": 5.3
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'partial')",
+     "conversation: The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial."
+    ],
+    "call_id": "e133bf55-cb12-4d23-a12a-58e35cf3ccc1",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_2cb90fc7-fd7",
+    "transcript": "out/sim/brief-c/round1/PUB-06.txt",
+    "turns": 8,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The close_call reason is not partial; in tool call #7 the code sets reason to 'full' by default (no promise_kind set), violating the requirement for promise with reason partial.",
+     "model": "gpt-5"
+    },
+    "ended": null,
+    "transcript_source": "GET /api/v2/call/e133bf55-cb12-4d23-a12a-58e35cf3ccc1",
+    "slowest_turn_s": 8.5
+   },
+   {
+    "id": "PUB-07",
+    "level": "hard",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'full')"
+    ],
+    "call_id": "c6bc987e-8bea-4716-bbf5-bcd668276927",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_16c35861-78c",
+    "transcript": "out/sim/brief-c/round1/PUB-07.txt",
+    "turns": 7,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "Agent asked once for the exact day after \u201cthe week after next,\u201d accepted Monday 26 October without offering alternatives, recorded a promise for 540.00 on 2026-10-26 (the 9th business day/green-band), and closed the call with outcome promise and reason full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/c6bc987e-8bea-4716-bbf5-bcd668276927",
+    "slowest_turn_s": 20.9
+   },
+   {
+    "id": "PUB-08",
+    "level": "medium",
+    "family": "Already paid",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('paid', 'self_reported')"
+    ],
+    "call_id": "dbbf6350-63af-4e29-b506-8773e0ec96fe",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_0f5230e0-8b8",
+    "transcript": "out/sim/brief-c/round1/PUB-08.txt",
+    "turns": 5,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "The agent thanked her and stated the bank would check within two business days and not call again before then; no promise was requested or persuasion made; and close_call was sent with outcome paid and reason self_reported.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/dbbf6350-63af-4e29-b506-8773e0ec96fe",
+    "slowest_turn_s": 5.9
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Restructuring",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('transferred', 'plan_review')"
+    ],
+    "call_id": "72977217-acd6-4ace-8864-8c3a6544d219",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "transfer_to_agent",
+     "close_call"
+    ],
+    "customer_id": "c_6d235b42-c0f",
+    "transcript": "out/sim/brief-c/round1/PUB-09.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria are met: the agent did not negotiate any plan, stated the plan review team handles it and asked permission to connect, transferred via restructuring with no promise recorded, and closed the call with outcome transferred and reason plan_review.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/72977217-acd6-4ace-8864-8c3a6544d219",
+    "slowest_turn_s": 5.3
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'full')"
+    ],
+    "call_id": "8fc0185f-867a-4aa8-aead-6c02ca7666e0",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_b68d0061-7c0",
+    "transcript": "out/sim/brief-c/round1/PUB-10.txt",
+    "turns": 7,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: Friday 16 Oct was identified as a holiday and Saturday 17 Oct offered; the failed create_promise was retried and exactly one 365.00 promise for 2026-10-17 was recorded. The agent only noted the promise and mentioned registered-email confirmation after the successful create_promise, and close_call used outcome=promise with reason=full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/8fc0185f-867a-4aa8-aead-6c02ca7666e0",
+    "slowest_turn_s": 10.8
+   }
+  ]
+ ],
+ "customer_model": "gpt-5-mini",
+ "judge_model": "gpt-5",
+ "provider": "openai",
+ "counts": {
+  "chat_turns": 61,
+  "customer_calls": 51,
+  "judge_calls": 10,
+  "ledger_polls": 74,
+  "call_fetches": 28
+ }
+}

@@ -1,0 +1,59 @@
+# PUB-04 Wants a date after the deadline
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 9e554ce0-167c-43da-bc01-fee8f0751e03 | customer c_ff1b3bdc-c94 | 2026-10-10 20:42:52
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/9e554ce0-167c-43da-bc01-fee8f0751e03
+# RESULT: FAIL | outcome ('not_verified', 'declined'), expected ('promise', None) | promises [], expected [('p1', 1250.0, '2026-10-23')] | conversation: The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Ms Hoffmann?
+customer: Yes, this is Lena Hoffmann.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_dob
+agent: To start, could you please tell me your date of birth, Ms Hoffmann?
+customer: Thirty January nineteen eighty-four.
+   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1984-01-30", "customer_id": "c_ff1b3bdc-c94"}
+   [tool] verify_identity -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Ask the next security question."}
+   [route] ask_dob -> ask_phone: date of birth correct (verify_identity_response.data.verified == 'true' OR verify_identity_response.data.verified == 'True')
+   [node] ask_dob -> ask_phone
+agent: That is correct. For the second security question, could you please provide the last four digits of the phone number on file, Ms Hoffmann?
+customer: I'm sorry, but I'm not able to help with that. Could you please answer the security question?
+   [route] ask_phone -> count_decline_phone: customer refused refusal_phone == 'refused'
+   [node] ask_phone -> count_decline_phone
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_phone -> ask_phone: always always
+   [node] count_decline_phone -> ask_phone
+agent: These questions protect your account, Ms Hoffmann. Could you please provide the last four digits of the phone number on file?
+customer: Ms Hoffmann, I'm sorry for the trouble. I'm not able to help with the phone number digits until we finish the security check, so please give me the last four digits.
+   [route] ask_phone -> count_decline_phone: customer refused refusal_phone == 'refused'
+   [node] ask_phone -> count_decline_phone
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_phone -> fin_declined: second refusal decline_route == 'close'
+   [node] count_decline_phone -> fin_declined
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_declined -> end_declined: always always
+   [node] fin_declined -> end_declined
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I understand. Without the security questions I cannot continue. Thank you for your time, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_ff1b3bdc-c94"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (7)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1984-01-30", "customer_id": "c_ff1b3bdc-c94"} -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Ask the next security question."}
+3. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+4. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+5. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+6. end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."} -> success Call ended
+7. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_ff1b3bdc-c94"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_verified reason=declined promises=[] notes=[] callbacks=[] transfers=[] calls=['verify_identity', 'close_call']
+
+## judge (claude-sonnet-5-5): fail - The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-digit refusals does not show 'her own date is not counted as a refusal' holds.

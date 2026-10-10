@@ -1,0 +1,67 @@
+smoke scripted | workflow de5f944a-d43d-4a7e-80fc-405ee4c53649 | out/smoke/brief-d/wrong_number.script.json
+script: wrong number: nobody by that name; no debt talk, close politely
+variables: {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00"}
+--- turn 1
+customer: Hello?
+agent (15.7s): Hello. Am I speaking with Daniel Reyes?
+   [extract] who1 = 'unclear'
+   [route] stays in opening (no transition matched)
+--- turn 2
+customer: I think you have the wrong number, nobody by that name here.
+agent: !! HTTP 504: the agent service timed out (the gateway waits about 60 s; the platform may be busy) | the engine handled the turn anyway (reply recovered, from the call log after 1 s)
+agent (61.4s): I apologise for the inconvenience. Thank you, goodbye.
+   [extract] who1 = 'wrong_number'
+   [route] opening -> setup: always always
+   [node] opening -> setup (always always)
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wedn...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> fin_wrong_number: wrong number who1 == 'wrong_number'
+   [node] setup -> fin_wrong_number (wrong number who1 == 'wrong_number')
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['close_outcome'] = 'not_reached'\n vars['close_code'] = 'WN'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_wrong_number -> end_wrong_number: always always
+   [node] fin_wrong_number -> end_wrong_number (always always)
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I apologise for the inconvenience. Thank you, goodbye."}
+   [call] ended by the engine
+   [tool] end_call -> success Call ended
+   [call] ended by the agent
+--- POST /api/v2/chat/end -> {"callId": "f9a117c1-25a6-4cd0-8f98-4c9758f70246", "ended": true, "endedReason": "customer-ended-call"}
+== tool calls (3) from GET /api/v2/call/f9a117c1-25a6-4cd0-8f98-4c9758f70246
+ 1. turn 2  code_exec          args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['...
+    -> HTTP 200 data=null
+ 2. turn 2  code_exec          args={"timeout_ms": 10000, "code": "try:\n vars['close_outcome'] = 'not_reached'\n vars['close_code'] = 'WN'\nexcept Exception:\n pass\n"}
+    -> HTTP 200 data=null
+ 3. turn 2  end_call           args={"message_mode": "custom", "spoken_message": "I apologise for the inconvenience. Thank you, goodbye."}
+    -> success Call ended
+== variables after the last routing (31): {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00", "who1": "wrong_number", "today_iso": "2026-10-14", "today_text": "Wednesday 14 October 2026", "now_time": "11:00", "weekday_table": "\"Monday\" or \"this Monday\" = Monday 19 October 2026 (2026-10-19); \"next Monday\" = Monday 19 October 2026 (2026-10-19)\n\"Tuesday\" or \"this Tuesday\" = Tuesday 20 October 2026 (2026-10-20); \"next Tuesday\" = Tuesday 20 October 2026 (2026-10-20)\n\"Wednesday\" or \"this Wednesday\" = Wednesday 14 October 2026 (2026-10-14); \"next Wednesday\" = Wednesday 21 October 2026 (2026-10-21)\n\"Thursday\" or \"this Thursday\" = Thursday 15 October 2026 (2026-10-15); \"next Thursday\" = Thursday 15 October 2026 (2026-10-15)\n\"Friday\" or \"this Friday\" = Friday 16 October 2026 (2026-10-16); \"next Friday\" = Friday 16 October 2026 (2026-10-16)\...
+== expectations (29)
+ FAIL turn 1 contains_any ["Kestrel Bank"] -> none found in: 'Hello. Am I speaking with Daniel Reyes?'
+ PASS turn 1 not_contains 'debt'
+ PASS turn 1 not_contains 'collection'
+ PASS turn 1 not_contains 'payment'
+ PASS turn 1 not_contains 'amount'
+ PASS turn 1 not_contains 'overdue'
+ PASS turn 1 not_contains 'past due'
+ PASS turn 1 not_contains 're:\\bowes?\\b'
+ PASS turn 1 not_contains 're:\\blate\\b'
+ PASS turn 1 not_contains 'loan'
+ PASS turn 1 not_contains 'credit card'
+ PASS turn 1 not_contains 'balance'
+ PASS turns 1-2 not_contains 'debt'
+ PASS turns 1-2 not_contains 'collection'
+ PASS turns 1-2 not_contains 'payment'
+ PASS turns 1-2 not_contains 'amount'
+ PASS turns 1-2 not_contains 'overdue'
+ PASS turns 1-2 not_contains 'past due'
+ PASS turns 1-2 not_contains 're:\\bowes?\\b'
+ PASS turns 1-2 not_contains 're:\\blate\\b'
+ PASS turns 1-2 not_contains 'loan'
+ PASS turns 1-2 not_contains 'credit card'
+ PASS turns 1-2 not_contains 'balance'
+ PASS turns 1-2 not_contains 'arrears'
+ PASS turn 2 contains_any ["sorry", "apolog", "goodbye", "re:\\bbye\\b", "thank"] -> 'apolog'
+ PASS all turns tool verify_identity not called
+ PASS all turns tool get_account not called
+ PASS all turns tool create_promise not called
+ PASS all turns tool schedule_callback not called
+RESULT: FAIL | 28/29 checks passed | call f9a117c1-25a6-4cd0-8f98-4c9758f70246

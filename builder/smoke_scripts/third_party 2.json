@@ -1,0 +1,15 @@
+{
+ "name": "third party: a relative answers; nothing about the account, ask when the customer can be reached",
+ "variables": {"customer_id": "c_smoke", "first_name": "Maria", "last_name": "Costa", "title": "Ms", "now": "2026-10-14T11:00"},
+ "turns": ["Hello?", "This is her husband, she is not here. What is this about?", "She should be back tomorrow morning, around eleven."],
+ "expect": [
+  {"after_turn": 1, "contains_any": ["Freya Bank"],
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance"]},
+  {"after_turn": 2,
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance", "account"],
+   "contains_any": ["reach", "re:\\bwhen\\b", "call back", "callback", "call her", "good time", "best time", "available"]},
+  {"after_turn": 3, "cumulative": true,
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance"]},
+  {"tools_not_called": ["verify_identity", "get_account", "create_promise"]}
+ ]
+}

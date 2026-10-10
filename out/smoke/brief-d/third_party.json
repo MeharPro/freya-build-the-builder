@@ -1,0 +1,61 @@
+{
+ "mode": "scripted",
+ "workflow_id": "de5f944a-d43d-4a7e-80fc-405ee4c53649",
+ "call_id": null,
+ "variables": {
+  "customer_id": "c_smoke",
+  "first_name": "Maria",
+  "last_name": "Costa",
+  "title": "Ms",
+  "now": "2026-10-14T11:00"
+ },
+ "script": "out/smoke/brief-d/third_party.script.json",
+ "persona": null,
+ "case": null,
+ "customer_model": null,
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "",
+   "status": 504,
+   "seconds": 167.5,
+   "events": [
+    "[harness] HTTP 503 before the call exists: sending the line again in 15 s (1/3)",
+    "[harness] HTTP 503 before the call exists: sending the line again in 15 s (2/3)",
+    "[harness] HTTP 504 before the call exists: sending the line again in 15 s (3/3)"
+   ],
+   "error": "HTTP 504: the agent service timed out (the gateway waits about 60 s; the platform may be busy)"
+  }
+ ],
+ "tool_calls": [],
+ "end": null,
+ "checks": [
+  {
+   "ok": false,
+   "line": "FAIL turn 1: no reply (HTTP 504: the agent service timed out (the gateway waits about 60 s; the platform may be busy))"
+  },
+  {
+   "ok": false,
+   "line": "FAIL turn 2: no such turn (1 sent)"
+  },
+  {
+   "ok": false,
+   "line": "FAIL turn 3: no such turn (1 sent)"
+  },
+  {
+   "ok": true,
+   "line": "PASS all turns tool verify_identity not called"
+  },
+  {
+   "ok": true,
+   "line": "PASS all turns tool get_account not called"
+  },
+  {
+   "ok": true,
+   "line": "PASS all turns tool create_promise not called"
+  }
+ ],
+ "variables_after": {},
+ "exit_code": 2
+}

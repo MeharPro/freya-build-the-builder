@@ -1,0 +1,38 @@
+# GEN-C-01 Who-is-this question then 'go ahead': unclear after the second ask
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call fa6b4b6d-ad19-49c2-a3df-ebb714b23448 | customer c_0972c637-23a | 2026-10-10 20:26:22
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/fa6b4b6d-ad19-49c2-a3df-ebb714b23448
+# RESULT: FAIL | conversation: The first sentence, "Hello, this is Freya Bank's digital assistant.", does not mention the recording. The notice "Please note that we record this call" only comes in the second sentence, so the first criterion is not met.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Reyes?
+customer: Who is this?
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> opening_retry: always always
+   [node] setup -> opening_retry
+agent: I am Freya Bank's digital assistant. Am I speaking with Mr Reyes?
+customer: Go ahead.
+   [route] opening_retry -> fin_unclear: always always
+   [node] opening_retry -> fin_unclear
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'unclear'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_unclear -> end_unclear: always always
+   [node] fin_unclear -> end_unclear
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I am sorry, I could not confirm who I am speaking with. Thank you, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I am sorry, I could not confirm who I am speaking with. Thank you, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "unclear", "outcome": "not_reached", "customer_id": "c_0972c637-23a"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (4)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'unclear'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+3. end_call args={"message_mode": "custom", "spoken_message": "I am sorry, I could not confirm who I am speaking with. Thank you, goodbye."} -> success Call ended
+4. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "unclear", "outcome": "not_reached", "customer_id": "c_0972c637-23a"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_reached reason=unclear promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): fail - The first sentence, "Hello, this is Freya Bank's digital assistant.", does not mention the recording. The notice "Please note that we record this call" only comes in the second sentence, so the first criterion is not met.

@@ -1,0 +1,14 @@
+# PUB-09 Asks for a new payment plan
+# workflow 9cf0839d-66c4-4f9f-91df-8f9f2698b2d1 | call None | customer c_234d1d72-021 | 2026-10-10 18:23:36
+# customer model gpt-5-mini | judge model gpt-5 (openai) | stop: no call started: HTTP 503: Internal server error | transcript from: harness log (the call route did not serve the chat callId)
+# RESULT: FAIL | outcome (None, None), expected ('transferred', 'restructuring') | transfers [], expected [{'queue': 'restructuring'}] | the call was not closed with close_call | conversation: no call was started, nothing to judge
+
+customer: Hello?
+agent: (no reply: HTTP 503: Internal server error)
+
+## tool calls (0)
+(none)
+
+## ledger: outcome=None reason=None promises=[] notes=[] callbacks=[] transfers=[] calls=[]
+
+## chat route warnings: first turn retried 3 time(s) after a 502/503/504/no answer; practice customer(s) c_7abc2ff3-3e7, c_f9bd844c-a7f, c_3f068d5e-3b9 may hold an orphan call on the engine (no callId to end it with), harmless to this case's ledger

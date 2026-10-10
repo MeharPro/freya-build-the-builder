@@ -1,0 +1,525 @@
+{
+ "case": "PUB-09",
+ "rep": 1,
+ "workflow_id": "f523ddf6-4d31-419d-9b6e-c68d58e59ad8",
+ "call_id": "240f5a1d-f5d1-498f-adb6-82cafdf332db",
+ "customer_id": "c_493e0b99-4d6",
+ "variables": {
+  "customer_id": "c_493e0b99-4d6",
+  "first_name": "Victor",
+  "last_name": "Ionescu",
+  "title": "Mr",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Ionescu?",
+   "status": 200,
+   "seconds": 3.0,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_4_1791665080477"
+  },
+  {
+   "n": 2,
+   "customer": "Yes, this is Victor Ionescu.",
+   "agent": "Thank you, Mr Ionescu. For security, could you please tell me your date of birth?",
+   "status": 200,
+   "seconds": 13.7,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_10_1791665087141"
+  },
+  {
+   "n": 3,
+   "customer": "Thirteenth of August, nineteen eighty-one.",
+   "agent": "Mr Ionescu, that does not match our records. What is your date of birth?",
+   "status": 200,
+   "seconds": 3.7,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_8_1791665102598"
+  },
+  {
+   "n": 4,
+   "customer": "Sorry, I'll try again. Eleventh of August, nineteen eighty-one.",
+   "agent": "Thank you. What are the last four digits of the phone number on file, Mr Ionescu?",
+   "status": 200,
+   "seconds": 5.7,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_9_1791665110747"
+  },
+  {
+   "n": 5,
+   "customer": "The last four digits of the phone number on file are 5560.",
+   "agent": "Thank you, Mr Ionescu. I am calling from the collections team about a late payment on your personal loan. The past-due amount is 2100, and it is 28 days late. Can you make this payment today?",
+   "status": 200,
+   "seconds": 11.8,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_17_1791665124831"
+  },
+  {
+   "n": 6,
+   "customer": "I can't pay 2100 today. Could we look at lower monthly instalments instead?",
+   "agent": "I cannot set up a new plan myself, but I will transfer you to the team that can help with that.",
+   "status": 200,
+   "seconds": 10.7,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_10_1791665131163"
+  },
+  {
+   "n": 7,
+   "customer": "I can't pay 2100 today. Could we look at lower monthly instalments instead?",
+   "agent": "Thank you, Mr Ionescu. A colleague will take over now. Goodbye.",
+   "status": 504,
+   "seconds": 28.2,
+   "error": "HTTP 504: error code: 504 | reply recovered from the call log after 7 s; the agent ended the call",
+   "ended_by_agent": true
+  }
+ ],
+ "end": {
+  "callId": "240f5a1d-f5d1-498f-adb6-82cafdf332db",
+  "ended": true,
+  "endedReason": "assistant-ended-call",
+  "alreadyEnded": true
+ },
+ "transcript": [
+  "customer: Hello?",
+  "agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Ionescu?",
+  "customer: Yes, this is Victor Ionescu.",
+  "   [route] opening -> setup: always always",
+  "   [node] opening -> setup",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"import datetime, json, re\\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\\nBWD = set([0, 1, 2, 3, 4])\\nWDRULE = 'this_week'\\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'",
+  "   [node] setup -> ask_dob",
+  "agent: Thank you, Mr Ionescu. For security, could you please tell me your date of birth?",
+  "customer: Thirteenth of August, nineteen eighty-one.",
+  "   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={\"field\": \"date_of_birth\", \"answer\": \"1981-08-13\", \"customer_id\": \"c_493e0b99-4d6\"}",
+  "   [tool] verify_identity -> HTTP 200 data={\"ok\": true, \"verified\": false, \"wrong_answers_left\": 2, \"all_verified\": false, \"what_to_do_next\": \"Wrong answer. Tell the customer it does not match our records and ask again: What is your date of birth?\"}",
+  "agent: Mr Ionescu, that does not match our records. What is your date of birth?",
+  "customer: Sorry, I'll try again. Eleventh of August, nineteen eighty-one.",
+  "   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={\"field\": \"date_of_birth\", \"answer\": \"1981-08-11\", \"customer_id\": \"c_493e0b99-4d6\"}",
+  "   [tool] verify_identity -> HTTP 200 data={\"ok\": true, \"verified\": true, \"wrong_answers_left\": 2, \"all_verified\": false, \"what_to_do_next\": \"Correct. Ask the next security question.\"}",
+  "   [route] ask_dob -> ask_phone: date of birth correct (verify_identity_response.data.verified == 'true' OR verify_identity_response.data.verified == 'True')",
+  "   [node] ask_dob -> ask_phone",
+  "agent: Thank you. What are the last four digits of the phone number on file, Mr Ionescu?",
+  "customer: The last four digits of the phone number on file are 5560.",
+  "   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={\"field\": \"phone_last4\", \"answer\": \"5560\", \"customer_id\": \"c_493e0b99-4d6\"}",
+  "   [tool] verify_identity -> HTTP 200 data={\"ok\": true, \"verified\": true, \"wrong_answers_left\": 2, \"all_verified\": true, \"what_to_do_next\": \"Both answers are correct. Identity verified.\"}",
+  "   [route] ask_phone -> load_account: identity verified (verify_identity_response.data.all_verified == 'true' OR verify_identity_response.data.all_verified == 'True')",
+  "   [node] ask_phone -> load_account",
+  "   [tool] api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={\"customer_id\": \"c_493e0b99-4d6\"}",
+  "   [tool] api_call -> HTTP 200 data={\"ok\": true, \"products\": [{\"product_id\": \"p1\", \"type\": \"personal_loan\", \"past_due\": 2100, \"days_late\": 28, \"instalment_amount\": 700}]}",
+  "   [route] load_account -> prepare: always always",
+  "   [node] load_account -> prepare",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"try:\\n import datetime, json, re\\n HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\\n BWD = set([0, 1, 2, 3, 4])\\n WDRULE = 'this_week'\\n WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr...",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] prepare -> negotiate: always always",
+  "   [node] prepare -> negotiate",
+  "agent: Thank you, Mr Ionescu. I am calling from the collections team about a late payment on your personal loan. The past-due amount is 2100, and it is 28 days late. Can you make this payment today?",
+  "customer: I can't pay 2100 today. Could we look at lower monthly instalments instead?",
+  "   [route] negotiate -> xfer_restructuring: topic new_plan topic == 'new_plan'",
+  "   [node] negotiate -> xfer_restructuring",
+  "   [tool] api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent body={\"queue\": \"restructuring\", \"customer_id\": \"c_493e0b99-4d6\"}",
+  "agent: I cannot set up a new plan myself, but I will transfer you to the team that can help with that.",
+  "   [tool] api_call -> HTTP 200 data={\"ok\": true}",
+  "   [route] xfer_restructuring -> fin_transferred_restructuring: always always",
+  "   [node] xfer_restructuring -> fin_transferred_restructuring",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"try:\\n vars['outcome'] = 'transferred'\\n vars['reason'] = 'restructuring'\\nexcept Exception:\\n pass\\n\"}",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] fin_transferred_restructuring -> end_transferred_restructuring: always always",
+  "   [node] fin_transferred_restructuring -> end_transferred_restructuring",
+  "   [tool] end_call args={\"message_mode\": \"custom\", \"spoken_message\": \"Thank you, Mr Ionescu. A colleague will take over now. Goodbye.\"}",
+  "customer: I can't pay 2100 today. Could we look at lower monthly instalments instead?",
+  "   [route] xfer_restructuring -> fin_transferred_restructuring: always always",
+  "   [node] xfer_restructuring -> fin_transferred_restructuring",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"try:\\n vars['outcome'] = 'transferred'\\n vars['reason'] = 'restructuring'\\nexcept Exception:\\n pass\\n\"}",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] fin_transferred_restructuring -> end_transferred_restructuring: always always",
+  "   [node] fin_transferred_restructuring -> end_transferred_restructuring",
+  "   [tool] end_call args={\"message_mode\": \"custom\", \"spoken_message\": \"Thank you, Mr Ionescu. A colleague will take over now. Goodbye.\"}",
+  "   [call] ended: assistant-ended-call",
+  "agent: Thank you, Mr Ionescu. A colleague will take over now. Goodbye.",
+  "   [tool] end_call -> success Call ended",
+  "   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={\"reason\": \"restructuring\", \"outcome\": \"transferred\", \"customer_id\": \"c_493e0b99-4d6\"}",
+  "   [tool] close_call -> HTTP 200 data={\"ok\": true}"
+ ],
+ "tool_calls": [
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\ndef isbd(d):\n    return d.weekday() in BWD and d.isoformat() not in HOL\ndef txt(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1] + ' ' + str(d.year)\ndef txt_short(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1]\ndef addbd(d, n):\n    c = 0\n    guard = 0\n    while c < n and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n        if isbd(d):\n            c += 1\n    return d\ndef next_bd(d):\n    guard = 0\n    while not isbd(d) and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n    return d\ndef prev_bd(d):\n    guard = 0\n    while not isbd(d) and guard < 4000:\n        d = d - datetime.timedelta(days=1)\n        guard += 1\n    return d\ndef lastbd_of_week(monday):\n    for k in range(6, -1, -1):\n        d = monday + datetime.timedelta(days=k)\n        if isbd(d):\n            return d\n    return None\ndef weekday_table(today):\n    monday = today - datetime.timedelta(days=today.weekday())\n    tab = []\n    for i in range(7):\n        a = monday + datetime.timedelta(days=i)\n        b = a + datetime.timedelta(days=7)\n        t1 = '\"this ' + WD[i] + '\" = ' + txt(a) + (' (already past)' if a < today else '')\n        tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))\n    return '\\n'.join(tab)\ndef weekday_table_first_after(today):\n    tab = []\n    for k in range(1, 8):\n        a = today + datetime.timedelta(days=k)\n        tab.append('\"this ' + WD[a.weekday()] + '\" = \"next ' + WD[a.weekday()] + '\" = ' + txt(a))\n    return '\\n'.join(tab)\nif WDRULE == 'first_after':\n    weekday_table = weekday_table_first_after\ndef calendar_text(today, deadline, extra_days=10):\n    cal = []\n    d = today\n    while d <= deadline + datetime.timedelta(days=extra_days):\n        if d > deadline:\n            tag = 'AFTER THE DEADLINE, not allowed'\n        elif isbd(d):\n            tag = 'allowed'\n        elif d.weekday() not in BWD:\n            tag = 'not a business day (' + WD[d.weekday()] + '), not allowed'\n        else:\n            tag = 'bank holiday, not allowed'\n        nb = next_bd(d)\n        extra = ''\n        if tag.startswith('not a business day') or tag.startswith('bank'):\n            extra = ' -> next business day ' + txt_short(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')\n        cal.append(d.isoformat() + ' ' + txt_short(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)\n        d = d + datetime.timedelta(days=1)\n    return '\\n'.join(cal)\ndef fmt(x):\n    try:\n        x = float(x)\n    except Exception:\n        return str(x)\n    s = '%.2f' % x\n    return s[:-3] if s.endswith('.00') else s\ntry:\n    raw = str(vars.get('now') or '').strip()\n    try:\n        nowdt = datetime.datetime.fromisoformat(raw[:16])\n    except Exception:\n        nowdt = datetime.datetime.fromisoformat(raw[:10] + 'T09:00')\n    today = nowdt.date()\n    vars['today_iso'] = today.isoformat()\n    vars['today_text'] = txt(today)\n    vars['now_time'] = nowdt.strftime('%H:%M')\n    vars['weekday_table'] = weekday_table(today)\n    lines = []\n    cur = nowdt.strftime('%H:%M')\n    if cur < '19:00':\n        start = '10:00' if cur < '10:00' else 'after ' + cur\n        lines.append('Today, ' + txt(today) + ' (' + today.isoformat() + '), from ' + start + ' up to 19:00.')\n    nbd = today\n    for _i in range(1):\n        nbd = addbd(nbd, 1)\n        lines.append(txt(nbd) + ' (' + nbd.isoformat() + '), from 10:00 up to 19:00 included.')\n    tom = today + datetime.timedelta(days=1)\n    extra = 'Tomorrow is ' + txt(tom) + '.'\n    if not isbd(tom):\n        extra += ' Tomorrow is NOT allowed, it is not a business day.'\n    vars['callback_text'] = 'The ONLY allowed callback times are:\\n- ' + '\\n- '.join(lines) + '\\n' + extra + ' Any other day or time is outside the window.'\n    monday = today - datetime.timedelta(days=today.weekday())\n    a1 = lastbd_of_week(monday)\n    if a1 is None or a1 <= today:\n        a1 = lastbd_of_week(monday + datetime.timedelta(days=7))\n    vars['attempt1_date'] = a1.isoformat()\n    vars['early_deadline'] = addbd(today, 12).isoformat()\n    vars['late_deadline'] = addbd(today, 7).isoformat()\n    vars['setup_state'] = 'ok'\nexcept Exception as e:\n    vars['setup_state'] = 'error ' + str(e)\n    vars.setdefault('callback_text', 'Callbacks: today later than now up to 19:00, or the next business day from 10:00 to 19:00.')\n    vars.setdefault('today_text', str(vars.get('now')))\n    vars.setdefault('today_iso', str(vars.get('now'))[:10])\n    vars.setdefault('now_time', '')\n    vars.setdefault('weekday_table', '')\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "verify_identity",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "field": "date_of_birth",
+     "answer": "1981-08-13",
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "verified": false,
+     "wrong_answers_left": 2,
+     "all_verified": false,
+     "what_to_do_next": "Wrong answer. Tell the customer it does not match our records and ask again: What is your date of birth?"
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "verify_identity",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "field": "date_of_birth",
+     "answer": "1981-08-11",
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 2,
+     "all_verified": false,
+     "what_to_do_next": "Correct. Ask the next security question."
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "verify_identity",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "field": "phone_last4",
+     "answer": "5560",
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 2,
+     "all_verified": true,
+     "what_to_do_next": "Both answers are correct. Identity verified."
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "api_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "products": [
+      {
+       "product_id": "p1",
+       "type": "personal_loan",
+       "past_due": 2100,
+       "days_late": 28,
+       "instalment_amount": 700
+      }
+     ]
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "try:\n    import datetime, json, re\n    HOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\n    BWD = set([0, 1, 2, 3, 4])\n    WDRULE = 'this_week'\n    WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\n    MO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\n    def isbd(d):\n        return d.weekday() in BWD and d.isoformat() not in HOL\n    def txt(d):\n        return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1] + ' ' + str(d.year)\n    def txt_short(d):\n        return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1]\n    def addbd(d, n):\n        c = 0\n        guard = 0\n        while c < n and guard < 4000:\n            d = d + datetime.timedelta(days=1)\n            guard += 1\n            if isbd(d):\n                c += 1\n        return d\n    def next_bd(d):\n        guard = 0\n        while not isbd(d) and guard < 4000:\n            d = d + datetime.timedelta(days=1)\n            guard += 1\n        return d\n    def prev_bd(d):\n        guard = 0\n        while not isbd(d) and guard < 4000:\n            d = d - datetime.timedelta(days=1)\n            guard += 1\n        return d\n    def lastbd_of_week(monday):\n        for k in range(6, -1, -1):\n            d = monday + datetime.timedelta(days=k)\n            if isbd(d):\n                return d\n        return None\n    def weekday_table(today):\n        monday = today - datetime.timedelta(days=today.weekday())\n        tab = []\n        for i in range(7):\n            a = monday + datetime.timedelta(days=i)\n            b = a + datetime.timedelta(days=7)\n            t1 = '\"this ' + WD[i] + '\" = ' + txt(a) + (' (already past)' if a < today else '')\n            tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))\n        return '\\n'.join(tab)\n    def weekday_table_first_after(today):\n        tab = []\n        for k in range(1, 8):\n            a = today + datetime.timedelta(days=k)\n            tab.append('\"this ' + WD[a.weekday()] + '\" = \"next ' + WD[a.weekday()] + '\" = ' + txt(a))\n        return '\\n'.join(tab)\n    if WDRULE == 'first_after':\n        weekday_table = weekday_table_first_after\n    def calendar_text(today, deadline, extra_days=10):\n        cal = []\n        d = today\n        while d <= deadline + datetime.timedelta(days=extra_days):\n            if d > deadline:\n                tag = 'AFTER THE DEADLINE, not allowed'\n            elif isbd(d):\n                tag = 'allowed'\n            elif d.weekday() not in BWD:\n                tag = 'not a business day (' + WD[d.weekday()] + '), not allowed'\n            else:\n                tag = 'bank holiday, not allowed'\n            nb = next_bd(d)\n            extra = ''\n            if tag.startswith('not a business day') or tag.startswith('bank'):\n                extra = ' -> next business day ' + txt_short(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')\n            cal.append(d.isoformat() + ' ' + txt_short(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)\n            d = d + datetime.timedelta(days=1)\n        return '\\n'.join(cal)\n    def fmt(x):\n        try:\n            x = float(x)\n        except Exception:\n            return str(x)\n        s = '%.2f' % x\n        return s[:-3] if s.endswith('.00') else s\n\n    P = json.loads('\\x7b\"texts\": \\x7b\"today_word\": \"today\", \"on_date\": \"on [date]\", \"question\": \"Can you pay [amount] [when]?\", \"question_product\": \"For your [words], can you pay [amount] [when]?\", \"question_all\": \"Can you pay all of them today?\", \"weekend_or_holiday\": \"[named] is not a business day, so I cannot record it. The next business day is [date].\", \"after_deadline\": \"The latest date I can record is [deadline].\", \"before_today\": \"[named] has already passed.\", \"below_floor\": \"I cannot record [named]. The lowest amount I can record is [floor], your [floor_name].\", \"above_full\": \"Your past-due amount is [full], so that is the most I can record.\", \"vague\": \"Which exact day would that be?\", \"vague_deadline\": \"The latest date I can record is [deadline].\", \"too_much_floor\": \"I understand. The lowest amount I can accept is [floor], your [floor_name]. The rest stays overdue.\", \"exhausted\": \"I understand.\", \"one_by_one\": \"Let us go through them one by one.\", \"next_product\": \"Your [words] has [past_due] past due.\", \"paid\": \"Thank you for letting me know. Payments can take one business day to appear, so I will not take a promise for your [words].\", \"dispute\": \"Thank you for telling me. I will not take a promise for your [words].\", \"hardship\": \"I am sorry to hear that. Would you like me to connect you with our customer support team?\", \"human_first\": \"I can help you with most things myself. Is there anything I can help you with before I transfer you?\", \"notalk_first\": \"I understand. This will only take a moment.\", \"readback_head\": \"To confirm: your \", \"readback_item\": \"[words], [amount], [when]\", \"readback_sep\": \"; \", \"own_deadline\": \", which is the latest date I can record for it\", \"moved_bd\": \", the next business day\", \"readback_tail\": \". Do you confirm?\", \"recorded\": \"Your promise is recorded.\", \"recorded_many\": \"Your promises for [list] are recorded.\", \"rec_failed\": \"I could not record the promise for your [words] because of a technical problem.\", \"anything_else\": \"Is there anything else I can help you with?\", \"wrap_change\": \"A recorded promise cannot be changed or cancelled on this call, but you can change it in the Freya Bank mobile app.\", \"and\": \" and \", \"after_recorded\": \"You will receive a text message confirming this promise.\"\\x7d, \"multi\": false, \"notes\": false, \"note_reasons\": \\x7b\\x7d, \"fin_keys\": \\x7b\"promise\": \"promise\", \"paid\": \"paid\", \"default\": \"refused\", \"refused\": \"refused\", \"hardship\": \"hardship\", \"dispute\": \"dispute\", \"service_error\": \"service_error\"\\x7d, \"asides\": \\x7b\"robot\": \\x7b\"when\": \"asks whether they are talking to a robot, a machine or an AI\", \"say\": \"I am Freya Bank\\'s digital assistant.\"\\x7d, \"scam\": \\x7b\"when\": \"asks whether this call is a scam or genuine\", \"say\": \"You can verify this call by phoning Freya Bank\\'s customer service number.\"\\x7d\\x7d, \"weekday_rule\": \"this_week\", \"fail_max\": 2, \"max_checks\": 8, \"human_limit\": 2, \"notalk_limit\": 2, \"wrap_turns\": 2, \"closed_day_move\": \"after\", \"ordinals\": [\"first\", \"second\", \"third\"], \"clear_enums\": [\"stance\", \"offer_kind\", \"offer_for\", \"topic\", \"confirm\", \"hs_answer\", \"wrap\", \"aside\"], \"clear_values\": [\"offer_date\", \"offer_amount\", \"offer_when\"], \"outcome_var\": \"outcome\", \"reason_var\": \"reason\", \"promise_outcome\": \"promise\", \"now_var\": \"now\", \"after_recorded\": true\\x7d')\n    def g(V, k, d=''):\n        v = V.get(k)\n        if v is None:\n            return d\n        s = str(v)\n        return d if s.lower() in ('none', 'null') and d == '' else s\n    def num(x, d=None):\n        try:\n            s = str(x).replace(',', '').strip()\n            if not s or s.lower() in ('none', 'null', 'nan'):\n                return d\n            m = re.search(r'-?\\d+(\\.\\d+)?', s)\n            return float(m.group(0)) if m else d\n        except Exception:\n            return d\n    def pdate(x):\n        s = str(x or '').strip()\n        m = re.search(r'(\\d{4})-(\\d{1,2})-(\\d{1,2})', s)\n        if not m:\n            return None\n        try:\n            return datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))\n        except Exception:\n            return None\n    def T(key, **kw):\n        s = str(P['texts'].get(key) or '')\n        for k, v in kw.items():\n            s = s.replace('[' + k + ']', str(v))\n        return s\n    def join(parts):\n        return ' '.join([str(x).strip() for x in parts if str(x or '').strip()])\n    def pids(V):\n        return [x for x in g(V, 'pids_csv').split(',') if x]\n    def pg(V, pid, k, d=''):\n        return g(V, k + '_' + pid, d)\n    def pset(V, pid, k, v):\n        V[k + '_' + pid] = str(v)\n    def today_of(V):\n        d = pdate(g(V, 'today_iso')) or pdate(g(V, P['now_var']))\n        return d or datetime.date(2000, 1, 1)\n    def when(V, d):\n        if d == today_of(V):\n            return T('today_word')\n        return T('on_date', date=txt_short(d))\n    def dtext(V, d):\n        return T('today_word') if d == today_of(V) else txt_short(d)\n    def full_of(V, pid):\n        return num(pg(V, pid, 'full'), 0.0) or 0.0\n    def floor_of(V, pid):\n        f = num(pg(V, pid, 'floor'))\n        return full_of(V, pid) if f is None or f <= 0 else f\n    def deadline_of(V, pid):\n        return pdate(pg(V, pid, 'deadline')) or today_of(V)\n    def state(V, pid):\n        return pg(V, pid, 'state', 'open')\n    def multi(V):\n        return bool(P['multi']) and len(pids(V)) > 1\n    def question(V, pid, a, d):\n        key = 'question_product' if multi(V) else 'question'\n        return T(key, amount=fmt(a), when=when(V, d), words=pg(V, pid, 'words'), date=txt_short(d))\n    def set_prop(V, pid, a, d):\n        V['prop_pid'] = pid\n        V['prop_amount'] = str(float(a))\n        V['prop_date'] = d.isoformat()\n        V['offer_question'] = question(V, pid, a, d)\n    def prop_of(V, pid):\n        if g(V, 'prop_pid') == pid:\n            a = num(g(V, 'prop_amount'))\n            d = pdate(g(V, 'prop_date'))\n            if a is not None and d is not None:\n                return a, d\n        t = today_of(V)\n        return full_of(V, pid), (t if isbd(t) else next_bd(t))\n    def okey(a, d):\n        return fmt(a) + '@' + d.isoformat()\n    def refused_list(V, pid):\n        return [x for x in pg(V, pid, 'refused_offers').split(';') if x]\n    def ladder(V, pid):\n        try:\n            L = json.loads(pg(V, pid, 'ladder', '[]'))\n            return L if isinstance(L, list) else []\n        except Exception:\n            return []\n    def rung(V, pid, i):\n        r = ladder(V, pid)[i]\n        rule = str(r[0])\n        d = pdate(r[1]) or deadline_of(V, pid)\n        if rule == 'floor':\n            a = floor_of(V, pid)\n        elif rule == 'full_or_floor' and pg(V, pid, 'too_much') == 'yes':\n            a = floor_of(V, pid)\n        else:\n            a = full_of(V, pid)\n        return a, d\n    def back_route(V):\n        return 'hardship' if g(V, 'mode') == 'hardship' else 'negotiate'\n    def say(V, text, route=None):\n        V['say_next'] = text\n        V['route'] = route or back_route(V)\n    def register_product(V, pid, words, full, floor, floor_name, deadline, rungs):\n        pid = str(pid)\n        ids = pids(V)\n        if pid not in ids:\n            ids.append(pid)\n        V['pids_csv'] = ','.join(ids)\n        pset(V, pid, 'words', words)\n        pset(V, pid, 'full', float(full))\n        pset(V, pid, 'floor', float(floor))\n        pset(V, pid, 'floor_name', floor_name)\n        pset(V, pid, 'deadline', deadline.isoformat())\n        lad = []\n        for r in rungs:\n            rd = r[1]\n            if rd > deadline:\n                rd = deadline\n            lad.append([str(r[0]), rd.isoformat()])\n        pset(V, pid, 'ladder', json.dumps(lad))\n        for k, v in (('state', 'open'), ('attempts_used', '0'), ('too_much', 'no'), ('offered_floor', 'no'),\n                     ('refused_offers', ''), ('agreed', ''), ('vague_asked', 'no'), ('checks', '0'), ('fails', '0'),\n                     ('noted', 'no')):\n            pset(V, pid, k, v)\n    def init_negotiation(V, statement):\n        ids = pids(V)\n        V['mode'] = 'negotiate'\n        V['stage'] = 'all' if multi(V) else 'one'\n        V['cur_pid'] = ids[0] if ids else ''\n        V['human_count'] = '0'\n        V['notalk_count'] = '0'\n        V['wrap_count'] = '0'\n        V['wrap_human'] = '0'\n        V['vague_all'] = 'no'\n        V['hs_offer'] = 'no'\n        if ids:\n            a, d = prop_of(V, ids[0])\n            set_prop(V, ids[0], a, d)\n        if V['stage'] == 'all':\n            V['offer_question'] = T('question_all')\n        V['say_next'] = statement\n        V['route'] = 'negotiate'\n        finish_turn(V)\n    def readback(V, ids):\n        items = []\n        for p in ids:\n            parts = pg(V, p, 'agreed').split('|')\n            a = num(parts[0], 0.0) if parts else 0.0\n            d = pdate(parts[1]) if len(parts) > 1 else None\n            tag = parts[2] if len(parts) > 2 else ''\n            if d is None:\n                continue\n            s = T('readback_item', words=pg(V, p, 'words'), amount=fmt(a), when=when(V, d), date=txt_short(d))\n            if tag == 'dl':\n                s += T('own_deadline')\n            elif tag == 'bd':\n                s += T('moved_bd')\n            items.append(s)\n        return T('readback_head') + T('readback_sep').join(items) + T('readback_tail')\n    def start_product(V, pid, prefix):\n        V['stage'] = 'one'\n        V['cur_pid'] = pid\n        if not ladder(V, pid):\n            a, d = full_of(V, pid), deadline_of(V, pid)\n        else:\n            a, d = rung(V, pid, 0)\n            pset(V, pid, 'attempts_used', 1)\n        set_prop(V, pid, a, d)\n        say(V, join([prefix, T('next_product', words=pg(V, pid, 'words'), past_due=fmt(full_of(V, pid))), V['offer_question']]), 'negotiate')\n    def advance(V, prefix=''):\n        ids = pids(V)\n        opn = [p for p in ids if state(V, p) == 'open']\n        if opn and g(V, 'mode') == 'hardship':\n            for p in opn:\n                pset(V, p, 'state', 'hardship')\n            opn = []\n        if opn:\n            start_product(V, opn[0], prefix)\n            return\n        agreed = [p for p in ids if state(V, p) == 'agreed']\n        if agreed:\n            V['readback_line'] = join([prefix, readback(V, agreed)])\n            V['route'] = 'confirm'\n            return\n        note_next(V)\n    def agree(V, pid, a, d, tag='', move=True):\n        pset(V, pid, 'state', 'agreed')\n        pset(V, pid, 'agreed', str(float(a)) + '|' + d.isoformat() + '|' + tag)\n        V['ok_pid'] = pid\n        V['ok_amount'] = str(float(a))\n        V['ok_date'] = d.isoformat()\n        V['offer_verdict'] = 'ok'\n        set_prop(V, pid, a, d)\n        if move:\n            advance(V, '')\n    def refuse(V, pid, prefix=''):\n        if g(V, 'mode') == 'hardship':\n            pset(V, pid, 'state', 'hardship')\n            advance(V, '')\n            return\n        a0, d0 = prop_of(V, pid)\n        rl = refused_list(V, pid)\n        if okey(a0, d0) not in rl:\n            rl.append(okey(a0, d0))\n        pset(V, pid, 'refused_offers', ';'.join(rl))\n        L = ladder(V, pid)\n        k = int(num(pg(V, pid, 'attempts_used'), 0) or 0)\n        while k < len(L):\n            a, d = rung(V, pid, k)\n            if okey(a, d) not in rl:\n                break\n            k += 1\n        if k >= len(L):\n            pset(V, pid, 'state', 'refused')\n            V['offer_verdict'] = 'exhausted'\n            advance(V, join([prefix, T('exhausted')]))\n            return\n        pset(V, pid, 'attempts_used', k + 1)\n        set_prop(V, pid, a, d)\n        V['next_offer_text'] = V['offer_question']\n        say(V, join([prefix, V['offer_question']]), 'negotiate')\n    def too_much(V, pid, prefix=''):\n        pset(V, pid, 'too_much', 'yes')\n        a0, d0 = prop_of(V, pid)\n        fl_ = floor_of(V, pid)\n        if g(V, 'mode') != 'hardship' and pg(V, pid, 'offered_floor') != 'yes' and fl_ < a0 - 0.005:\n            pset(V, pid, 'offered_floor', 'yes')\n            set_prop(V, pid, fl_, d0)\n            say(V, join([prefix, T('too_much_floor', floor=fmt(fl_), floor_name=pg(V, pid, 'floor_name'), words=pg(V, pid, 'words')), V['offer_question']]))\n            return\n        refuse(V, pid, prefix)\n    def check_one(V, pid, a, d, kind):\n        n = int(num(pg(V, pid, 'checks'), 0) or 0) + 1\n        pset(V, pid, 'checks', n)\n        if n > int(P['max_checks']):\n            pset(V, pid, 'state', 'hardship' if g(V, 'mode') == 'hardship' else 'refused')\n            V['offer_verdict'] = 'loop_exhausted'\n            advance(V, T('exhausted'))\n            return\n        pa, pd = prop_of(V, pid)\n        t = today_of(V)\n        dl = deadline_of(V, pid)\n        if kind == 'vague' or (a is None and d is None):\n            V['offer_verdict'] = 'vague'\n            if pg(V, pid, 'vague_asked') != 'yes':\n                pset(V, pid, 'vague_asked', 'yes')\n                say(V, T('vague'))\n                return\n            set_prop(V, pid, pa, dl)\n            say(V, join([T('vague_deadline', deadline=txt_short(dl), words=pg(V, pid, 'words')), V['offer_question']]))\n            return\n        amt = pa if a is None or a <= 0 else a\n        day = pd if d is None else d\n        issues = []\n        na, nd = amt, day\n        if nd < t:\n            issues.append(('before_today', T('before_today', named=txt_short(nd))))\n            nd = t if isbd(t) else next_bd(t)\n        elif nd > dl:\n            issues.append(('after_deadline', T('after_deadline', deadline=txt_short(dl), named=txt_short(nd), words=pg(V, pid, 'words'))))\n            nd = dl\n        elif not isbd(nd):\n            nb = next_bd(nd)\n            if P['closed_day_move'] == 'before':\n                nb = prev_bd(nd)\n                if nb < t:\n                    nb = next_bd(nd)\n            if nb > dl:\n                nb = dl\n            issues.append(('weekend_or_holiday', T('weekend_or_holiday', named=txt_short(nd), date=txt_short(nb))))\n            nd = nb\n        fl_ = floor_of(V, pid)\n        full = full_of(V, pid)\n        if na < fl_ - 0.005:\n            if pg(V, pid, 'offered_floor') == 'yes' and g(V, 'mode') != 'hardship':\n                V['offer_verdict'] = 'below_floor'\n                refuse(V, pid)\n                return\n            issues.append(('below_floor', T('below_floor', named=fmt(na), floor=fmt(fl_), floor_name=pg(V, pid, 'floor_name'), words=pg(V, pid, 'words'))))\n            pset(V, pid, 'offered_floor', 'yes')\n            na = fl_\n        elif na > full + 0.005:\n            issues.append(('above_full', T('above_full', full=fmt(full), named=fmt(na), words=pg(V, pid, 'words'))))\n            na = full\n        if not issues:\n            agree(V, pid, na, nd)\n            return\n        V['offer_verdict'] = issues[0][0]\n        set_prop(V, pid, na, nd)\n        V['offer_text'] = join([x[1] for x in issues] + [V['offer_question']])\n        say(V, V['offer_text'])\n    def offer_target(V):\n        f = g(V, 'offer_for')\n        ids = pids(V)\n        order = P['ordinals']\n        if f in order:\n            i = order.index(f)\n            if i < len(ids):\n                return ids[i]\n        return ''\n    def all_offer(V, d):\n        t = today_of(V)\n        for p in [x for x in pids(V) if state(V, x) == 'open']:\n            dd = d\n            tag = ''\n            dl = deadline_of(V, p)\n            if dd < t:\n                dd = t if isbd(t) else next_bd(t)\n            if not isbd(dd):\n                dd = next_bd(dd)\n                tag = 'bd'\n            if dd > dl:\n                dd = dl\n                tag = 'dl'\n            agree(V, p, full_of(V, p), dd, tag, move=False)\n        V['offer_verdict'] = 'ok'\n        advance(V, '')\n    WDN = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']\n    MON = {'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6, 'july': 7, 'august': 8,\n           'september': 9, 'october': 10, 'november': 11, 'december': 12}\n    NUMW = {'a': 1, 'an': 1, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8,\n            'nine': 9, 'ten': 10, 'fourteen': 14}\n    def _month_of(w):\n        for k, v in MON.items():\n            if w.startswith(k[:3]):\n                return v\n        return None\n    ORDW = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5, 'sixth': 6, 'seventh': 7, 'eighth': 8, 'ninth': 9,\n            'tenth': 10, 'eleventh': 11, 'twelfth': 12, 'thirteenth': 13, 'fourteenth': 14, 'fifteenth': 15, 'sixteenth': 16,\n            'seventeenth': 17, 'eighteenth': 18, 'nineteenth': 19, 'twentieth': 20, 'thirtieth': 30}\n    def _ordinal_words(t):\n        for tens, base in (('twenty', 20), ('thirty', 30)):\n            for w, n in ORDW.items():\n                if n < 10:\n                    t = t.replace(' %s %s ' % (tens, w), ' %dth ' % (base + n))\n        for w in sorted(ORDW, key=len, reverse=True):\n            t = t.replace(' %s ' % w, ' %dth ' % ORDW[w])\n        return t\n    def resolve_when(V, text):\n        # (date, kind) from the customer's OWN WORDS, relative to the call's today (never the real clock: the platform's\n        # date extraction resolved 'tomorrow' with the real clock). kind: 'exact' (with a date), 'vague', or 'none'.\n        t = ' ' + re.sub(r'[^a-z0-9 ]', ' ', str(text or '').lower()) + ' '\n        t = _ordinal_words(re.sub(r'\\s+', ' ', t))\n        if not t.strip():\n            return None, 'none'\n        today = today_of(V)\n        D = datetime.timedelta\n        if ' day after tomorrow ' in t:\n            return today + D(2), 'exact'\n        if ' tomorrow ' in t:\n            return today + D(1), 'exact'\n        if re.search(r' (today|tonight|right now|now|this morning|this afternoon|this evening) ', t):\n            return today, 'exact'\n        m = re.search(r' in (\\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten|fourteen) (day|week|fortnight)s? ', t)\n        if m:\n            n = int(m.group(1)) if m.group(1).isdigit() else NUMW.get(m.group(1), 1)\n            n = n * (7 if m.group(2) == 'week' else 14 if m.group(2) == 'fortnight' else 1)\n            return today + D(n), 'exact'\n        m = re.search(r' (\\d{1,2})(?:st|nd|rd|th)? (?:of )?([a-z]{3,9})(?: (\\d{4}))? ', t)\n        mo = _month_of(m.group(2)) if m else None\n        if m and mo:\n            y = int(m.group(3)) if m.group(3) else today.year\n            try:\n                d = datetime.date(y, mo, int(m.group(1)))\n                if not m.group(3) and d < today - D(14):\n                    d = datetime.date(y + 1, mo, int(m.group(1)))\n                return d, 'exact'\n            except Exception:\n                return None, 'vague'\n        m = re.search(r' ([a-z]{3,9}) (?:the )?(\\d{1,2})(?:st|nd|rd|th)? ', t)\n        mo = _month_of(m.group(1)) if m else None\n        if m and mo:\n            try:\n                d = datetime.date(today.year, mo, int(m.group(2)))\n                if d < today - D(14):\n                    d = datetime.date(today.year + 1, mo, int(m.group(2)))\n                return d, 'exact'\n            except Exception:\n                return None, 'vague'\n        m = re.search(r' (?:(this|next|coming|on|by) )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday) ', t)\n        if m:\n            wd = WDN.index(m.group(2))\n            if m.group(1) == 'next':\n                if P.get('weekday_rule') == 'first_after':\n                    delta = (wd - today.weekday()) % 7 or 7\n                else:   # that weekday in the following calendar week\n                    delta = (7 - today.weekday()) + wd\n            else:\n                delta = (wd - today.weekday()) % 7\n            return today + D(delta), 'exact'\n        m = re.search(r' (?:the )?(\\d{1,2})(?:st|nd|rd|th) ', t)\n        if m:\n            n = int(m.group(1))\n            y, mo = today.year, today.month\n            if n < today.day:\n                mo += 1\n                if mo > 12:\n                    mo, y = 1, y + 1\n            try:\n                return datetime.date(y, mo, n), 'exact'\n            except Exception:\n                return None, 'vague'\n        if re.search(r'(next week|week after next|end of (the )?month|end of month|this month|next month|when (my |the )?(salary|pay|wages|money)|'\n                     r'after (my |the )?(pay|salary)|a few (days|weeks)|couple of (days|weeks)|soon|later|some ?time|not sure|maybe|'\n                     r'next (few|couple)|beginning of|middle of|start of|mid )', t):\n            return None, 'vague'\n        return None, 'none'\n    def offer_date_of(V):\n        # the customer's words first (offer_when, resolved in code); the extraction's offer_date only as a fallback and\n        # never a date before the call's today\n        d, kind = resolve_when(V, g(V, 'offer_when'))\n        if kind == 'exact' and d is not None:\n            return d, 'exact'\n        if kind == 'vague':\n            return None, 'vague'\n        d = pdate(g(V, 'offer_date'))\n        if d is not None and d < today_of(V):\n            return None, 'vague'\n        return d, g(V, 'offer_kind')\n    def ev_offer(V):\n        kind = g(V, 'offer_kind')\n        a = num(g(V, 'offer_amount'))\n        d, k2 = offer_date_of(V)\n        if k2 in ('exact', 'vague'):\n            kind = k2\n        if kind == 'vague':\n            d = None\n        if multi(V) and g(V, 'stage') != 'all' and g(V, 'offer_for') == 'all' and d is not None and a is None and kind == 'exact':\n            all_offer(V, d)\n            return\n        if multi(V) and g(V, 'stage') == 'all':\n            tp = offer_target(V)\n            if tp:\n                V['stage'] = 'one'\n                V['cur_pid'] = tp\n                check_one(V, tp, a, d, kind)\n                return\n            if kind == 'vague' or (d is None and a is None):\n                V['offer_verdict'] = 'vague'\n                if g(V, 'vague_all') != 'yes':\n                    V['vague_all'] = 'yes'\n                    say(V, T('vague'))\n                    return\n                p = pids(V)[0]\n                pset(V, p, 'vague_asked', 'yes')\n                V['stage'] = 'one'\n                V['cur_pid'] = p\n                check_one(V, p, None, None, 'vague')\n                return\n            if d is not None:\n                all_offer(V, d)\n                return\n            p = pids(V)[0]\n            V['stage'] = 'one'\n            V['cur_pid'] = p\n            check_one(V, p, a, None, 'exact')\n            return\n        check_one(V, g(V, 'cur_pid'), a, d, kind)\n    def ev_accept(V):\n        if multi(V) and g(V, 'stage') == 'all':\n            t = today_of(V)\n            for p in [x for x in pids(V) if state(V, x) == 'open']:\n                agree(V, p, full_of(V, p), t if isbd(t) else next_bd(t), '', move=False)\n            advance(V, '')\n            return\n        pid = g(V, 'cur_pid')\n        if state(V, pid) == 'agreed':\n            pset(V, pid, 'state', 'open')\n        a, d = prop_of(V, pid)\n        check_one(V, pid, a, d, 'exact')\n    def to_one_by_one(V):\n        p = pids(V)[0]\n        V['stage'] = 'one'\n        V['cur_pid'] = p\n        return p, join([T('one_by_one'), T('next_product', words=pg(V, p, 'words'), past_due=fmt(full_of(V, p)))])\n    def ev_refuse(V):\n        if multi(V) and g(V, 'stage') == 'all':\n            p, pre = to_one_by_one(V)\n            refuse(V, p, pre)\n            return\n        pid = g(V, 'cur_pid')\n        if state(V, pid) == 'agreed':\n            pset(V, pid, 'state', 'open')\n        refuse(V, pid)\n    def ev_too_much(V):\n        if multi(V) and g(V, 'stage') == 'all':\n            p, pre = to_one_by_one(V)\n            too_much(V, p, pre)\n            return\n        too_much(V, g(V, 'cur_pid'))\n    def targets_for_topic(V):\n        tp = offer_target(V)\n        if tp:\n            return [tp]\n        if multi(V) and g(V, 'stage') == 'all':\n            return [p for p in pids(V) if state(V, p) in ('open', 'agreed')]\n        return [g(V, 'cur_pid')]\n    def ev_settle(V, kind):\n        ts = targets_for_topic(V)\n        words = [pg(V, p, 'words') for p in ts]\n        for p in ts:\n            pset(V, p, 'state', kind)\n        pre = T(kind, words=T('and').join(words)) if multi(V) else ''\n        advance(V, pre)\n    def ev_human(V):\n        c = int(num(g(V, 'human_count'), 0) or 0) + 1\n        V['human_count'] = str(c)\n        if c >= int(P['human_limit']):\n            V['route'] = 'xfer_general'\n            return\n        say(V, T('human_first'))\n    def ev_notalk(V):\n        c = int(num(g(V, 'notalk_count'), 0) or 0) + 1\n        V['notalk_count'] = str(c)\n        if c >= int(P['notalk_limit']):\n            for p in pids(V):\n                if state(V, p) in ('open', 'agreed'):\n                    pset(V, p, 'state', 'refused')\n            advance(V, '')\n            return\n        say(V, join([T('notalk_first'), g(V, 'offer_question')]))\n    def ev_hardship(V):\n        V['mode'] = 'hardship'\n        hd, hk = offer_date_of(V)\n        if g(V, 'offer_kind') == 'exact' or hk == 'exact':\n            V['hs_offer'] = 'yes'\n            V['hs_date'] = hd.isoformat() if hd is not None else ''\n            V['hs_amount'] = g(V, 'offer_amount')\n        say(V, T('hardship'), 'hardship')\n    def ev_hs_decline(V):\n        if g(V, 'hs_offer') == 'yes':\n            V['hs_offer'] = 'no'\n            V['offer_kind'] = 'exact'\n            V['offer_date'] = g(V, 'hs_date')\n            V['offer_amount'] = g(V, 'hs_amount')\n            ev_offer(V)\n            return\n        for p in pids(V):\n            if state(V, p) == 'open':\n                pset(V, p, 'state', 'hardship')\n        advance(V, '')\n    def ev_hs_offer(V):\n        ev_offer(V)\n    def ev_confirm_no(V):\n        agreed = [p for p in pids(V) if state(V, p) == 'agreed']\n        pid = g(V, 'cur_pid') if g(V, 'cur_pid') in agreed else (agreed[-1] if agreed else g(V, 'cur_pid'))\n        V['cur_pid'] = pid\n        V['stage'] = 'one'\n        parts = pg(V, pid, 'agreed').split('|')\n        a = num(parts[0]) if parts else None\n        d = pdate(parts[1]) if len(parts) > 1 else None\n        if a is not None and d is not None:\n            set_prop(V, pid, a, d)\n        pset(V, pid, 'state', 'open')\n        refuse(V, pid)\n    def ev_change(V):\n        agreed = [p for p in pids(V) if state(V, p) == 'agreed']\n        a = num(g(V, 'offer_amount'))\n        d, k2 = offer_date_of(V)\n        tp = offer_target(V)\n        if not tp and multi(V) and len(agreed) > 1 and d is not None and a is None:\n            for p in agreed:\n                pset(V, p, 'state', 'open')\n            all_offer(V, d)\n            return\n        pid = tp or (g(V, 'cur_pid') if g(V, 'cur_pid') in agreed else (agreed[-1] if agreed else g(V, 'cur_pid')))\n        parts = pg(V, pid, 'agreed').split('|')\n        pa = num(parts[0]) if parts else None\n        pd = pdate(parts[1]) if len(parts) > 1 else None\n        if pa is not None and pd is not None:\n            set_prop(V, pid, pa, pd)\n        pset(V, pid, 'state', 'open')\n        V['cur_pid'] = pid\n        V['stage'] = 'one'\n        pset(V, pid, 'checks', 0)\n        check_one(V, pid, a, d, 'exact')\n    def rec_next(V):\n        for p in pids(V):\n            if state(V, p) == 'agreed':\n                parts = pg(V, p, 'agreed').split('|')\n                V['rec_pid'] = p\n                V['rec_amount'] = str(num(parts[0], 0.0))\n                V['rec_date'] = parts[1] if len(parts) > 1 else ''\n                V['rec_ok'] = 'pending'\n                V['route'] = 'record'\n                return\n        note_next(V)\n    def ev_confirm_yes(V):\n        rec_next(V)\n    def ev_rec_after(V):\n        p = g(V, 'rec_pid')\n        ok = g(V, 'rec_ok').lower() == 'true'\n        if p:\n            if ok:\n                pset(V, p, 'state', 'recorded')\n                rl = [x for x in g(V, 'recorded_pids').split(',') if x]\n                if p not in rl:\n                    rl.append(p)\n                V['recorded_pids'] = ','.join(rl)\n            else:\n                f = int(num(pg(V, p, 'fails'), 0) or 0) + 1\n                pset(V, p, 'fails', f)\n                if f < int(P['fail_max']):\n                    V['rec_ok'] = 'pending'\n                    V['route'] = 'record'\n                    return\n                pset(V, p, 'state', 'service_error')\n        rec_next(V)\n    def note_next(V):\n        if P['notes']:\n            for p in pids(V):\n                st = state(V, p)\n                if st in P['note_reasons'] and pg(V, p, 'noted') == 'no':\n                    V['note_pid'] = p\n                    V['note_reason'] = P['note_reasons'][st]\n                    V['note_ok'] = 'pending'\n                    V['route'] = 'note'\n                    return\n        if [p for p in pids(V) if state(V, p) == 'recorded']:\n            enter_wrapup(V)\n            return\n        finalize(V)\n    def ev_note_after(V):\n        p = g(V, 'note_pid')\n        if p:\n            if g(V, 'note_ok').lower() == 'true':\n                pset(V, p, 'noted', 'yes')\n            else:\n                f = int(num(pg(V, p, 'note_fails'), 0) or 0) + 1\n                pset(V, p, 'note_fails', f)\n                if f >= int(P['fail_max']):\n                    pset(V, p, 'noted', 'failed')\n                else:\n                    V['note_ok'] = 'pending'\n                    V['route'] = 'note'\n                    return\n        note_next(V)\n    def enter_wrapup(V):\n        rec = [p for p in pids(V) if state(V, p) == 'recorded']\n        bad = [p for p in pids(V) if state(V, p) == 'service_error']\n        if multi(V) and (len(rec) > 1 or bad):\n            line = T('recorded_many', list=T('and').join([pg(V, p, 'words') for p in rec]))\n        else:\n            line = T('recorded')\n        parts = [line] + [T('rec_failed', words=pg(V, p, 'words')) for p in bad]\n        if P['after_recorded']:\n            parts.append(T('after_recorded'))\n        parts.append(T('anything_else'))\n        V['wrap_line'] = join(parts)\n        V[P['outcome_var']] = P['promise_outcome']\n        V[P['reason_var']] = ''\n        V['route'] = 'wrapup'\n    def finalize(V):\n        ids = pids(V)\n        sts = [state(V, p) for p in ids]\n        fk = P['fin_keys']\n        if 'recorded' in sts:\n            key = fk['promise']\n        elif sts and all(s == 'paid' for s in sts):\n            key = fk['paid']\n        else:\n            key = fk['default']\n            for s in sts:\n                if s != 'paid':\n                    key = fk.get(s) or fk['default']\n                    break\n        V['final_route'] = key\n        V['route'] = 'fin'\n    def ev_wrap_human(V):\n        c = int(num(g(V, 'wrap_human'), 0) or 0) + 1\n        V['wrap_human'] = str(c)\n        if c >= int(P['human_limit']):\n            V['route'] = 'xfer_general'\n            return\n        V['wrap_line'] = T('human_first')\n        V['route'] = 'wrapup'\n    def ev_wrap_change(V):\n        c = int(num(g(V, 'wrap_count'), 0) or 0) + 1\n        V['wrap_count'] = str(c)\n        if c > int(P['wrap_turns']):\n            finalize(V)\n            return\n        V['wrap_line'] = join([T('wrap_change'), T('anything_else')])\n        V['route'] = 'wrapup'\n    def ev_finalize(V):\n        finalize(V)\n    def state_line(V):\n        ids = pids(V)\n        out = []\n        cur = g(V, 'cur_pid')\n        for i, p in enumerate(ids):\n            st = state(V, p)\n            L = ladder(V, p)\n            head = ('Product ' + str(i + 1) + ' of ' + str(len(ids)) + ': ') if len(ids) > 1 else 'Product: '\n            s = head + pg(V, p, 'words') + ' (id ' + p + '). Past due ' + fmt(full_of(V, p)) + ', lowest amount ' + fmt(floor_of(V, p)) + ', latest date ' + txt_short(deadline_of(V, p)) + '.'\n            if st == 'open':\n                rl = refused_list(V, p)\n                if rl:\n                    s += ' Offers already refused: ' + ', '.join([x.replace('@', ' on ') for x in rl]) + ': never offer them again.'\n                s += ' Persuasion attempts used: ' + pg(V, p, 'attempts_used', '0') + ' of ' + str(len(L)) + '.'\n                if pg(V, p, 'offered_floor') == 'yes':\n                    s += ' The lowest amount was already offered once: do not offer it again yourself.'\n            elif st == 'agreed':\n                s += ' Agreed, not recorded yet: ' + pg(V, p, 'agreed').split('|')[0] + ' on ' + (pg(V, p, 'agreed').split('|') + ['', ''])[1] + '.'\n            else:\n                s += ' Settled: ' + st + '.'\n            out.append(s)\n        if g(V, 'mode') == 'hardship':\n            out.append('The customer mentioned a hardship: make no persuasion attempt and propose nothing yourself.')\n        elif g(V, 'offer_question'):\n            out.append('Current offer, ask exactly this: \"' + g(V, 'offer_question') + '\"')\n        rec = [p for p in ids if state(V, p) == 'recorded']\n        out.append('Recorded: ' + (', '.join(rec) if rec else 'nothing yet') + '.')\n        V['state_line'] = ' '.join(out)\n    def finish_turn(V):\n        # an aside (a side question in the customer's turn: robot? scam?) is answered first, in the line the route speaks;\n        # a turn that goes through code into a tts line never reaches the dialogue model, so the answer must be built here\n        a = str(V.get('aside') or 'none')\n        asides = P.get('asides') or {}\n        if a != 'none' and a in asides:\n            txt = str(asides[a].get('say') or '')\n            key = {'confirm': 'readback_line', 'wrapup': 'wrap_line'}.get(str(V.get('route') or ''), 'say_next')\n            line = str(V.get(key) or '')\n            if txt and not line.startswith(txt):\n                V[key] = (txt + ' ' + line).strip()\n        for k in P['clear_enums']:\n            V[k] = 'none'\n        for k in P['clear_values']:\n            V[k] = ''\n        state_line(V)\n    def main(V, ev):\n        try:\n            V['policy_event'] = ev\n            V['offer_verdict'] = ''\n            if ev == 'offer':\n                ev_offer(V)\n            elif ev == 'accept':\n                ev_accept(V)\n            elif ev == 'refuse':\n                ev_refuse(V)\n            elif ev == 'too_much':\n                ev_too_much(V)\n            elif ev in ('paid', 'dispute'):\n                ev_settle(V, ev)\n            elif ev == 'human':\n                ev_human(V)\n            elif ev == 'notalk':\n                ev_notalk(V)\n            elif ev == 'hardship':\n                ev_hardship(V)\n            elif ev == 'hs_decline':\n                ev_hs_decline(V)\n            elif ev == 'confirm_no':\n                ev_confirm_no(V)\n            elif ev == 'change':\n                ev_change(V)\n            elif ev == 'confirm_yes':\n                ev_confirm_yes(V)\n            elif ev == 'rec_after':\n                ev_rec_after(V)\n            elif ev == 'note_after':\n                ev_note_after(V)\n            elif ev == 'wrap_human':\n                ev_wrap_human(V)\n            elif ev == 'wrap_change':\n                ev_wrap_change(V)\n            elif ev == 'finalize':\n                ev_finalize(V)\n            V['policy_state'] = 'ok'\n        except Exception as e:\n            V['policy_state'] = 'error ' + ev + ': ' + str(e)\n            if not g(V, 'route'):\n                V['route'] = 'negotiate'\n        try:\n            finish_turn(V)\n        except Exception as e:\n            V['policy_state'] = 'error state_line: ' + str(e)\n            V.setdefault('state_line', '')\n    import json, re\n    prods = vars.get('products')\n    if isinstance(prods, str):\n        try:\n            prods = json.loads(prods)\n        except Exception:\n            prods = None\n    if not isinstance(prods, list) or not prods:\n        found = {}\n        for k, v in list(vars.items()):\n            m = re.search(r'products\\.(\\d+)\\.(\\w+)$', str(k))\n            if m:\n                found.setdefault(int(m.group(1)), {})[m.group(2)] = v\n        prods = [found[i] for i in sorted(found)]\n\n    today = datetime.date.fromisoformat(str(vars.get('today_iso')))\n    p = prods[0] if prods else {}\n    if not isinstance(p, dict):\n        p = {}\n    ptype = str(p.get('type') or '')\n    pid = str(p.get('product_id') or 'p1')\n    if ptype == 'credit_card':\n        words = 'credit card ending ' + str(p.get('card_last4') or '')\n        floor = p.get('minimum_payment')\n        floor_name = 'minimum payment'\n    else:\n        words = ptype.replace('_', ' ') if ptype else 'loan'\n        floor = p.get('instalment_amount')\n        floor_name = 'monthly instalment'\n    past_due = float(p.get('past_due') or 0)\n    try:\n        floor = float(floor)\n    except Exception:\n        floor = past_due\n    days_late = int(float(p.get('days_late') or 0))\n    a1 = datetime.date.fromisoformat(str(vars.get('attempt1_date')))\n    if days_late <= 7:\n        deadline = datetime.date.fromisoformat(str(vars.get('early_deadline')))\n        rungs = [('full_or_floor', a1)]\n    else:\n        deadline = datetime.date.fromisoformat(str(vars.get('late_deadline')))\n        rungs = [('full_or_floor', a1), ('floor', deadline)]\n    register_product(vars, pid, words, past_due, floor, floor_name, deadline, rungs)\n    vars['product_id'] = pid\n    vars['product_words'] = words\n    vars['past_due_fmt'] = fmt(past_due)\n    vars['days_late_txt'] = str(days_late)\n    vars['deadline_text'] = txt_short(deadline)\n    statement = ('Thank you, ' + str(vars.get('title') or '') + ' ' + str(vars.get('last_name') or '') + '. I am calling from the collections team about a late payment on your '\n                 + words + '. The past-due amount is ' + fmt(past_due) + ', and it is ' + str(days_late) + ' days late. Can you make this payment today?')\n    init_negotiation(vars, statement)\n    vars.setdefault('say_next', '')\n    vars.setdefault('state_line', '')\n    vars.setdefault('offer_question', '')\n    vars.setdefault('offer_text', '')\n    vars.setdefault('offer_verdict', '')\n    vars.setdefault('next_offer_text', '')\n    vars.setdefault('route', '')\n    vars.setdefault('final_route', '')\n    vars.setdefault('readback_line', '')\n    vars.setdefault('wrap_line', '')\n    vars.setdefault('prop_pid', '')\n    vars.setdefault('prop_amount', '')\n    vars.setdefault('prop_date', '')\n    vars.setdefault('ok_pid', '')\n    vars.setdefault('ok_amount', '')\n    vars.setdefault('ok_date', '')\n    vars.setdefault('rec_pid', '')\n    vars.setdefault('rec_amount', '')\n    vars.setdefault('rec_date', '')\n    vars.setdefault('rec_ok', '')\n    vars.setdefault('note_pid', '')\n    vars.setdefault('note_reason', '')\n    vars.setdefault('note_ok', '')\n    vars.setdefault('recorded_pids', '')\n    vars.setdefault('pids_csv', '')\n    vars.setdefault('cur_pid', '')\n    vars.setdefault('stage', '')\n    vars.setdefault('mode', '')\n    vars.setdefault('human_count', '')\n    vars.setdefault('notalk_count', '')\n    vars.setdefault('wrap_count', '')\n    vars.setdefault('wrap_human', '')\n    vars.setdefault('vague_all', '')\n    vars.setdefault('hs_offer', '')\n    vars.setdefault('hs_date', '')\n    vars.setdefault('hs_amount', '')\n    vars.setdefault('policy_state', '')\n    vars.setdefault('policy_event', '')\n    vars['prepare_state'] = 'ok'\nexcept Exception as e:\n    vars['prepare_state'] = 'error ' + str(e)\n    vars.setdefault('say_next', 'Thank you. I am calling from the collections team about a late payment. Can you make this payment today?')\n    vars.setdefault('state_line', '')\n    vars.setdefault('offer_question', '')\n    vars.setdefault('route', 'negotiate')\n    vars.setdefault('product_words', 'account')\n    vars.setdefault('past_due_fmt', 'the past-due amount')\n    vars.setdefault('days_late_txt', '')\n    vars.setdefault('deadline_text', '')\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200,
+    "validation_errors": [
+     "variable 'stance' rejected by schema validation",
+     "variable 'confirm' rejected by schema validation",
+     "variable 'wrap' rejected by schema validation",
+     "variable 'offer_date' rejected by schema validation",
+     "variable 'offer_amount' rejected by schema validation"
+    ]
+   }
+  },
+  {
+   "tool": "api_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "queue": "restructuring",
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "try:\n    vars['outcome'] = 'transferred'\n    vars['reason'] = 'restructuring'\nexcept Exception:\n    pass\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "end_call",
+   "args": {
+    "message_mode": "custom",
+    "spoken_message": "Thank you, Mr Ionescu. A colleague will take over now. Goodbye."
+   },
+   "result": null
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "try:\n    vars['outcome'] = 'transferred'\n    vars['reason'] = 'restructuring'\nexcept Exception:\n    pass\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "end_call",
+   "args": {
+    "message_mode": "custom",
+    "spoken_message": "Thank you, Mr Ionescu. A colleague will take over now. Goodbye."
+   },
+   "result": {
+    "status": "success",
+    "message": "Call ended"
+   }
+  },
+  {
+   "tool": "close_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "reason": "restructuring",
+     "outcome": "transferred",
+     "customer_id": "c_493e0b99-4d6"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200,
+    "header": {
+     "Date": "Sat, 10 Oct 2026 20:45:54 GMT",
+     "Content-Type": "application/json",
+     "Content-Length": "11",
+     "Connection": "keep-alive",
+     "Report-To": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fdgNU1PCpD7AKEodXGUXl9Xwsu6bDcczYcqudOHutYQOkMLu4OWcT%2F3ZoicukNeh31DbrChSJQ0LvAjvZlV9E4JgXfpOuVh3f%2FjTYoeS%2BQyNUZH5xh5NW5lcd2SbYpdwmumnjxN%2Fc0JcA71HoAUQcGUOli%2FvoT7xLg%3D%3D\"}]}",
+     "Nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+     "Server": "cloudflare",
+     "CF-RAY": "a48878b01f01646b-FRA",
+     "alt-svc": "h3=\":443\"; ma=86400"
+    }
+   }
+  }
+ ],
+ "ledger": {
+  "ok": true,
+  "case": "PUB-09",
+  "team": "4d03f63f4e0d8cc0ec31bb9b",
+  "now": "2026-10-14T11:00",
+  "verified": {
+   "date_of_birth": true,
+   "phone_last4": true
+  },
+  "wrong": 1,
+  "hinted": false,
+  "promises": [],
+  "notes": [],
+  "callbacks": [],
+  "transfers": [
+   {
+    "queue": "restructuring"
+   }
+  ],
+  "outcome": "transferred",
+  "reason": "restructuring",
+  "failures": {
+   "verify_identity": 0,
+   "get_account": 0,
+   "transfer_to_agent": 0,
+   "close_call": 0
+  },
+  "calls": [
+   {
+    "n": 1,
+    "tool": "verify_identity",
+    "args": {
+     "field": "date_of_birth",
+     "answer": "1981-08-13"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "verified": false,
+     "wrong_answers_left": 2,
+     "all_verified": false
+    }
+   },
+   {
+    "n": 2,
+    "tool": "verify_identity",
+    "args": {
+     "field": "date_of_birth",
+     "answer": "1981-08-11"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 2,
+     "all_verified": false
+    }
+   },
+   {
+    "n": 3,
+    "tool": "verify_identity",
+    "args": {
+     "field": "phone_last4",
+     "answer": "5560"
+    },
+    "status": 200,
+    "result": {
+     "ok": true,
+     "verified": true,
+     "wrong_answers_left": 2,
+     "all_verified": true
+    }
+   },
+   {
+    "n": 4,
+    "tool": "get_account",
+    "args": {},
+    "status": 200,
+    "result": {
+     "ok": true,
+     "products": [
+      {
+       "product_id": "p1",
+       "type": "personal_loan",
+       "past_due": 2100,
+       "days_late": 28,
+       "instalment_amount": 700
+      }
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "tool": "transfer_to_agent",
+    "args": {
+     "queue": "restructuring"
+    },
+    "status": 200,
+    "result": {
+     "ok": true
+    }
+   },
+   {
+    "n": 6,
+    "tool": "close_call",
+    "args": {
+     "reason": "restructuring",
+     "outcome": "transferred"
+    },
+    "status": 200,
+    "result": {
+     "ok": true
+    }
+   }
+  ],
+  "last_at": 1791665154591
+ },
+ "judge": {
+  "outcome": "pass",
+  "reason": "The agent called transfer_to_agent with queue 'restructuring' once the customer asked for lower instalments. It said it could not set up a plan itself and described no plan of its own. No promise-recording tool was called; close_call recorded only the transfer.",
+  "model": "claude-sonnet-5-5"
+ },
+ "failed": [],
+ "pass": true,
+ "stop": "close_call in the ledger"
+}

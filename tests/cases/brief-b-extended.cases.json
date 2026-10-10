@@ -1,0 +1,847 @@
+[
+  {
+    "id": "EXT-B-01",
+    "mock_case": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Refuses all three",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "Verified. Cannot pay today. Refuses every offer on every product with 'No.' Gives no reason, date or amount. Do not say you do not want to talk.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "refused"
+        },
+        {
+          "product_id": "p2",
+          "reason": "refused"
+        },
+        {
+          "product_id": "p3",
+          "reason": "refused"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all late products stated before any ask",
+      "two attempts on each late product (credit card, personal loan), one on the car loan",
+      "one add_note 'refused' per product",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-02",
+    "mock_case": "PUB-12",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Disputes one, already paid one, promises one",
+    "variables": {
+      "first_name": "Marcus",
+      "last_name": "Bell",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1983-10-19",
+      "phone_last4": "4410"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "9015",
+        "past_due": 510.0,
+        "days_late": 16,
+        "minimum_payment": 153.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 1320.0,
+        "days_late": 16,
+        "instalment_amount": 440.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 140.0,
+        "days_late": 7,
+        "instalment_amount": 46.0
+      }
+    ],
+    "script": "Verified. Says the credit card is not his, he never had it. Says he paid the personal loan in the app yesterday. Will pay the car loan in full today. Confirms at the read-back.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p3",
+          "amount": 140.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "dispute"
+        },
+        {
+          "product_id": "p2",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all late products stated before any ask",
+      "the dispute and the payment claim do not end the call",
+      "promise for the car loan, 140.00 today",
+      "notes: credit card dispute, personal loan paid"
+    ]
+  },
+  {
+    "id": "EXT-B-03",
+    "mock_case": "PUB-13",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "medium",
+    "title": "Disputes both products",
+    "variables": {
+      "first_name": "Elena",
+      "last_name": "Rossi",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1991-01-08",
+      "phone_last4": "6604"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "6604",
+        "past_due": 300.0,
+        "days_late": 4,
+        "minimum_payment": 90.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 900.0,
+        "days_late": 20,
+        "instalment_amount": 300.0
+      }
+    ],
+    "script": "Verified. Says she never had either of these products and owes nothing.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "dispute",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "dispute"
+        },
+        {
+          "product_id": "p2",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all late products stated before any ask",
+      "agent does not argue",
+      "one add_note 'dispute' per product",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-04",
+    "mock_case": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "medium",
+    "title": "Already paid all three",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "Verified. Says she paid all three in the app this morning.",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p3",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "agent says payments can take one business day to appear",
+      "one add_note 'paid' per product",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-05",
+    "mock_case": "PUB-12",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Lost his job, declines support",
+    "variables": {
+      "first_name": "Marcus",
+      "last_name": "Bell",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1983-10-19",
+      "phone_last4": "4410"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "9015",
+        "past_due": 510.0,
+        "days_late": 16,
+        "minimum_payment": 153.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 1320.0,
+        "days_late": 16,
+        "instalment_amount": 440.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 140.0,
+        "days_late": 7,
+        "instalment_amount": 46.0
+      }
+    ],
+    "script": "Verified. After hearing the amounts, says he lost his job last month and cannot pay anything on any of them. Declines to be transferred.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "hardship",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "hardship"
+        },
+        {
+          "product_id": "p2",
+          "reason": "hardship"
+        },
+        {
+          "product_id": "p3",
+          "reason": "hardship"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "one short sentence of sympathy",
+      "no persuasion attempt on any product",
+      "support team offered once",
+      "one add_note 'hardship' per product"
+    ]
+  },
+  {
+    "id": "EXT-B-06",
+    "mock_case": "PUB-13",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Restructuring after one promise is recorded",
+    "variables": {
+      "first_name": "Elena",
+      "last_name": "Rossi",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1991-01-08",
+      "phone_last4": "6604"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "6604",
+        "past_due": 300.0,
+        "days_late": 4,
+        "minimum_payment": 90.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 900.0,
+        "days_late": 20,
+        "instalment_amount": 300.0
+      }
+    ],
+    "script": "Verified. Will pay the credit card in full today. Refuses every offer on the personal loan with 'No.' Confirms the read-back. After the agent says the promise is recorded, say 'For the loan I need lower instalments, a new plan.'",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "restructuring",
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 300.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "restructuring"
+        }
+      ]
+    },
+    "checks": [
+      "promise for the credit card, 300.00 today, recorded before the transfer",
+      "transfer_to_agent called with queue restructuring",
+      "no add_note at all",
+      "agent does not describe a plan of its own"
+    ]
+  },
+  {
+    "id": "EXT-B-07",
+    "mock_case": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "One date for all, after every deadline",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "Verified. Cannot pay today. Wants to pay all three in full on 6 November when her salary comes. Accepts when told the latest dates. Confirms once.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-23"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-23"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-11-02"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all late products stated before any ask",
+      "6 November is not recorded for any product",
+      "credit card and personal loan on 23 October, car loan on 2 November, named in the read-back",
+      "one create_promise per product"
+    ]
+  },
+  {
+    "id": "EXT-B-08",
+    "mock_case": "PUB-10",
+    "brief": "B",
+    "family": "Tool failure",
+    "level": "hard",
+    "title": "Brief B rules, one product, promise service fails once",
+    "variables": {
+      "first_name": "Grace",
+      "last_name": "Lin",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1989-02-23",
+      "phone_last4": "9904"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "7740",
+        "past_due": 365.0,
+        "days_late": 8,
+        "minimum_payment": 109.5
+      }
+    ],
+    "faults": [
+      {
+        "tool": "create_promise",
+        "fail_first_n": 1
+      }
+    ],
+    "script": "Verified. Cannot pay today. Agrees to pay the full amount this Friday and confirms.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 365.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "exactly one promise in the ledger after the retry",
+      "agent does not say 'recorded' before a successful call",
+      "no add_note"
+    ]
+  },
+  {
+    "id": "EXT-B-09",
+    "mock_case": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Two today, the car loan on a holiday",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "Verified. Says she can pay the credit card and the personal loan in full today, and the car loan in full on Monday the 26th of October. Accepts the next business day for the car loan. Confirms once.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-14"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-14"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-27"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "26 October is not accepted for the car loan; 27 October is offered",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product"
+    ]
+  },
+  {
+    "id": "EXT-B-10",
+    "mock_case": "PUB-08",
+    "brief": "B",
+    "family": "Notes",
+    "level": "medium",
+    "title": "Brief B rules, one product, refuses",
+    "variables": {
+      "first_name": "Hannah",
+      "last_name": "Schmidt",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1993-04-28",
+      "phone_last4": "3317"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "5512",
+        "past_due": 180.0,
+        "days_late": 5,
+        "minimum_payment": 54.0
+      }
+    ],
+    "script": "Verified. When asked whether you can pay today, say 'No, I'm not paying.' Refuse every offer with 'No.' Give no reason, date or amount. Do not say you do not want to talk.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "refused"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "exactly one persuasion attempt (early band)",
+      "add_note 'refused' for the product",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-11",
+    "mock_case": "PUB-01",
+    "brief": "B",
+    "family": "Notes",
+    "level": "medium",
+    "title": "Brief B rules, one product, already paid",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "Verified. Says he paid it in the app this morning.",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "agent says payments can take one business day to appear",
+      "add_note 'paid' for the product",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-12",
+    "mock_case": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Paid, refused, disputed: close on the first non-paid note",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "Verified. Says she paid the credit card yesterday. Refuses every offer on the personal loan with 'No.' Says she never had a car loan.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "refused"
+        },
+        {
+          "product_id": "p3",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all late products stated before any ask",
+      "two attempts on the personal loan",
+      "notes: credit card paid, personal loan refused, car loan dispute",
+      "no promise recorded"
+    ]
+  },
+  {
+    "id": "EXT-B-13",
+    "mock_case": "PUB-13",
+    "brief": "B",
+    "family": "Hardship",
+    "level": "medium",
+    "title": "Illness, accepts support, no notes",
+    "variables": {
+      "first_name": "Elena",
+      "last_name": "Rossi",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1991-01-08",
+      "phone_last4": "6604"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "6604",
+        "past_due": 300.0,
+        "days_late": 4,
+        "minimum_payment": 90.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 900.0,
+        "days_late": 20,
+        "instalment_amount": 300.0
+      }
+    ],
+    "script": "Verified. After hearing the amounts, says she has been ill for weeks and cannot deal with this. Accepts to be connected with the support team.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "support",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "support"
+        }
+      ]
+    },
+    "checks": [
+      "one short sentence of sympathy",
+      "no persuasion attempt",
+      "transfer_to_agent with queue support",
+      "no add_note at all"
+    ]
+  },
+  {
+    "id": "EXT-B-14",
+    "mock_case": "PUB-13",
+    "brief": "B",
+    "family": "Calendar",
+    "level": "hard",
+    "title": "Friday call: card today, loan on the holiday inside its deadline",
+    "variables": {
+      "first_name": "Elena",
+      "last_name": "Rossi",
+      "title": "Ms",
+      "now": "2026-10-16T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1991-01-08",
+      "phone_last4": "6604"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "6604",
+        "past_due": 300.0,
+        "days_late": 4,
+        "minimum_payment": 90.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 900.0,
+        "days_late": 20,
+        "instalment_amount": 300.0
+      }
+    ],
+    "script": "Verified. Says she can pay the credit card in full today and the personal loan in full on Monday the 26th of October. Accepts the next business day for the loan. Confirms once.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 300.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 900.0,
+          "date": "2026-10-27"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "26 October is not accepted for the loan; 27 October is offered",
+      "one read-back and one confirmation for both",
+      "one create_promise per product"
+    ]
+  }
+]

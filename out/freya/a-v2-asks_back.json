@@ -1,0 +1,461 @@
+{
+ "agent_id": "2f2a0c4e-7511-4c9b-a50a-9bcebed6849e",
+ "simulation_id": "2a7bbdb1-7285-4996-b5a1-4aa9aeea7ffe",
+ "iteration_id": "02984121-9ae1-4735-8c72-63a01f67f81e",
+ "seconds": 421,
+ "passed": 4,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Happy path",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-04",
+   "family": "Dates",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-09",
+   "family": "Restructuring",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "easy",
+   "family": "Happy path",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('promise', None)",
+    "promises [], expected [('p1', 420.0, '2026-10-14')]",
+    "conversation: Several success criteria were not met because the call ended prematurely. 1. Only one security question (date of birth) was verified; the second question was never answered by the user. 2. The function 'create_promise' was never called. 3. The required text-message sentence was not spoken as no promise was established. The agent ended the call correctly when the user failed to complete verificatio"
+   ],
+   "call_id": "4b1971ab-fc12-4d99-81c4-99f4627208e6",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_0a39eb42-205",
+   "slowest_turn_s": 1.1,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": true,
+   "failed": [],
+   "call_id": "39f22b9c-7955-4b85-90ce-9daa240b515e",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_3d6ae039-918",
+   "slowest_turn_s": 1.2,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": true,
+   "failed": [],
+   "call_id": "5f35f3dd-a84f-456f-af1e-d84f920fb980",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_7984b88f-875",
+   "slowest_turn_s": 1.4,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-04",
+   "level": "medium",
+   "family": "Dates",
+   "pass": true,
+   "failed": [],
+   "call_id": "235a6075-c70d-4516-84b3-96b790f09888",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_868a06b3-cf1",
+   "slowest_turn_s": 1.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('no_promise', 'hardship')",
+    "conversation: The conversation failed to meet several success criteria: - No sentence of sympathy was provided by the agent. - The support team was never offered. - The call ended abruptly because the user questioned the security procedure, and the agent terminated the call without attempting to address the user's concerns or fulfill the required actions (sympathy/support offer)."
+   ],
+   "call_id": "111f25cf-143b-45ef-a996-906999fcfc39",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_3b5d89e4-38d",
+   "slowest_turn_s": 0.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "outcome ('transferred', 'restructuring'), expected ('promise', None)",
+    "promises [], expected [('p1', 637.5, '2026-10-16')]",
+    "transfers [{'queue': 'restructuring'}], expected []",
+    "conversation: The agent failed to meet the third success criterion: obtaining a promise for 637.50 on Friday 16 October. While the agent did offer the minimum payment (637.50) once and noted that the rest would stay overdue (Message 10), and never asked the customer how much she could pay, the conversation was transferred and ended before any specific payment date or agreement was reached. The call ended proper"
+   ],
+   "call_id": "a10a136c-40fb-4fee-922a-8b5416884e3d",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "customer_id": "c_a99e8e5f-bfb",
+   "slowest_turn_s": 1.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-07",
+   "level": "hard",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "conversation: The conversation failed the first success criterion: 'agent asks once for the exact day'. The agent asked for the exact day in Message 10 and then asked again in Message 12 after the user questioned why it was needed. While the agent correctly explained the reason, the repetition of the request constitutes a second ask. The other criteria were met: the agent correctly identified that October 26th "
+   ],
+   "call_id": "14824de3-57ad-4bf7-9143-c11abdfd944b",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_25e630e7-c12",
+   "slowest_turn_s": 3.2,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-08",
+   "level": "medium",
+   "family": "Already paid",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('paid', None)",
+    "conversation: 1. The agent did not state that payments can take one business day to appear as required by the success criteria. The call ended during the verification process before this information could be shared."
+   ],
+   "call_id": "ce3d7c95-313c-4054-8957-7c988a1f9ce7",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_efe83774-d1f",
+   "slowest_turn_s": 2.0,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Restructuring",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('transferred', 'restructuring')",
+    "transfers [], expected [{'queue': 'restructuring'}]",
+    "conversation: - The criterion \"transfer_to_agent called with queue restructuring\" was not met; the system events show that the assistant ended the call via the `end_call` and `close_call` functions instead of transferring. - The agent did not describe a plan of its own, satisfying that criterion. - No promises were made or recorded, satisfying that criterion. - The call ended properly via the assistant ending t"
+   ],
+   "call_id": "0536779b-20fa-422d-95a3-113a61b65721",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_6ee320c0-4e5",
+   "slowest_turn_s": 1.0,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": true,
+   "failed": [],
+   "call_id": "f13834c4-af19-4bb6-a8a0-a1a93126b584",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_c7bbe714-0e0",
+   "slowest_turn_s": 2.6,
+   "ended": "assistant-ended-call"
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "easy",
+    "family": "Happy path",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('promise', None)",
+     "promises [], expected [('p1', 420.0, '2026-10-14')]",
+     "conversation: Several success criteria were not met because the call ended prematurely. 1. Only one security question (date of birth) was verified; the second question was never answered by the user. 2. The function 'create_promise' was never called. 3. The required text-message sentence was not spoken as no promise was established. The agent ended the call correctly when the user failed to complete verificatio"
+    ],
+    "call_id": "4b1971ab-fc12-4d99-81c4-99f4627208e6",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_0a39eb42-205",
+    "slowest_turn_s": 1.1,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": true,
+    "failed": [],
+    "call_id": "39f22b9c-7955-4b85-90ce-9daa240b515e",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_3d6ae039-918",
+    "slowest_turn_s": 1.2,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": true,
+    "failed": [],
+    "call_id": "5f35f3dd-a84f-456f-af1e-d84f920fb980",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_7984b88f-875",
+    "slowest_turn_s": 1.4,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-04",
+    "level": "medium",
+    "family": "Dates",
+    "pass": true,
+    "failed": [],
+    "call_id": "235a6075-c70d-4516-84b3-96b790f09888",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_868a06b3-cf1",
+    "slowest_turn_s": 1.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('no_promise', 'hardship')",
+     "conversation: The conversation failed to meet several success criteria: - No sentence of sympathy was provided by the agent. - The support team was never offered. - The call ended abruptly because the user questioned the security procedure, and the agent terminated the call without attempting to address the user's concerns or fulfill the required actions (sympathy/support offer)."
+    ],
+    "call_id": "111f25cf-143b-45ef-a996-906999fcfc39",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_3b5d89e4-38d",
+    "slowest_turn_s": 0.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "outcome ('transferred', 'restructuring'), expected ('promise', None)",
+     "promises [], expected [('p1', 637.5, '2026-10-16')]",
+     "transfers [{'queue': 'restructuring'}], expected []",
+     "conversation: The agent failed to meet the third success criterion: obtaining a promise for 637.50 on Friday 16 October. While the agent did offer the minimum payment (637.50) once and noted that the rest would stay overdue (Message 10), and never asked the customer how much she could pay, the conversation was transferred and ended before any specific payment date or agreement was reached. The call ended proper"
+    ],
+    "call_id": "a10a136c-40fb-4fee-922a-8b5416884e3d",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "transfer_to_agent",
+     "close_call"
+    ],
+    "customer_id": "c_a99e8e5f-bfb",
+    "slowest_turn_s": 1.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-07",
+    "level": "hard",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "conversation: The conversation failed the first success criterion: 'agent asks once for the exact day'. The agent asked for the exact day in Message 10 and then asked again in Message 12 after the user questioned why it was needed. While the agent correctly explained the reason, the repetition of the request constitutes a second ask. The other criteria were met: the agent correctly identified that October 26th "
+    ],
+    "call_id": "14824de3-57ad-4bf7-9143-c11abdfd944b",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_25e630e7-c12",
+    "slowest_turn_s": 3.2,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-08",
+    "level": "medium",
+    "family": "Already paid",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('paid', None)",
+     "conversation: 1. The agent did not state that payments can take one business day to appear as required by the success criteria. The call ended during the verification process before this information could be shared."
+    ],
+    "call_id": "ce3d7c95-313c-4054-8957-7c988a1f9ce7",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_efe83774-d1f",
+    "slowest_turn_s": 2.0,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Restructuring",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('transferred', 'restructuring')",
+     "transfers [], expected [{'queue': 'restructuring'}]",
+     "conversation: - The criterion \"transfer_to_agent called with queue restructuring\" was not met; the system events show that the assistant ended the call via the `end_call` and `close_call` functions instead of transferring. - The agent did not describe a plan of its own, satisfying that criterion. - No promises were made or recorded, satisfying that criterion. - The call ended properly via the assistant ending t"
+    ],
+    "call_id": "0536779b-20fa-422d-95a3-113a61b65721",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_6ee320c0-4e5",
+    "slowest_turn_s": 1.0,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": true,
+    "failed": [],
+    "call_id": "f13834c4-af19-4bb6-a8a0-a1a93126b584",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_c7bbe714-0e0",
+    "slowest_turn_s": 2.6,
+    "ended": "assistant-ended-call"
+   }
+  ]
+ ]
+}

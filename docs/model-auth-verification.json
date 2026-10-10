@@ -1,0 +1,9 @@
+{
+  "sdk_version": "0.2.165",
+  "empty_cli_config": true,
+  "configured_auth_method": "api_key",
+  "paid_model_request_made": false,
+  "key_validity_verified": false,
+  "sdk_inherits_process_environment": true,
+  "fresh_build_verified": false
+}

@@ -1,0 +1,52 @@
+# PUB-07 A vague period, then a holiday
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 1320f1c4-9c46-4153-b383-da25714a0a33 | customer c_f103b551-ccc | 2026-10-10 20:44:31
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/1320f1c4-9c46-4153-b383-da25714a0a33
+# RESULT: FAIL | outcome ('not_verified', 'declined'), expected ('promise', None) | promises [], expected [('p1', 540.0, '2026-10-27')] | conversation: The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Ortiz?
+customer: Yes, this is Samuel Ortiz.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_dob: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_dob
+agent: Thank you, Mr Ortiz. To start, could you please tell me your date of birth?
+customer: I'm sorry, I'm not able to help with that. Could you please repeat the question?
+   [route] ask_dob -> count_decline_dob: customer refused refusal_dob == 'refused'
+   [node] ask_dob -> count_decline_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_dob -> ask_dob: always always
+   [node] count_decline_dob -> ask_dob
+agent: These questions protect your account, Mr Ortiz. Could you please tell me your date of birth?
+customer: Sorry, I'm not comfortable giving my date of birth just yet. Could you tell me what this call is about?
+   [route] ask_dob -> count_decline_dob: customer refused refusal_dob == 'refused'
+   [node] ask_dob -> count_decline_dob
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] count_decline_dob -> fin_declined: second refusal decline_route == 'close'
+   [node] count_decline_dob -> fin_declined
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_declined -> end_declined: always always
+   [node] fin_declined -> end_declined
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I understand. Without the security questions I cannot continue. Thank you for your time, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_f103b551-ccc"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (6)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+3. code_exec args={"timeout_ms": 10000, "code": "try:\n n = int(float(vars.get('decline_count') or 0)) + 1\n vars['decline_count'] = n\n vars['refusal_dob'] = 'none'\n vars['refusal_phone'] = 'none'\n vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\... -> HTTP 200 data=null
+4. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_verified'\n vars['reason'] = 'declined'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+5. end_call args={"message_mode": "custom", "spoken_message": "I understand. Without the security questions I cannot continue. Thank you for your time, goodbye."} -> success Call ended
+6. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "declined", "outcome": "not_verified", "customer_id": "c_f103b551-ccc"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_verified reason=declined promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): fail - The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesday 27 October.

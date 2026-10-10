@@ -1,0 +1,5 @@
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-c.md
+inventory: 64 rules | self-check: missing numbered rules none, missing tokens ['. Dates as ', 'add_note {product_id, reason, text?}', 'get_account {}', 'schedule_callback {date, time: "HH:MM"}', '{ok: bool, error?: string, ...}']
+model call: claude-opus-5-5 | purpose: gap-fill the rule inventory (these values/tokens from the brief appear nowhere in the inventory: . Dates as , add_note {product_id, reason, text?}, get_account {}, schedule_callback {date, )
+gap-fill: 0 added, 5 replaced -> 64 rules | self-check: missing numbered rules none, missing tokens none
+rules: 64 (64 in force) -> out/brief-c.rules.json + brief-c.rules.md | 2 model call(s), 91 s, $0.40 | by category: amounts 4, closing 4, confirmation 2, dates 8, disclosure 2, hardship 1, identity 8, opening 3, other 6, persuasion 5, recording 5, special 8, third_party 7, wording 1 | self-check: ok

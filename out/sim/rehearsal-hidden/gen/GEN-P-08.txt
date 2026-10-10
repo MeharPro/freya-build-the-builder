@@ -1,0 +1,16 @@
+# GEN-P-08 create_promise fails once, retry succeeds
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 6829a691-58a4-4cfc-95f0-922b562aef30 | customer c_73c89d72-ea7 | 2026-10-10 20:25:26
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: customer model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude' | transcript from: GET /api/v2/call/6829a691-58a4-4cfc-95f0-922b562aef30
+# RESULT: FAIL | outcome ('not_reached', 'unclear'), expected ('promise', None) | promises [], expected [('p1', 365.0, '2026-10-14')] | conversation: judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Ms Lin?
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "unclear", "outcome": "not_reached", "customer_id": "c_73c89d72-ea7"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (1)
+1. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "unclear", "outcome": "not_reached", "customer_id": "c_73c89d72-ea7"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_reached reason=unclear promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): fail - judge model failed: [Errno 2] No such file or directory: '/root/.local/bin/claude'

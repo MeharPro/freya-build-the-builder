@@ -1,0 +1,67 @@
+{
+ "model": "claude-opus-5-5",
+ "sample_models": {
+  "A": "claude-opus-5-5",
+  "B": "claude-opus-5-5",
+  "C": "claude-opus-5-5"
+ },
+ "seconds": 86.80670642852783,
+ "cost_usd": 1.5758051,
+ "calls": 9,
+ "self_check": {
+  "missing_numbers": {},
+  "missing_tokens": []
+ },
+ "samples": {
+  "A": 57,
+  "B": 60,
+  "C": 58
+ },
+ "stages": {
+  "extract": {
+   "seconds": 44.27238845825195,
+   "cost_usd": 1.16269,
+   "calls": 6
+  },
+  "merge": {
+   "seconds": 18.603328704833984,
+   "cost_usd": 0.21720199999999998,
+   "calls": 1
+  },
+  "gap-fill": {
+   "seconds": 4.79855751991272,
+   "cost_usd": 0.0832472,
+   "calls": 1
+  },
+  "verify": {
+   "seconds": 0.0,
+   "cost_usd": 0.1126659,
+   "calls": 1
+  },
+  "verify+decide": {
+   "seconds": 19.12415862083435
+  }
+ },
+ "briefs": [
+  "briefs/rehearsal-a.md"
+ ],
+ "api": "tools/openapi.json",
+ "spec": "rehearsal-a.spec.json",
+ "conflicts": "rehearsal-a.rules.conflicts.md",
+ "n_conflicts": 1,
+ "call_date_range": {
+  "earliest": "",
+  "latest": "",
+  "basis": ""
+ },
+ "n_rules": 60,
+ "n_in_force": 60,
+ "n_low": 1,
+ "n_low_in_force": 1,
+ "verification": {
+  "ok": 20
+ },
+ "decision_blocks": 0,
+ "spec_errors": 0,
+ "spec_warnings": 0
+}

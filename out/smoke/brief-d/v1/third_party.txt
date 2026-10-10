@@ -1,0 +1,79 @@
+smoke scripted | workflow de5f944a-d43d-4a7e-80fc-405ee4c53649 | out/smoke/brief-d/third_party.script.json
+script: third party: a relative answers; nothing about the account, ask when the customer can be reached
+variables: {"customer_id": "c_smoke", "first_name": "Maria", "last_name": "Costa", "title": "Ms", "now": "2026-10-14T11:00"}
+--- turn 1
+customer: Hello?
+agent (3.6s): Hello. Am I speaking with Maria Costa?
+   [extract] who1 = 'unclear'
+   [route] stays in opening (no transition matched)
+--- turn 2
+customer: This is her husband, she is not here. What is this about?
+agent (4.2s): This is a personal banking matter that I can only discuss with Ms Costa. When would be a good time to reach her?
+   [extract] who1 = 'someone_else'
+   [route] opening -> setup: always always
+   [node] opening -> setup (always always)
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wedn...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> third_party: someone else answered who1 == 'someone_else'
+   [node] setup -> third_party (someone else answered who1 == 'someone_else')
+--- turn 3
+customer: She should be back tomorrow morning, around eleven.
+agent (3.9s): I am sorry, I was unable to book that time. When else might she be available?
+   [extract] tp_status = 'none'
+   [route] stays in third_party (no transition matched)
+   [tool] schedule_callback POST https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback body={"date": "2026-10-15", "time": "11:00", "customer_id": "c_smoke"}
+   [tool] schedule_callback -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+   [route] stays in third_party (no transition matched)
+--- POST /api/v2/chat/end -> {"callId": "241a971a-2a17-4d7d-a777-b1f62385ce36", "ended": true, "endedReason": "customer-ended-call"}
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "UNC", "outcome": "not_reached", "customer_id": "c_smoke"}
+   [tool] close_call -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+== tool calls (3) from GET /api/v2/call/241a971a-2a17-4d7d-a777-b1f62385ce36
+ 1. turn 2  code_exec          args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-30', '2026-11-20', '2026-12-24', '2026-12-25', '2026-12-28', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['...
+    -> HTTP 200 data=null
+ 2. turn 3  schedule_callback  POST https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback body={"date": "2026-10-15", "time": "11:00", "customer_id": "c_smoke"}
+    -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+ 3. end     close_call         POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "UNC", "outcome": "not_reached", "customer_id": "c_smoke"}
+    -> ERROR API request failed: {'ok': False, 'error': 'unknown customer_id'}
+== variables after the last routing (43): {"customer_id": "c_smoke", "first_name": "Maria", "last_name": "Costa", "title": "Ms", "now": "2026-10-14T11:00", "who1": "someone_else", "today_iso": "2026-10-14", "today_text": "Wednesday 14 October 2026", "now_time": "11:00", "weekday_table": "\"Monday\" or \"this Monday\" = Monday 19 October 2026 (2026-10-19); \"next Monday\" = Monday 19 October 2026 (2026-10-19)\n\"Tuesday\" or \"this Tuesday\" = Tuesday 20 October 2026 (2026-10-20); \"next Tuesday\" = Tuesday 20 October 2026 (2026-10-20)\n\"Wednesday\" or \"this Wednesday\" = Wednesday 14 October 2026 (2026-10-14); \"next Wednesday\" = Wednesday 21 October 2026 (2026-10-21)\n\"Thursday\" or \"this Thursday\" = Thursday 15 October 2026 (2026-10-15); \"next Thursday\" = Thursday 15 October 2026 (2026-10-15)\n\"Friday\" or \"this Friday\" = Friday 16 October 2026 (2026-10-16); \"next Friday\" = Friday 16 October 2026 (2026-10-16)\n...
+== expectations (40)
+ FAIL turn 1 contains_any ["Kestrel Bank"] -> none found in: 'Hello. Am I speaking with Maria Costa?'
+ PASS turn 1 not_contains 'debt'
+ PASS turn 1 not_contains 'collection'
+ PASS turn 1 not_contains 'payment'
+ PASS turn 1 not_contains 'amount'
+ PASS turn 1 not_contains 'overdue'
+ PASS turn 1 not_contains 'past due'
+ PASS turn 1 not_contains 're:\\bowes?\\b'
+ PASS turn 1 not_contains 're:\\blate\\b'
+ PASS turn 1 not_contains 'loan'
+ PASS turn 1 not_contains 'credit card'
+ PASS turn 1 not_contains 'balance'
+ PASS turn 2 contains_any ["reach", "re:\\bwhen\\b", "call back", "callback", "call her", "good time", "best time", "available"] -> 'reach'
+ PASS turn 2 not_contains 'debt'
+ PASS turn 2 not_contains 'collection'
+ PASS turn 2 not_contains 'payment'
+ PASS turn 2 not_contains 'amount'
+ PASS turn 2 not_contains 'overdue'
+ PASS turn 2 not_contains 'past due'
+ PASS turn 2 not_contains 're:\\bowes?\\b'
+ PASS turn 2 not_contains 're:\\blate\\b'
+ PASS turn 2 not_contains 'loan'
+ PASS turn 2 not_contains 'credit card'
+ PASS turn 2 not_contains 'balance'
+ PASS turn 2 not_contains 'arrears'
+ PASS turns 1-3 not_contains 'debt'
+ PASS turns 1-3 not_contains 'collection'
+ PASS turns 1-3 not_contains 'payment'
+ PASS turns 1-3 not_contains 'amount'
+ PASS turns 1-3 not_contains 'overdue'
+ PASS turns 1-3 not_contains 'past due'
+ PASS turns 1-3 not_contains 're:\\bowes?\\b'
+ PASS turns 1-3 not_contains 're:\\blate\\b'
+ PASS turns 1-3 not_contains 'loan'
+ PASS turns 1-3 not_contains 'credit card'
+ PASS turns 1-3 not_contains 'balance'
+ PASS turns 1-3 not_contains 'arrears'
+ PASS all turns tool verify_identity not called
+ PASS all turns tool get_account not called
+ PASS all turns tool create_promise not called
+RESULT: FAIL | 39/40 checks passed | call 241a971a-2a17-4d7d-a777-b1f62385ce36

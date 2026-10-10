@@ -1,0 +1,567 @@
+{
+ "reference": [
+  {
+   "ref": "1",
+   "status": "covered",
+   "inventory_ids": [
+    "R04",
+    "R05"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "2",
+   "status": "covered",
+   "inventory_ids": [
+    "R07"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "3",
+   "status": "covered",
+   "inventory_ids": [
+    "R07",
+    "R08",
+    "R09"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "4",
+   "status": "covered",
+   "inventory_ids": [
+    "R10",
+    "R11",
+    "R12"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "5",
+   "status": "covered",
+   "inventory_ids": [
+    "R13"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "6",
+   "status": "covered",
+   "inventory_ids": [
+    "R14"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "7",
+   "status": "covered",
+   "inventory_ids": [
+    "R15"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "8",
+   "status": "covered",
+   "inventory_ids": [
+    "R16"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "9",
+   "status": "covered",
+   "inventory_ids": [
+    "R111"
+   ],
+   "note": "18:00 per memo"
+  },
+  {
+   "ref": "10",
+   "status": "covered",
+   "inventory_ids": [
+    "R19",
+    "R20"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "11",
+   "status": "covered",
+   "inventory_ids": [
+    "R21"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "12",
+   "status": "covered",
+   "inventory_ids": [
+    "R22"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "13",
+   "status": "covered",
+   "inventory_ids": [
+    "R23"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "14",
+   "status": "covered",
+   "inventory_ids": [
+    "R24"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "15",
+   "status": "covered",
+   "inventory_ids": [
+    "R26"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "16",
+   "status": "covered",
+   "inventory_ids": [
+    "R27"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "17",
+   "status": "covered",
+   "inventory_ids": [
+    "R28"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "18",
+   "status": "covered",
+   "inventory_ids": [
+    "R29"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "19",
+   "status": "covered",
+   "inventory_ids": [
+    "R30"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "20",
+   "status": "covered",
+   "inventory_ids": [
+    "R31"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "21",
+   "status": "covered",
+   "inventory_ids": [
+    "R32",
+    "R33"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "22",
+   "status": "partial",
+   "inventory_ids": [
+    "R107",
+    "R108"
+   ],
+   "note": "Closure list correct; the explicit statement that 2026-10-26 is a normal business day is only in R108, which is marked NOT POLICY"
+  },
+  {
+   "ref": "23",
+   "status": "covered",
+   "inventory_ids": [
+    "R103"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "24",
+   "status": "covered",
+   "inventory_ids": [
+    "R103"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "25",
+   "status": "covered",
+   "inventory_ids": [
+    "R57",
+    "R76"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "26",
+   "status": "covered",
+   "inventory_ids": [
+    "R106"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "27",
+   "status": "covered",
+   "inventory_ids": [
+    "R91",
+    "R82"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "28",
+   "status": "covered",
+   "inventory_ids": [
+    "R93"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "29",
+   "status": "covered",
+   "inventory_ids": [
+    "R94"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "30",
+   "status": "covered",
+   "inventory_ids": [
+    "R95"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "31",
+   "status": "covered",
+   "inventory_ids": [
+    "R96"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "32",
+   "status": "covered",
+   "inventory_ids": [
+    "R97"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "33",
+   "status": "covered",
+   "inventory_ids": [
+    "R34",
+    "R35",
+    "R90"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "34",
+   "status": "covered",
+   "inventory_ids": [
+    "R85",
+    "R86",
+    "R87",
+    "R79"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "35",
+   "status": "covered",
+   "inventory_ids": [
+    "R88"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "36",
+   "status": "covered",
+   "inventory_ids": [
+    "R89",
+    "R36"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "37",
+   "status": "covered",
+   "inventory_ids": [
+    "R34"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "38",
+   "status": "covered",
+   "inventory_ids": [
+    "R38"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "39",
+   "status": "covered",
+   "inventory_ids": [
+    "R98",
+    "R104",
+    "R39"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "40",
+   "status": "covered",
+   "inventory_ids": [
+    "R40",
+    "R101",
+    "R105"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "41",
+   "status": "covered",
+   "inventory_ids": [
+    "R41",
+    "R44",
+    "R109",
+    "R110"
+   ],
+   "note": "R43 still in force with the old code HARD"
+  },
+  {
+   "ref": "42",
+   "status": "covered",
+   "inventory_ids": [
+    "R45"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "43",
+   "status": "covered",
+   "inventory_ids": [
+    "R46"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "44",
+   "status": "covered",
+   "inventory_ids": [
+    "R46"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "45",
+   "status": "covered",
+   "inventory_ids": [
+    "R47"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "46",
+   "status": "covered",
+   "inventory_ids": [
+    "R48",
+    "R49"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "47",
+   "status": "covered",
+   "inventory_ids": [
+    "R50"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "48",
+   "status": "covered",
+   "inventory_ids": [
+    "R51",
+    "R110"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "49",
+   "status": "covered",
+   "inventory_ids": [
+    "R52",
+    "R63"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "50",
+   "status": "covered",
+   "inventory_ids": [
+    "R53"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "51",
+   "status": "covered",
+   "inventory_ids": [
+    "R54"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "52",
+   "status": "covered",
+   "inventory_ids": [
+    "R55"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "53",
+   "status": "covered",
+   "inventory_ids": [
+    "R56"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "54",
+   "status": "covered",
+   "inventory_ids": [
+    "R57",
+    "R58",
+    "R59"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "55",
+   "status": "covered",
+   "inventory_ids": [
+    "R60"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "56",
+   "status": "covered",
+   "inventory_ids": [
+    "R61"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "57",
+   "status": "covered",
+   "inventory_ids": [
+    "R62",
+    "R72"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "58",
+   "status": "covered",
+   "inventory_ids": [
+    "R73"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "59",
+   "status": "covered",
+   "inventory_ids": [
+    "R64",
+    "R70"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "60",
+   "status": "covered",
+   "inventory_ids": [
+    "R63",
+    "R65"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "61",
+   "status": "covered",
+   "inventory_ids": [
+    "R75",
+    "R110"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "62",
+   "status": "partial",
+   "inventory_ids": [
+    "R109",
+    "R49"
+   ],
+   "note": "Has the SVC codes for both phases, but nothing says other tools may be repeated"
+  },
+  {
+   "ref": "63",
+   "status": "covered",
+   "inventory_ids": [
+    "R66",
+    "R67"
+   ],
+   "note": ""
+  },
+  {
+   "ref": "64",
+   "status": "partial",
+   "inventory_ids": [
+    "R01",
+    "R112"
+   ],
+   "note": "Says a later memo can override CP-7, but does not say the memo also overrides code list v3"
+  }
+ ],
+ "wrongly_in_force": [
+  {
+   "id": "R43",
+   "why": "Hardship-declined close uses code HARD from code list v3; the memo replaced it with HSHP"
+  }
+ ],
+ "extra_in_force": 8,
+ "summary": {
+  "reference_rules": 64,
+  "covered": 61,
+  "partial": 3,
+  "wrongly_in_force": 1,
+  "extra_in_force": 8,
+  "cost_usd": 0.22231849999999997,
+  "seconds": 31.867038249969482
+ }
+}

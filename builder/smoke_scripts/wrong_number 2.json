@@ -1,0 +1,13 @@
+{
+ "name": "wrong number: nobody by that name; no debt talk, close politely",
+ "variables": {"customer_id": "c_smoke", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00"},
+ "turns": ["Hello?", "I think you have the wrong number, nobody by that name here."],
+ "expect": [
+  {"after_turn": 1, "contains_any": ["Freya Bank"],
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance"]},
+  {"after_turn": 2, "cumulative": true,
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance", "account"]},
+  {"after_turn": 2, "contains_any": ["sorry", "apolog", "goodbye", "re:\\bbye\\b", "thank"]},
+  {"tools_not_called": ["verify_identity", "get_account", "create_promise", "schedule_callback"]}
+ ]
+}

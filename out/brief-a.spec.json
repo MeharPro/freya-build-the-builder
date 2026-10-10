@@ -1,0 +1,292 @@
+{
+ "schema": "rules-v2/spec-1",
+ "call_date_range": {
+  "earliest": "2026-10-14",
+  "latest": "2027-01-01",
+  "basis": "example `now` 2026-10-14T11:00; bank holiday list runs to 2027-01-01"
+ },
+ "spec": {
+  "callback": {
+   "open": "10:00",
+   "close": "19:00",
+   "same_day": true,
+   "later_than_now": true,
+   "days_ahead_business": 1
+  },
+  "max_wrong_answers": 3,
+  "calendar": {
+   "business_weekdays": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri"
+   ],
+   "holidays": [
+    {
+     "date": "2026-10-26",
+     "name": ""
+    },
+    {
+     "date": "2026-11-11",
+     "name": ""
+    },
+    {
+     "date": "2026-11-26",
+     "name": ""
+    },
+    {
+     "date": "2026-12-25",
+     "name": ""
+    },
+    {
+     "date": "2027-01-01",
+     "name": ""
+    }
+   ]
+  },
+  "bands": [
+   {
+    "name": "early",
+    "min_days": 1,
+    "max_days": 7,
+    "deadline_rule": {
+     "type": "business_days_after",
+     "n": 12,
+     "adjust": "none"
+    },
+    "attempts": 1
+   },
+   {
+    "name": "late",
+    "min_days": 8,
+    "max_days": 45,
+    "deadline_rule": {
+     "type": "business_days_after",
+     "n": 7,
+     "adjust": "none"
+    },
+    "attempts": 2
+   }
+  ],
+  "floors": [
+   {
+    "product_types": [
+     "credit_card"
+    ],
+    "rule": {
+     "type": "field",
+     "field": "minimum_payment"
+    }
+   },
+   {
+    "product_types": [
+     "personal_loan",
+     "car_loan"
+    ],
+    "rule": {
+     "type": "field",
+     "field": "instalment_amount"
+    }
+   }
+  ],
+  "attempt_ladder": [
+   {
+    "attempt": 1,
+    "bands": [],
+    "amount": "in_play",
+    "date_rule": "the last business day of this week; if today is that day, the last business day of next week"
+   },
+   {
+    "attempt": 2,
+    "bands": [
+     "late"
+    ],
+    "amount": "floor",
+    "date_rule": "the deadline"
+   }
+  ],
+  "identity": [
+   {
+    "order": 1,
+    "field": "date_of_birth",
+    "hint_values": [
+     "day_month_swapped"
+    ],
+    "retry_rule": "ask month as a word; not a wrong answer"
+   },
+   {
+    "order": 2,
+    "field": "phone_last4"
+   }
+  ],
+  "outcomes": [
+   {
+    "outcome": "not_reached",
+    "reason": "unclear",
+    "when": "still unclear after second ask; rule 3"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "callback",
+    "when": "callback scheduled; rule 6"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "no_callback",
+    "when": "second proposal outside window; rule 7"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "wrong_number",
+    "when": "number not the customer's; rule 8"
+   },
+   {
+    "outcome": "not_reached",
+    "reason": "deceased",
+    "when": "customer has died; rule 9"
+   },
+   {
+    "outcome": "not_verified",
+    "reason": "failed",
+    "when": "three wrong answers; rule 14"
+   },
+   {
+    "outcome": "not_verified",
+    "reason": "declined",
+    "when": "second refusal; twice no talk, before verification; rule 15"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "refused",
+    "when": "attempts used up; twice no talk, verified; rules 31 and 45"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "support",
+    "when": "hardship, accepts transfer; rule 32"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "hardship",
+    "when": "hardship, declines transfer; rule 32"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "service_error",
+    "when": "create_promise fails twice; rule 37"
+   },
+   {
+    "outcome": "paid",
+    "reason": "",
+    "when": "customer already paid; rule 39"
+   },
+   {
+    "outcome": "no_promise",
+    "reason": "dispute",
+    "when": "debt disputed; rule 40"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "restructuring",
+    "when": "plan request; rule 41"
+   },
+   {
+    "outcome": "transferred",
+    "reason": "human",
+    "when": "insists on human; rule 42"
+   },
+   {
+    "outcome": "promise",
+    "reason": "",
+    "when": "at least one promise was recorded"
+   }
+  ],
+  "verbatim": [
+   {
+    "text": "Am I speaking with {title} {last_name}?",
+    "when": "R08: Ask \"Am I speaking with {title} {last_name}?\"."
+   },
+   {
+    "text": "I am sorry for your loss.",
+    "when": "R15: If told the customer has died, say \"I am sorry for your loss.\", ask nothing else, close `not_reached` / `deceased`."
+   },
+   {
+    "text": "Can you make this payment today?",
+    "when": "R36: First ask: \"Can you make this payment today?\"."
+   },
+   {
+    "text": "Do you confirm?",
+    "when": "R42: Read product, amount and date back and ask \"Do you confirm?\". Call `create_promise` only after a clear yes."
+   },
+   {
+    "text": "You will receive a text message confirming this promise.",
+    "when": "R46: After a recorded promise, say the confirmation text sentence."
+   }
+  ],
+  "forbidden_words_before_verification": [
+   "collections",
+   "debt",
+   "payment",
+   "the product"
+  ]
+ },
+ "sources": {
+  "forbidden_words_before_verification": [
+   "R07"
+  ],
+  "verbatim": [
+   "R08",
+   "R15",
+   "R36",
+   "R42",
+   "R46"
+  ],
+  "outcomes": [
+   "R09",
+   "R12",
+   "R13",
+   "R14",
+   "R15",
+   "R20",
+   "R21",
+   "R39",
+   "R40",
+   "R45",
+   "R47",
+   "R48",
+   "R49",
+   "R50",
+   "R53",
+   "R54",
+   "R55"
+  ],
+  "callback": [
+   "R12"
+  ],
+  "identity": [
+   "R17",
+   "R19"
+  ],
+  "max_wrong_answers": [
+   "R18"
+  ],
+  "calendar": [
+   "R25"
+  ],
+  "bands": [
+   "R26"
+  ],
+  "floors": [
+   "R33"
+  ],
+  "attempt_ladder": [
+   "R38"
+  ]
+ },
+ "notes": [
+  "R02: customer_id: pass to every tool; first_name,last_name: person to ask for; title: Mr or Ms; now: current date/time",
+  "R03: customer_id: pass to every tool call; first_name,last_name: person to ask for; title: Mr or Ms; now: e.g. 2026-10-14T11:00"
+ ],
+ "merge_conflicts": []
+}

@@ -1,0 +1,28 @@
+sim | workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 (slot rehearsal-a) | 10 case(s) x 1 rep(s) | concurrency 2 | customer claude-haiku-5-5, judge claude-sonnet-5-5 (claude)
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - conversation: The callback was scheduled for 2026-10-15 (Thursday) at 11:00, not the next business day. The customer said 'tomorrow' (Sunday the 11th), so the next business day is Monday 12 October. The agent also did not correct the date after the customer ob
+PASS PUB-01 easy   Happy path     | verify > verify > get_account > promise > close_call
+FAIL PUB-03 medium Identity       | verify > verify > get_account > close_call
+       - outcome ('no_promise', 'dispute'), expected ('not_verified', 'failed')
+       - conversation: The customer never gave three wrong answers; both security answers were correct and the check ended with verification succeeding. The agent also disclosed the past-due amount (95) and the card ending 0377 after verification, and it never told the
+FAIL PUB-04 medium Dates          | verify > close_call
+       - outcome ('not_verified', 'declined'), expected ('promise', None)
+       - promises [], expected [('p1', 1250.0, '2026-10-23')]
+       - conversation: The call ended at the security check with no promise date set, so 'promise date is the late-band deadline, 23 October' was never satisfied. The customer also never asked whether it was a digital assistant, and the agent's counting of her phone-di
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > close_call
+       - conversation: The support team was offered twice ("Would you like me to connect you with our customer support team?" in the first reply and again after the customer's second message), which breaks the 'offered once' criterion.
+FAIL PUB-07 hard   Dates          | close_call
+       - outcome ('not_verified', 'declined'), expected ('promise', None)
+       - promises [], expected [('p1', 540.0, '2026-10-27')]
+       - conversation: The call ended after the customer declined the date of birth check twice, before any promise-to-pay discussion. The agent never asked for the exact day, never handled 26 October or offered the next business day, and recorded no promise for Tuesda
+FAIL PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+       - promises [('p1', 2125.1, '2026-10-16')], expected [('p1', 637.5, '2026-10-16')]
+       - conversation: The promise was recorded and confirmed for 2125.10 on Friday 16 October, not the required 637.50. The agent never offered the minimum payment or said the rest stays overdue; the customer raised the minimum, and the agent ignored it. It did not as
+PASS PUB-08 medium Already paid   | verify > verify > get_account > close_call
+PASS PUB-09 medium Restructuring  | verify > verify > verify > get_account > transfer_to_agent > close_call
+PASS PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+
+slowest agent turn per call: median 3 s, worst 10 s (chat-route timing, not a simulation's).
+
+4 / 10 passed (bank records and conversation checks). Local chat-route simulation, 401 s.
+cost: 58 chat turns, 58 model calls (48 customer on claude-haiku-5-5, 10 judge on claude-sonnet-5-5), 58 ledger polls, 20 call fetches.

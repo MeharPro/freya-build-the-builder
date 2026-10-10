@@ -1,0 +1,2 @@
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md
+inventory: 97 rules | self-check: missing numbered rules none, missing tokens none

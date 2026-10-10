@@ -1,0 +1,28 @@
+# PUB-02 A relative answers
+# workflow 9cf0839d-66c4-4f9f-91df-8f9f2698b2d1 | call f116a51d-6045-40a3-9bdd-64612e759743 | customer c_ad5330f3-2c9 | 2026-10-10 18:15:08
+# customer model gpt-5-mini | judge model gpt-5 (openai) | stop: two empty replies in a row | transcript from: GET /api/v2/call/f116a51d-6045-40a3-9bdd-64612e759743
+# RESULT: FAIL | conversation: Callback was not scheduled for the next business day at 11:00; the transcript shows only a suggested time and there is no scheduling confirmation or tool call indicating a callback was set.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Ms Costa?
+customer: No, this is her husband.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO ...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> third_party: someone else answered who1 == 'someone_else'
+   [node] setup -> third_party
+agent: Hello. When would be a good time to reach Ms Costa?
+customer: She can be reached tomorrow morning around eleven.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO ...
+   [tool] code_exec -> HTTP 200 data=null
+
+## tool calls (2)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO ... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO ... -> HTTP 200 data=null
+
+## ledger: outcome=not_reached reason=callback promises=[] notes=[] callbacks=[{"date": "2026-10-15", "time": "11:00"}] transfers=[] calls=['schedule_callback', 'close_call']
+
+## judge (gpt-5): fail - Callback was not scheduled for the next business day at 11:00; the transcript shows only a suggested time and there is no scheduling confirmation or tool call indicating a callback was set.

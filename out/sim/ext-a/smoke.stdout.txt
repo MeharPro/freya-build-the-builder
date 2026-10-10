@@ -1,0 +1,8 @@
+sim | workflow 4045179c-42e8-436d-9fe2-c21c616c71fc | 2 case(s) x 1 rep(s) | concurrency 1 | customer gpt-5-mini, judge gpt-5 (openai)
+FAIL EXT-A-01 medium Opening        | (no tool calls)
+       - harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>
+FAIL EXT-A-02 easy   Opening        | (no tool calls)
+       - harness: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>
+
+0 / 2 passed (bank records and conversation checks). Local chat-route simulation, 1 s.
+cost: 0 chat turns, 0 model calls (0 customer on gpt-5-mini, 0 judge on gpt-5), 0 ledger polls, 0 call fetches.

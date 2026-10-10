@@ -1,0 +1,14 @@
+WARN nodes.setup.pre_actions[code_exec].code: code has statements outside try/except (Assign); wrap the whole body
+WARN nodes.prepare.pre_actions[code_exec].code: code has statements outside try/except (Assign); wrap the whole body
+INFO nodes.third_party.tools[schedule_callback].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_dob.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_dob.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_phone.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_phone.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.tools[create_promise].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.tools[create_promise].parameters.body.product_id: field product_id is baked by code in node 'prepare' ({{product_id}}): the model never fills it
+INFO nodes.negotiate.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship.tools[create_promise].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship.tools[create_promise].parameters.body.product_id: field product_id is baked by code in node 'prepare' ({{product_id}}): the model never fills it
+INFO nodes.hardship.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+-- 0 error(s), 2 warning(s), 18 info

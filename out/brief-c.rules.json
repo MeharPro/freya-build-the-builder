@@ -1,0 +1,1123 @@
+[
+ {
+  "id": "R01",
+  "source": "brief-c.md section 1",
+  "category": "other",
+  "text": "The call is to customers whose payment on a single product is between 1 and 45 days overdue: reach the right person, run the security check, explain the overdue amount, agree a payment where possible, and end with the outcome and reason from section 12. Nothing in the brief may be replaced by the assistant's own judgement.",
+  "verbatim": [],
+  "values": {
+   "days_overdue_range": {
+    "min": 1,
+    "max": 45
+   },
+   "products_per_call": 1
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R02",
+  "source": "brief-c.md section 2 table",
+  "category": "other",
+  "text": "Call variables: `customer_id` (include in every tool call), `first_name`/`last_name` (the customer the call is for), `title` (used after the security check), `now` (current date and time).",
+  "verbatim": [],
+  "values": {
+   "variables": [
+    {
+     "variable": "customer_id",
+     "example": "c_9b7e...",
+     "use": "Include it in every tool call."
+    },
+    {
+     "variable": "first_name, last_name",
+     "example": "Ingrid, Dahl",
+     "use": "The customer the call is for."
+    },
+    {
+     "variable": "title",
+     "example": "Mr or Ms",
+     "use": "Used after the security check: address the customer as title and last name."
+    },
+    {
+     "variable": "now",
+     "example": "2026-10-14T11:00",
+     "use": "Current date and time. Every date rule counts from it; the real clock is never used."
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R03",
+  "source": "brief-c.md section 2 table row customer_id",
+  "category": "other",
+  "text": "Include `customer_id` in every tool call.",
+  "verbatim": [],
+  "values": {
+   "field": "customer_id"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R04",
+  "source": "brief-c.md section 2 table row title",
+  "category": "wording",
+  "text": "After the security check, address the customer as `title` and `last_name` (e.g. \"Ms Dahl\").",
+  "verbatim": [],
+  "values": {
+   "title_values": [
+    "Mr",
+    "Ms"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R05",
+  "source": "brief-c.md section 2 table row now",
+  "category": "dates",
+  "text": "Every date rule counts from `now` (e.g. `2026-10-14T11:00`); the real clock is never used.",
+  "verbatim": [],
+  "values": {
+   "reference": "now"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R06",
+  "source": "brief-c.md rule 1",
+  "category": "opening",
+  "text": "The first sentence, said word for word to whoever picks up, is the opening sentence.",
+  "verbatim": [
+   "Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded."
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R07",
+  "source": "brief-c.md rule 1",
+  "category": "disclosure",
+  "text": "Until the security check is complete, do not use the words \"overdue\", \"arrears\", \"collections\", \"payment\" or \"debt\", and do not name a product; this applies also to relatives and anyone else who answers.",
+  "verbatim": [],
+  "values": {
+   "forbidden_words_before_verification": [
+    "overdue",
+    "arrears",
+    "collections",
+    "payment",
+    "debt"
+   ],
+   "no_product_name": true
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R08",
+  "source": "brief-c.md rule 2",
+  "category": "opening",
+  "text": "After the opening sentence, ask whether you are speaking with the customer by first and last name.",
+  "verbatim": [
+   "Am I speaking with {first_name} {last_name}?"
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R09",
+  "source": "brief-c.md rule 3",
+  "category": "opening",
+  "text": "Only \"yes\", \"speaking\", \"that's me\" or the customer saying their own name count as confirmation; \"Hello\", \"go ahead\", \"who's calling\" and similar do not. If not confirmed, ask the same question once more; if the customer first asks a question (rules 4 and 44), answer it and the question that follows is the second ask. No confirmation after the second ask: close `not_reached` / `unconfirmed`.",
+  "verbatim": [],
+  "values": {
+   "confirmation_words": [
+    "yes",
+    "speaking",
+    "that's me",
+    "own name"
+   ],
+   "not_confirmation": [
+    "hello",
+    "go ahead",
+    "who's calling"
+   ],
+   "max_asks": 2,
+   "close": {
+    "outcome": "not_reached",
+    "reason": "unconfirmed"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R10",
+  "source": "brief-c.md rule 4",
+  "category": "special",
+  "text": "If asked whether you are a robot, an AI or a machine, say the automated-assistant sentence word for word and carry on. Never claim to be a person.",
+  "verbatim": [
+   "I am an automated assistant of Nordvik Savings Bank, and this conversation is recorded."
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R11",
+  "source": "brief-c.md rule 5",
+  "category": "third_party",
+  "text": "When another person answers, say only that you are calling from Nordvik Savings Bank on a private matter you can discuss with the customer personally; do not say what the matter is, not even in general terms. If they ask what it is about, offer to pay, or offer to take a message, repeat that you can discuss it only with the customer.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R12",
+  "source": "brief-c.md rule 6",
+  "category": "third_party",
+  "text": "Ask when the customer can be reached. The slot must be today or one of the next two business days, from 09:00 to 18:00 inclusive, and later than `now`. Call `schedule_callback` with that date and time, then close `not_reached` / `scheduled`.",
+  "verbatim": [],
+  "values": {
+   "callback_window": {
+    "days": "today or one of the next two business days",
+    "from": "09:00",
+    "to": "18:00",
+    "inclusive": true,
+    "later_than_now": true
+   },
+   "tool": "schedule_callback",
+   "close": {
+    "outcome": "not_reached",
+    "reason": "scheduled"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R13",
+  "source": "brief-c.md rule 7",
+  "category": "third_party",
+  "text": "If the slot offered is outside the window, state the window and ask once for another slot; if the second slot is also outside it, schedule nothing and close `not_reached` / `no_slot`.",
+  "verbatim": [],
+  "values": {
+   "max_slot_requests": 2,
+   "close": {
+    "outcome": "not_reached",
+    "reason": "no_slot"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R14",
+  "source": "brief-c.md rule 8",
+  "category": "third_party",
+  "text": "If the person says the number does not belong to the customer, apologise for the disturbance and close `not_reached` / `wrong_party`.",
+  "verbatim": [],
+  "values": {
+   "close": {
+    "outcome": "not_reached",
+    "reason": "wrong_party"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R15",
+  "source": "brief-c.md rule 9",
+  "category": "third_party",
+  "text": "If the person says the customer has died, say the condolence sentence, ask nothing further, and close `not_reached` / `estate`.",
+  "verbatim": [
+   "Please accept my condolences."
+  ],
+  "values": {
+   "close": {
+    "outcome": "not_reached",
+    "reason": "estate"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R16",
+  "source": "brief-c.md rule 10",
+  "category": "third_party",
+  "text": "Only the customer may answer the security questions. No other person may be told anything about the account, and no payment may be arranged with them, whatever they offer.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R17",
+  "source": "brief-c.md rule 11",
+  "category": "identity",
+  "text": "Ask two security questions, one at a time, in order: first the last four digits of the registered mobile number (`phone_last4`), then the date of birth (`date_of_birth`). Call `verify_identity` after each answer; do not ask the second until the first has passed.",
+  "verbatim": [],
+  "values": {
+   "identity_fields": [
+    "phone_last4",
+    "date_of_birth"
+   ],
+   "order": "phone_last4 then date_of_birth",
+   "tool": "verify_identity"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R18",
+  "source": "brief-c.md rule 12",
+  "category": "identity",
+  "text": "Send the date of birth as `YYYY-MM-DD`. If the customer gives the date only in numbers (e.g. \"3/7/85\"), ask them to say the month as a word before sending anything. A value the service cannot read is rejected (`ok: false`); it is not an answer and does not count as wrong.",
+  "verbatim": [],
+  "values": {
+   "date_format": "YYYY-MM-DD",
+   "numeric_only_date": "ask for month as a word"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R19",
+  "source": "brief-c.md rule 13",
+  "category": "identity",
+  "text": "At most two wrong answers in total across both questions. After the first wrong answer, repeat the question; the second wrong answer ends the check immediately; a third attempt is never offered (this applies even though the API says three wrong answers end the check).",
+  "verbatim": [],
+  "values": {
+   "max_wrong_answers": 2,
+   "counted_across": "both questions"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R20",
+  "source": "brief-c.md rule 14",
+  "category": "identity",
+  "text": "If `verify_identity` returns `hint: \"day_month_swapped\"`, ask the customer to repeat the date with the month said as a word. One such retry per call does not count as a wrong answer; any further swapped answer counts.",
+  "verbatim": [],
+  "values": {
+   "hint": "day_month_swapped",
+   "free_retries_per_call": 1
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R21",
+  "source": "brief-c.md rule 15",
+  "category": "identity",
+  "text": "When the check fails (rule 13), reveal no amount, product or reason for the call; say a colleague can complete the check if they call the number on the back of their card or on their latest statement. Close `not_verified` / `exhausted`.",
+  "verbatim": [],
+  "values": {
+   "close": {
+    "outcome": "not_verified",
+    "reason": "exhausted"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R22",
+  "source": "brief-c.md rule 16",
+  "category": "identity",
+  "text": "If the customer refuses to answer or asks what the call is about instead of answering, say once that the bank cannot discuss anything until the check is complete and ask again. A second refusal or second deflection closes `not_verified` / `withheld`.",
+  "verbatim": [],
+  "values": {
+   "max_refusals": 2,
+   "close": {
+    "outcome": "not_verified",
+    "reason": "withheld"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R23",
+  "source": "brief-c.md rule 17",
+  "category": "identity",
+  "text": "When both questions have passed, call `get_account`; from this point address the customer as {title} {last_name}.",
+  "verbatim": [],
+  "values": {
+   "tool": "get_account",
+   "address_as": "{title} {last_name}"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R24",
+  "source": "brief-c.md rule 18",
+  "category": "disclosure",
+  "text": "Say you are calling from the payments team of Nordvik Savings Bank about an overdue amount; name the product in words (\"credit card ending in 4821\", \"personal loan\" or \"car loan\"); state the overdue amount and the number of days overdue. The word \"collections\" is never used at Nordvik.",
+  "verbatim": [],
+  "values": {
+   "product_names": {
+    "credit_card": "credit card ending in {card_last4}",
+    "personal_loan": "personal loan",
+    "car_loan": "car loan"
+   },
+   "forbidden_words": [
+    "collections"
+   ],
+   "must_state": [
+    "overdue amount",
+    "days overdue"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R25",
+  "source": "brief-c.md section 7 definition",
+  "category": "dates",
+  "text": "Business days are Monday to Saturday except Nordvik holidays; Sundays and holidays are never business days.",
+  "verbatim": [],
+  "values": {
+   "business_days": "Mon-Sat except holidays",
+   "holidays": [
+    "2026-10-16",
+    "2026-11-02",
+    "2026-11-21",
+    "2026-12-08",
+    "2026-12-24",
+    "2026-12-25",
+    "2026-12-26",
+    "2026-12-31"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R26",
+  "source": "brief-c.md rule 19 and table",
+  "category": "dates",
+  "text": "The deadline and number of persuasion attempts depend on the band; \"after today\" means counting starts with the first business day following today (today not counted). Green (1 to 10 days late): 9th business day after today, 2 attempts. Amber (11 to 45): 4th business day after today, 1 attempt.",
+  "verbatim": [],
+  "values": {
+   "bands": [
+    {
+     "name": "green",
+     "min_days": 1,
+     "max_days": 10,
+     "deadline_rule": "the 9th business day after today",
+     "attempts": 2
+    },
+    {
+     "name": "amber",
+     "min_days": 11,
+     "max_days": 45,
+     "deadline_rule": "the 4th business day after today",
+     "attempts": 1
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R27",
+  "source": "brief-c.md rule 20",
+  "category": "dates",
+  "text": "A promise date is valid when it is today or later, is a business day, and is not later than the deadline; the deadline itself is valid.",
+  "verbatim": [],
+  "values": {
+   "valid_date": {
+    "min": "today",
+    "max": "deadline inclusive",
+    "business_day": true
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R28",
+  "source": "brief-c.md rule 21",
+  "category": "dates",
+  "text": "If the customer names a Sunday or holiday not later than the deadline, say it is not a business day and propose the next business day. A Saturday is a business day and is accepted.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R29",
+  "source": "brief-c.md rule 22",
+  "category": "dates",
+  "text": "\"This <weekday>\" and \"next <weekday>\" both mean the first such weekday after today (said on a Wednesday, both \"this Friday\" and \"next Friday\" are the coming Friday).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R30",
+  "source": "brief-c.md rule 23",
+  "category": "dates",
+  "text": "For a vague period (\"next week\", \"after payday\", \"end of the month\"), ask once for the exact day; if no exact day follows, it counts as a non-answer and uses one persuasion attempt (rule 31).",
+  "verbatim": [],
+  "values": {
+   "examples": [
+    "next week",
+    "after payday",
+    "end of the month"
+   ],
+   "asks": 1
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R31",
+  "source": "brief-c.md rule 24",
+  "category": "dates",
+  "text": "For a date later than the deadline, say the latest date the bank can record is the deadline, name that date and propose it; if the customer declines the deadline, treat it as a flat refusal (rule 31).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R32",
+  "source": "brief-c.md rule 25",
+  "category": "amounts",
+  "text": "Ask for the full overdue amount first. Never ask what the customer can pay or afford; every figure is proposed by the assistant.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R33",
+  "source": "brief-c.md rule 26",
+  "category": "amounts",
+  "text": "The floor is the smallest amount the bank records: credit card 40% of the overdue amount rounded up to the next whole currency unit (40% of 233.10 = 93.24 -> 94); personal loan or car loan: the `instalment_amount`. State a rounded floor in whole units.",
+  "verbatim": [],
+  "values": {
+   "floor": {
+    "credit_card": "ceil(0.40 * past_due)",
+    "personal_loan": "instalment_amount",
+    "car_loan": "instalment_amount"
+   },
+   "example": {
+    "past_due": 233.1,
+    "raw": 93.24,
+    "floor": 94
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R34",
+  "source": "brief-c.md rule 27",
+  "category": "amounts",
+  "text": "If the customer says the full amount is too much, propose the floor once and say the remainder stays overdue and the account stays in arrears until cleared. Declining the floor is a flat refusal (rule 31). The floor may be named a second time only as attempt 2 (rule 31).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R35",
+  "source": "brief-c.md rule 28",
+  "category": "amounts",
+  "text": "Customer-proposed amount: from the floor up to the full overdue amount (both included) accept; above the full amount record the full amount and say so; below the floor say the smallest recordable amount is the floor and propose it once, and if not accepted treat as a flat refusal (rule 31).",
+  "verbatim": [],
+  "values": {
+   "accepted_range": {
+    "min": "floor",
+    "max": "past_due",
+    "inclusive": true
+   },
+   "above_full": "record past_due",
+   "below_floor": "propose floor once"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R36",
+  "source": "brief-c.md rule 29",
+  "category": "persuasion",
+  "text": "Open the negotiation with the full-amount-today question word for word.",
+  "verbatim": [
+   "Are you able to settle the full overdue amount today?"
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R37",
+  "source": "brief-c.md rule 30",
+  "category": "persuasion",
+  "text": "A date or amount the customer proposes is never a refusal; handle it under sections 7 and 8.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R38",
+  "source": "brief-c.md rule 31",
+  "category": "persuasion",
+  "text": "A flat refusal or non-answer uses one persuasion attempt; a no to paying today with no date and no amount is a flat refusal. Attempts are for the full amount, or the floor if the customer already said the full amount is too much. Attempt 1: propose the next business day after today. Attempt 2 (green band only): propose the floor on the deadline.",
+  "verbatim": [],
+  "values": {
+   "attempts": [
+    {
+     "n": 1,
+     "proposal": "next business day after today",
+     "bands": [
+      "green",
+      "amber"
+     ]
+    },
+    {
+     "n": 2,
+     "proposal": "floor on the deadline",
+     "bands": [
+      "green"
+     ]
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R39",
+  "source": "brief-c.md rule 32",
+  "category": "persuasion",
+  "text": "When the band's attempts are used up, stop; never repeat a declined proposal. Close `no_promise` / `declined_offer`.",
+  "verbatim": [],
+  "values": {
+   "close": {
+    "outcome": "no_promise",
+    "reason": "declined_offer"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R40",
+  "source": "brief-c.md rule 33",
+  "category": "hardship",
+  "text": "On illness, bereavement, job loss or similar hardship, say the hardship sentence word for word; make no persuasion attempt and propose no amount or date. Say the care team can review their situation and ask whether to connect now: yes -> `transfer_to_agent` queue `support`, close `transferred` / `care_team`; no -> say the care team will contact them within three business days, close `no_promise` / `financial_distress`. Takes precedence over rules 31 and 42; if the customer nevertheless names a date and an amount themselves, record the promise under sections 7 and 8.",
+  "verbatim": [
+   "I am sorry to hear that. I will not ask you for a payment today."
+  ],
+  "values": {
+   "yes": {
+    "tool": "transfer_to_agent",
+    "queue": "support",
+    "outcome": "transferred",
+    "reason": "care_team"
+   },
+   "no": {
+    "outcome": "no_promise",
+    "reason": "financial_distress",
+    "care_team_contact": "within three business days"
+   },
+   "precedence_over": [
+    "rule 31",
+    "rule 42"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R41",
+  "source": "brief-c.md rule 34",
+  "category": "persuasion",
+  "text": "Never offer or agree to a discount, waiver, fee reversal, instalment plan, or any date later than the deadline. If asked, say the assistant cannot offer any reduction and the figures are those on the account.",
+  "verbatim": [],
+  "values": {
+   "forbidden_offers": [
+    "discount",
+    "waiver",
+    "fee reversal",
+    "instalment plan",
+    "date later than the deadline"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R42",
+  "source": "brief-c.md rule 35",
+  "category": "confirmation",
+  "text": "Read back the amount, the date and the product, then ask the confirm question word for word; call `create_promise` only after a clear yes.",
+  "verbatim": [
+   "Shall I record this?"
+  ],
+  "values": {
+   "read_back": [
+    "amount",
+    "date",
+    "product"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R43",
+  "source": "brief-c.md rule 36",
+  "category": "confirmation",
+  "text": "If the customer changes the amount or date during read-back, check the new value under sections 7 and 8 and read it back again before recording.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R44",
+  "source": "brief-c.md rule 37",
+  "category": "recording",
+  "text": "One promise per product and per call. A recorded promise is not changed or cancelled during the same call; if asked, say the payments line can change it.",
+  "verbatim": [],
+  "values": {
+   "max_promises_per_product": 1
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R45",
+  "source": "brief-c.md rule 38",
+  "category": "recording",
+  "text": "Say the promise is noted only after `create_promise` returns `ok: true`. On failure, retry up to two more times; if every attempt fails, say the promise could not be saved and close `no_promise` / `system_fault`.",
+  "verbatim": [],
+  "values": {
+   "max_total_attempts": 3,
+   "close_on_failure": {
+    "outcome": "no_promise",
+    "reason": "system_fault"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R46",
+  "source": "brief-c.md rule 39",
+  "category": "recording",
+  "text": "After a recorded promise, say the confirmation sentence word for word.",
+  "verbatim": [
+   "I have noted your promise. A confirmation will be sent to your registered email address."
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R47",
+  "source": "brief-c.md rule 40",
+  "category": "special",
+  "text": "\"I already paid\": thank the customer, say the bank will check for the payment within two business days and will not call again before then; do not ask for a promise. Close `paid` / `self_reported`.",
+  "verbatim": [],
+  "values": {
+   "check_window": "two business days",
+   "close": {
+    "outcome": "paid",
+    "reason": "self_reported"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R48",
+  "source": "brief-c.md rule 41",
+  "category": "special",
+  "text": "\"This is not my debt\", \"I never had this product\", or a claim the product was closed or settled in the past: do not argue, take no promise, say a colleague will look into it, call `transfer_to_agent` queue `general`, close `transferred` / `contested`. Rule 40 applies only to a payment of this overdue amount.",
+  "verbatim": [],
+  "values": {
+   "tool": "transfer_to_agent",
+   "queue": "general",
+   "outcome": "transferred",
+   "reason": "contested"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R49",
+  "source": "brief-c.md rule 42",
+  "category": "special",
+  "text": "Request for a new payment plan, lower instalments or spreading over months: do not describe or invent any plan; say the plan review team handles these and ask whether to connect now. Yes -> `transfer_to_agent` queue `restructuring`, close `transferred` / `plan_review`; no -> close `no_promise` / `declined_offer`.",
+  "verbatim": [],
+  "values": {
+   "yes": {
+    "tool": "transfer_to_agent",
+    "queue": "restructuring",
+    "outcome": "transferred",
+    "reason": "plan_review"
+   },
+   "no": {
+    "outcome": "no_promise",
+    "reason": "declined_offer"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R50",
+  "source": "brief-c.md rule 43",
+  "category": "special",
+  "text": "Request for a person: do not ask whether you can help first; call `transfer_to_agent` queue `general` and close `transferred` / `agent_request`. Applies before and after the security check.",
+  "verbatim": [],
+  "values": {
+   "tool": "transfer_to_agent",
+   "queue": "general",
+   "outcome": "transferred",
+   "reason": "agent_request",
+   "applies": "before and after verification"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R51",
+  "source": "brief-c.md rule 44",
+  "category": "special",
+  "text": "\"Is this a scam?\": say the customer may hang up and call the number on the back of their card or on their latest statement to confirm the call, then continue.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R52",
+  "source": "brief-c.md rule 45",
+  "category": "special",
+  "text": "A question not answerable from the tools: say you do not have that information and the payments team can answer it. Never invent a figure, a date or a reason.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R53",
+  "source": "brief-c.md rule 46",
+  "category": "special",
+  "text": "If the customer does not want to talk or wants to end the call, do not insist and end at once: after the security check close `no_promise` / `declined_offer`; before it close `not_verified` / `withheld`.",
+  "verbatim": [],
+  "values": {
+   "after_verification": {
+    "outcome": "no_promise",
+    "reason": "declined_offer"
+   },
+   "before_verification": {
+    "outcome": "not_verified",
+    "reason": "withheld"
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R54",
+  "source": "brief-c.md rule 47 and table",
+  "category": "closing",
+  "text": "Every call ends with exactly one `close_call` carrying an outcome and the reason from the table; it is the last tool call of the conversation.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "promise",
+     "reason": "full if recorded amount equals overdue amount, otherwise partial",
+     "when": "rules 35 to 39"
+    },
+    {
+     "outcome": "paid",
+     "reason": "self_reported",
+     "when": "rule 40"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "plan_review / agent_request / care_team / contested",
+     "when": "rules 42 / 43 / 33 / 41"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "declined_offer / financial_distress / system_fault",
+     "when": "rules 32, 42 and 46 / rule 33 / rule 38"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "exhausted / withheld",
+     "when": "rule 15 / rules 16 and 46"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "scheduled / no_slot / wrong_party / estate / unconfirmed",
+     "when": "rules 6 / 7 / 8 / 9 / 3"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R55",
+  "source": "brief-c.md rule 47 note under table",
+  "category": "closing",
+  "text": "If a transfer takes place after a promise was recorded, the promise decides: close as `promise` with `full` or `partial`.",
+  "verbatim": [],
+  "values": {
+   "outcome": "promise",
+   "reason": [
+    "full",
+    "partial"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R56",
+  "source": "brief-c.md rule 47 note under table; tools summary add_note",
+  "category": "recording",
+  "text": "Brief C never calls `add_note` (`add_note {product_id, reason, text?}`: not used in Brief C).",
+  "verbatim": [],
+  "values": {
+   "tool": "add_note",
+   "signature": "add_note {product_id, reason, text?}",
+   "used_in_brief_c": false,
+   "api_reason_enum_not_applicable": [
+    "refused",
+    "hardship",
+    "dispute",
+    "paid",
+    "service_error"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R57",
+  "source": "brief-c.md rule 48",
+  "category": "closing",
+  "text": "Before `close_call`, thank the customer for their time and say goodbye, naming Nordvik Savings Bank.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R58",
+  "source": "brief-c.md tools summary",
+  "category": "other",
+  "text": "Every tool call is a POST with a JSON body including `customer_id`. Responses carry `{ok: bool, error?: string, ...}`; an HTTP 500 means the service failed and the same call may be repeated.",
+  "verbatim": [],
+  "values": {
+   "method": "POST",
+   "body_must_include": "customer_id",
+   "response_shape": "{ok: bool, error?: string, ...}",
+   "http_500": "service failed; same call may be repeated"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R59",
+  "source": "brief-c.md tools summary get_account",
+  "category": "other",
+  "text": "`get_account {}` takes no fields besides `customer_id` and is refused until both security questions have passed; it returns products with `product_id`, `type` (credit_card|personal_loan|car_loan), `card_last4` (cards), `past_due`, `days_late`, `minimum_payment` (cards), `instalment_amount` (loans).",
+  "verbatim": [],
+  "values": {
+   "signature": "get_account {}",
+   "refused_until": "both security questions passed",
+   "returns": "{ok, products: [{product_id, type: credit_card|personal_loan|car_loan, card_last4?, past_due, days_late, minimum_payment? (cards), instalment_amount? (loans)}]}"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R60",
+  "source": "openapi.json /verify_identity; brief-c.md tools summary verify_identity",
+  "category": "identity",
+  "text": "`verify_identity {field: \"phone_last4\"|\"date_of_birth\", answer}`: `field` must be `phone_last4` or `date_of_birth`; `answer` for `phone_last4` is four digits and for `date_of_birth` a date converted from the spoken date. Dates as `YYYY-MM-DD`; an unreadable value is rejected and not counted. The API states three wrong answers end the check, but the brief's limit of two (rule 13) governs the agent.",
+  "verbatim": [],
+  "values": {
+   "signature": "verify_identity {field: \"phone_last4\"|\"date_of_birth\", answer}",
+   "field_enum": [
+    "phone_last4",
+    "date_of_birth"
+   ],
+   "date_format": "Dates as `YYYY-MM-DD`",
+   "phone_last4_format": "four digits",
+   "returns": "{ok, verified, wrong_answers_left, all_verified, hint?: \"day_month_swapped\"}",
+   "unreadable_value": "rejected (ok=false), not counted",
+   "api_wrong_answer_limit": 3,
+   "brief_wrong_answer_limit": 2
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R61",
+  "source": "openapi.json /create_promise",
+  "category": "recording",
+  "text": "`create_promise` requires `customer_id`, `product_id`, `amount` (number) and `date` (format date, YYYY-MM-DD); one per product.",
+  "verbatim": [],
+  "values": {
+   "required": [
+    "customer_id",
+    "product_id",
+    "amount",
+    "date"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R62",
+  "source": "openapi.json /schedule_callback; brief-c.md tools summary",
+  "category": "third_party",
+  "text": "`schedule_callback {date, time: \"HH:MM\"}` requires `customer_id`, `date` (format date, YYYY-MM-DD) and `time` as `HH:MM`.",
+  "verbatim": [],
+  "values": {
+   "signature": "schedule_callback {date, time: \"HH:MM\"}",
+   "required": [
+    "customer_id",
+    "date",
+    "time"
+   ],
+   "date_format": "YYYY-MM-DD",
+   "time_format": "HH:MM"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R63",
+  "source": "openapi.json /transfer_to_agent",
+  "category": "other",
+  "text": "`transfer_to_agent` requires `queue`, one of `restructuring`, `general`, `support`.",
+  "verbatim": [],
+  "values": {
+   "queue_enum": [
+    "restructuring",
+    "general",
+    "support"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ },
+ {
+  "id": "R64",
+  "source": "openapi.json /close_call",
+  "category": "closing",
+  "text": "`close_call` is always the last tool call and nothing is accepted after it; `outcome` is one of the enum values; `reason` is required by the API for every outcome except `promise` and `paid` (the brief still assigns `full`/`partial` and `self_reported`).",
+  "verbatim": [],
+  "values": {
+   "outcome_enum": [
+    "promise",
+    "paid",
+    "transferred",
+    "no_promise",
+    "not_verified",
+    "not_reached"
+   ],
+   "reason_optional_for": [
+    "promise",
+    "paid"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": ""
+ }
+]

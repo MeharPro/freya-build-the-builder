@@ -1,0 +1,15 @@
+{
+  "private_state_excluded": true,
+  "checks": [
+    {
+      "command": "python3 -m unittest discover -s builder/tests -q",
+      "exit": 0,
+      "output": "another simulation is running in this workspace, waiting up to 30 s\n----------------------------------------------------------------------\nRan 69 tests in 1.267s\n\nOK\n"
+    },
+    {
+      "command": "python3 -m compileall -q builder freya.py",
+      "exit": 0,
+      "output": ""
+    }
+  ]
+}

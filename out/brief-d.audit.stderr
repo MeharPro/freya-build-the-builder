@@ -1,0 +1,10 @@
+audit: 97 rules (88 in force) | workflow digest 70861 chars, generator 37339 chars | model claude-opus-5-5 | batches of 12, 3 in parallel
+model call: claude-opus-5-5 | purpose: audit rules R01-R12 (batch 1/8)
+model call: claude-opus-5-5 | purpose: audit rules R13-R25 (batch 2/8)
+model call: claude-opus-5-5 | purpose: audit rules R26-R37 (batch 3/8)
+model call: claude-opus-5-5 | purpose: audit rules R38-R50 (batch 4/8)
+model call: claude-opus-5-5 | purpose: audit rules R51-R62 (batch 5/8)
+model call: claude-opus-5-5 | purpose: audit rules R63-R79 (batch 6/8)
+model call: claude-opus-5-5 | purpose: audit rules R80-R93 (batch 7/8)
+model call: claude-opus-5-5 | purpose: audit rules R94-R97 (batch 8/8)
+model call: claude-opus-5-5 | purpose: rank the 4 gaps into the top 5 fixes

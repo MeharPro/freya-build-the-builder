@@ -1,0 +1,67 @@
+{
+ "model": "claude-opus-5-5",
+ "sample_models": {
+  "A": "claude-opus-5-5",
+  "B": "claude-opus-5-5",
+  "C": "claude-opus-5-5"
+ },
+ "seconds": 77.93197751045227,
+ "cost_usd": 0.9614872,
+ "calls": 9,
+ "self_check": {
+  "missing_numbers": {},
+  "missing_tokens": []
+ },
+ "samples": {
+  "A": 58,
+  "B": 56,
+  "C": 59
+ },
+ "stages": {
+  "extract": {
+   "seconds": 38.026636838912964,
+   "cost_usd": 0.5900322,
+   "calls": 6
+  },
+  "merge": {
+   "seconds": 19.245793342590332,
+   "cost_usd": 0.2109725,
+   "calls": 1
+  },
+  "decide": {
+   "seconds": 0.0,
+   "cost_usd": 0.0494139,
+   "calls": 1
+  },
+  "verify": {
+   "seconds": 0.0,
+   "cost_usd": 0.1110686,
+   "calls": 1
+  },
+  "verify+decide": {
+   "seconds": 20.646599292755127
+  }
+ },
+ "briefs": [
+  "briefs/brief-a.md"
+ ],
+ "api": "tools/openapi.json",
+ "spec": "brief-a.spec.json",
+ "conflicts": "brief-a.rules.conflicts.md",
+ "n_conflicts": 1,
+ "call_date_range": {
+  "earliest": "2026-10-14",
+  "latest": "2027-01-01",
+  "basis": "example `now` 2026-10-14T11:00; bank holiday list runs to 2027-01-01"
+ },
+ "n_rules": 60,
+ "n_in_force": 60,
+ "n_low": 2,
+ "n_low_in_force": 2,
+ "verification": {
+  "ok": 21
+ },
+ "decision_blocks": 1,
+ "spec_errors": 0,
+ "spec_warnings": 0
+}

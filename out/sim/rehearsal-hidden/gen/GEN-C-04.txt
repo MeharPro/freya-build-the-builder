@@ -1,0 +1,34 @@
+# GEN-C-04 Stranger: wrong number
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call c2d17449-be49-4408-8985-d7d423fa026c | customer c_7cba6593-c98 | 2026-10-10 20:26:58
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: close_call in the ledger | transcript from: GET /api/v2/call/c2d17449-be49-4408-8985-d7d423fa026c
+# RESULT: PASS
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Park?
+customer: No, there is no Owen Park here. This has been my number for years.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> fin_wrong_number: wrong number who1 == 'wrong_number'
+   [node] setup -> fin_wrong_number
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'wrong_number'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_wrong_number -> end_wrong_number: always always
+   [node] fin_wrong_number -> end_wrong_number
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I apologise for the inconvenience. Thank you, goodbye."}
+   [call] ended: assistant-ended-call
+agent: I apologise for the inconvenience. Thank you, goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "wrong_number", "outcome": "not_reached", "customer_id": "c_7cba6593-c98"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (4)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'wrong_number'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+3. end_call args={"message_mode": "custom", "spoken_message": "I apologise for the inconvenience. Thank you, goodbye."} -> success Call ended
+4. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "wrong_number", "outcome": "not_reached", "customer_id": "c_7cba6593-c98"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_reached reason=wrong_number promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): pass - The agent only confirmed identity, apologised and ended the call after a wrong-number reply. It never mentioned debt, payment, collections or the credit card, and no schedule_callback call was made.

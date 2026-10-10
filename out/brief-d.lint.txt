@@ -1,0 +1,38 @@
+WARN nodes.setup.pre_actions[code_exec].code: code has statements outside try/except (Assign, If); wrap the whole body
+WARN rules.R13: verbatim line "I am Kestrel Bank's digital assistant." is only in a prompt; make it fixed text (tts on_enter, farewell or code-built text) so the model cannot paraphrase it
+WARN rules.R43: verbatim line 'Shall I record that?' is only in a prompt; make it fixed text (tts on_enter, farewell or code-built text) so the model cannot paraphrase it
+WARN rules.R55: verbatim line "I don't have that information." is only in a prompt; make it fixed text (tts on_enter, farewell or code-built text) so the model cannot paraphrase it
+WARN rules.R60: verbatim line 'Shall I record that?' is only in a prompt; make it fixed text (tts on_enter, farewell or code-built text) so the model cannot paraphrase it
+WARN nodes.ask_dob.tools[transfer_to_agent]: write tool transfer_to_agent is available before identity is verified; check the brief whether that is allowed there (R39, R52, R53 name it without saying when)
+WARN nodes.ask_phone.tools[transfer_to_agent]: write tool transfer_to_agent is available before identity is verified; check the brief whether that is allowed there (R39, R52, R53 name it without saying when)
+WARN nodes.negotiate.task_message: task_message is 5297 characters (> 2500, before placeholders are filled): move facts into code-built text, drop rules a route or code already enforces, put the deciding rules first
+INFO nodes.opening.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.opening_retry.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.third_party.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.third_party.tools[schedule_callback].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_phone.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_phone.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_phone.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_dob.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_dob.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_dob.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.negotiate.transitions[4]: second transition to 'finalize': the engine merges them with OR at load time
+INFO nodes.negotiate.tools[create_promise].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.tools[add_note].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.transitions: is_tool_call transition to 'finalize' is never named as transition_to_finalize in the prompt
+INFO nodes.hardship.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.hardship.transitions[4]: second transition to 'finalize': the engine merges them with OR at load time
+INFO nodes.hardship.tools[create_promise].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship.tools[add_note].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship.transitions: is_tool_call transition to 'finalize' is never named as transition_to_finalize in the prompt
+INFO nodes.hardship_notes.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.hardship_notes.transitions[2]: second transition to 'finalize': the engine merges them with OR at load time
+INFO nodes.hardship_notes.tools[add_note].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship_notes.tools[transfer_to_agent].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.hardship_notes.transitions: is_tool_call transition to 'finalize' is never named as transition_to_finalize in the prompt
+INFO nodes.wrapup.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO rules: forbidden word 'any product name' is a description, not a word; not checked
+-- 0 error(s), 8 warning(s), 29 info

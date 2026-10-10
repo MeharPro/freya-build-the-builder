@@ -1,0 +1,16 @@
+sim | workflow 68dc5046-318c-4d4f-bae5-3d602d05a7f9 (slot brief-c) | 10 case(s) x 1 rep(s) | concurrency 2 | customer gpt-5-mini, judge gpt-5 (openai)
+PASS PUB-02 medium Third party    | schedule_callback > close_call
+PASS PUB-01 easy   Happy path     | verify > verify > get_account > promise > close_call
+PASS PUB-03 medium Identity       | verify > verify > verify > close_call
+PASS PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+PASS PUB-05 medium Hardship       | verify > verify > get_account > close_call
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+PASS PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+PASS PUB-08 medium Already paid   | verify > verify > get_account > close_call
+PASS PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+PASS PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+
+slowest agent turn per call: median 3 s, worst 6 s (chat-route timing, not a simulation's).
+
+10 / 10 passed (bank records and conversation checks). Local chat-route simulation, 370 s.
+cost: 62 chat turns, 62 model calls (52 customer on gpt-5-mini, 10 judge on gpt-5), 83 ledger polls, 20 call fetches.

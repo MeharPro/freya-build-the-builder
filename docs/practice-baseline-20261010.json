@@ -1,0 +1,59 @@
+{
+  "measured_at_utc": "2026-10-10T22:29:25.594730+00:00",
+  "benchmark": "Official public practice cases; reference-generator agents",
+  "fresh_model_driven_builder_measured": false,
+  "hidden_score_measured": false,
+  "scorer_changed": false,
+  "customer_scripts_changed": false,
+  "runs_discarded_for_latency": 0,
+  "prior_failure": {
+    "brief": "B",
+    "case": "PUB-12",
+    "version": 1,
+    "issue": "Recorded all products despite consent to one; subsequent old repetition looped",
+    "failure_call_id": "8d99f8df-c68c-4413-8783-19fdd2b4761d",
+    "old_baseline_complete": false
+  },
+  "results": [
+    {
+      "brief": "A",
+      "published_version": 1,
+      "cases_passed": 10,
+      "cases_total": 10,
+      "repetitions": 3,
+      "calls_passed": 30,
+      "median_slowest_turn_s_by_rep": [
+        4.9,
+        7.3,
+        10.4
+      ],
+      "simulation_seconds": 417,
+      "last_simulation_id": "3bf56605-575d-4fc1-840c-ea6b87da4b85",
+      "last_iteration_id": "2103e0d9-97be-45d0-82d3-ff8085d6369d",
+      "result_file": "results/current-a-reps3.json",
+      "result_sha256": "8260d3560e89f1a26d8e57e9411536e825a73485f9a594d1ac9bdd33f804012d",
+      "platform_export_file": "results/context-validation/practice-a.export.json",
+      "platform_export_sha256": "8356c32003995ef29014a9b67d54ebbdd0cb56470b7e54484e8ddbdaffcf9377"
+    },
+    {
+      "brief": "B",
+      "published_version": 3,
+      "cases_passed": 3,
+      "cases_total": 3,
+      "repetitions": 3,
+      "calls_passed": 9,
+      "median_slowest_turn_s_by_rep": [
+        11.2,
+        14.1,
+        6.0
+      ],
+      "simulation_seconds": 317,
+      "last_simulation_id": "536b8292-e821-466e-aa49-2c528e552b25",
+      "last_iteration_id": "49116165-40d4-4f81-ab56-e6e78892e1ad",
+      "result_file": "results/current-b-reps3.json",
+      "result_sha256": "a65ef73ac3fc8479681f2dcc0b79628dcdc1958613ccfef4fb20f87aa1fb2c6d",
+      "platform_export_file": "results/context-validation/practice-b.export.json",
+      "platform_export_sha256": "8f37ccda8c34edec8dd8f3e6e8bdeac9821717e2960224968f69bf0f28159b37"
+    }
+  ]
+}

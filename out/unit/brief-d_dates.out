@@ -1,0 +1,95 @@
+PUB-01 ok ok ok
+   - p1 = your credit card ending 4821: full overdue amount 420, 6 days overdue (band F). Floor (smallest amount that can be recorded) 252 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (420, or the floor 252 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected [{'product_id': 'p1', 'amount': 420.0, 'date': '2026-10-14'}]
+PUB-02 ok ok ok
+   - p1 = your personal loan: full overdue amount 310.50, 11 days overdue (band S). Floor (smallest amount that can be recorded) 103.50 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (310.50, or the floor 103.50 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 103.50 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected []
+PUB-03 ok ok ok
+   - p1 = your credit card ending 0377: full overdue amount 95, 4 days overdue (band F). Floor (smallest amount that can be recorded) 57 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (95, or the floor 57 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected []
+PUB-04 ok ok ok
+   - p1 = your car loan: full overdue amount 1250, 14 days overdue (band S). Floor (smallest amount that can be recorded) 400 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (1250, or the floor 400 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 400 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected [{'product_id': 'p1', 'amount': 1250.0, 'date': '2026-10-21'}]
+PUB-05 ok ok ok
+   - p1 = your personal loan: full overdue amount 780, 21 days overdue (band S). Floor (smallest amount that can be recorded) 260 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (780, or the floor 260 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 260 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected []
+PUB-06 ok ok ok
+   - p1 = your credit card ending 1903: full overdue amount 2125.10, 12 days overdue (band S). Floor (smallest amount that can be recorded) 1275 (twice the minimum payment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (2125.10, or the floor 1275 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 1275 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected [{'product_id': 'p1', 'amount': 1275.0, 'date': '2026-10-16'}]
+PUB-07 ok ok ok
+   - p1 = your personal loan: full overdue amount 540, 5 days overdue (band F). Floor (smallest amount that can be recorded) 180 (instalment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (540, or the floor 180 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected [{'product_id': 'p1', 'amount': 540.0, 'date': '2026-10-26'}]
+PUB-08 ok ok ok
+   - p1 = your credit card ending 5512: full overdue amount 180, 5 days overdue (band F). Floor (smallest amount that can be recorded) 108 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (180, or the floor 108 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected []
+PUB-09 ok ok ok
+   - p1 = your personal loan: full overdue amount 2100, 28 days overdue (band S). Floor (smallest amount that can be recorded) 700 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (2100, or the floor 700 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 700 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected []
+PUB-10 ok ok ok
+   - p1 = your credit card ending 7740: full overdue amount 365, 8 days overdue (band F). Floor (smallest amount that can be recorded) 219 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (365, or the floor 219 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected [{'product_id': 'p1', 'amount': 365.0, 'date': '2026-10-16'}]
+PUB-11 ok ok ok
+   - p1 = your credit card ending 2288: full overdue amount 220, 9 days overdue (band F). Floor (smallest amount that can be recorded) 132 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (220, or the floor 132 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   - p2 = your personal loan: full overdue amount 640, 9 days overdue (band F). Floor (smallest amount that can be recorded) 213 (instalment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (640, or the floor 213 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   - p3 = your car loan: full overdue amount 75, 3 days overdue (band F). Floor (smallest amount that can be recorded) 25 (instalment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (75, or the floor 25 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected [{'product_id': 'p1', 'amount': 220.0, 'date': '2026-10-16'}, {'product_id': 'p2', 'amount': 640.0, 'date': '2026-10-16'}, {'product_id': 'p3', 'amount': 75.0, 'date': '2026-10-16'}]
+PUB-12 ok ok ok
+   - p1 = your credit card ending 9015: full overdue amount 510, 16 days overdue (band S). Floor (smallest amount that can be recorded) 306 (twice the minimum payment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (510, or the floor 306 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 306 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   - p2 = your personal loan: full overdue amount 1320, 16 days overdue (band S). Floor (smallest amount that can be recorded) 440 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (1320, or the floor 440 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 440 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   - p3 = your car loan: full overdue amount 140, 7 days overdue (band F). Floor (smallest amount that can be recorded) 46 (instalment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (140, or the floor 46 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   expected [{'product_id': 'p1', 'amount': 510.0, 'date': '2026-10-15'}]
+PUB-13 ok ok ok
+   - p1 = your credit card ending 6604: full overdue amount 300, 4 days overdue (band F). Floor (smallest amount that can be recorded) 180 (twice the minimum payment). Latest date Wednesday 4 November (2026-11-04). Attempt 1: propose the amount in play (300, or the floor 180 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). NO attempt 2. Persuasion attempts for this product: 1. After attempt 1 is refused, stop: this product is refused (1 attempt).
+   - p2 = your personal loan: full overdue amount 900, 20 days overdue (band S). Floor (smallest amount that can be recorded) 300 (instalment). Latest date Wednesday 21 October (2026-10-21). Attempt 1: propose the amount in play (900, or the floor 300 once the customer said the full amount is too much) on Thursday 15 October (2026-10-15). Attempt 2: propose the floor 300 on the latest date Wednesday 21 October (2026-10-21). Persuasion attempts for this product: 2. After attempt 2 is refused, stop: this product is refused (2 attempts).
+   expected [{'product_id': 'p1', 'amount': 300.0, 'date': '2026-10-29'}, {'product_id': 'p2', 'amount': 900.0, 'date': '2026-10-21'}]
+--- statement_text
+Thank you, Ms Rossi. I am calling from the arrears team about overdue payments on 2 of your products. Your credit card ending 6604 has an overdue amount of 300, 4 days overdue. Your personal loan has an overdue amount of 900, 20 days overdue. Are you able to clear all of these today?
+--- weekday_table
+"Monday" or "this Monday" = Monday 19 October 2026 (2026-10-19); "next Monday" = Monday 19 October 2026 (2026-10-19)
+"Tuesday" or "this Tuesday" = Tuesday 20 October 2026 (2026-10-20); "next Tuesday" = Tuesday 20 October 2026 (2026-10-20)
+"Wednesday" or "this Wednesday" = Wednesday 14 October 2026 (2026-10-14); "next Wednesday" = Wednesday 21 October 2026 (2026-10-21)
+"Thursday" or "this Thursday" = Thursday 15 October 2026 (2026-10-15); "next Thursday" = Thursday 15 October 2026 (2026-10-15)
+"Friday" or "this Friday" = Friday 16 October 2026 (2026-10-16); "next Friday" = Friday 16 October 2026 (2026-10-16)
+"Saturday" or "this Saturday" = Saturday 17 October 2026 (2026-10-17); "next Saturday" = Saturday 17 October 2026 (2026-10-17)
+"Sunday" or "this Sunday" = Sunday 18 October 2026 (2026-10-18); "next Sunday" = Sunday 18 October 2026 (2026-10-18)
+--- callback_text
+The ONLY allowed callback times are:
+- Today, Wednesday 14 October 2026 (2026-10-14), from after 11:00 up to 18:00.
+- Thursday 15 October 2026 (2026-10-15), from 09:00 up to 18:00 included.
+- Friday 16 October 2026 (2026-10-16), from 09:00 up to 18:00 included.
+Tomorrow is Thursday 15 October 2026. Any other day or time is outside the window.
+--- calendar_text
+2026-10-14 Wednesday 14 October  (today): business day. Allowed for p1, p2.
+2026-10-15 Thursday 15 October: business day. Allowed for p1, p2.
+2026-10-16 Friday 16 October: business day. Allowed for p1, p2.
+2026-10-17 Saturday 17 October: weekend, NOT allowed. For p1, p2: offer the business day BEFORE it, Friday 16 October (2026-10-16).
+2026-10-18 Sunday 18 October: weekend, NOT allowed. For p1, p2: offer the business day BEFORE it, Friday 16 October (2026-10-16).
+2026-10-19 Monday 19 October: business day. Allowed for p1, p2.
+2026-10-20 Tuesday 20 October: business day. Allowed for p1, p2.
+2026-10-21 Wednesday 21 October: business day. Allowed for p1, p2.
+2026-10-22 Thursday 22 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-23 Friday 23 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-24 Saturday 24 October: weekend, NOT allowed. For p1: offer the business day BEFORE it, Friday 23 October (2026-10-23). AFTER THE DEADLINE of p2 (offer that product's deadline instead).
+2026-10-25 Sunday 25 October: weekend, NOT allowed. For p1: offer the business day BEFORE it, Friday 23 October (2026-10-23). AFTER THE DEADLINE of p2 (offer that product's deadline instead).
+2026-10-26 Monday 26 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-27 Tuesday 27 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-28 Wednesday 28 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-29 Thursday 29 October: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-10-30 Friday 30 October: closure day, NOT allowed. For p1: offer the business day BEFORE it, Thursday 29 October (2026-10-29). AFTER THE DEADLINE of p2 (offer that product's deadline instead).
+2026-10-31 Saturday 31 October: weekend, NOT allowed. For p1: offer the business day BEFORE it, Thursday 29 October (2026-10-29). AFTER THE DEADLINE of p2 (offer that product's deadline instead).
+2026-11-01 Sunday 1 November: weekend, NOT allowed. For p1: offer the business day BEFORE it, Thursday 29 October (2026-10-29). AFTER THE DEADLINE of p2 (offer that product's deadline instead).
+2026-11-02 Monday 2 November: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-11-03 Tuesday 3 November: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-11-04 Wednesday 4 November: business day. Allowed for p1. AFTER THE DEADLINE of p2 (use that product's deadline instead).
+2026-11-05 Thursday 5 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-06 Friday 6 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-07 Saturday 7 November: weekend, NOT allowed. AFTER THE DEADLINE of p1, p2 (offer that product's deadline instead).
+2026-11-08 Sunday 8 November: weekend, NOT allowed. AFTER THE DEADLINE of p1, p2 (offer that product's deadline instead).
+2026-11-09 Monday 9 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-10 Tuesday 10 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-11 Wednesday 11 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-12 Thursday 12 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-13 Friday 13 November: business day. AFTER THE DEADLINE of p1, p2 (use that product's deadline instead).
+2026-11-14 Saturday 14 November: weekend, NOT allowed. AFTER THE DEADLINE of p1, p2 (offer that product's deadline instead).
+--- vague_text
+Friday 16 October

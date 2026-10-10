@@ -1,0 +1,2617 @@
+[
+ {
+  "id": "R01",
+  "source": "brief-a.md section 1",
+  "category": "other",
+  "text": "Freya Bank calls customers 1 to 45 days late on one product; agent finds customer, checks identity, states debt, gets a promise where it can, closes with correct outcome.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "call_scope",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A01",
+   "B01",
+   "C01"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R02",
+  "source": "brief-a.md section 2 table",
+  "category": "other",
+  "text": "Every call starts with `customer_id`, `first_name`, `last_name`, `title`, `now`; nothing else is known before tools are called.",
+  "verbatim": [],
+  "values": {
+   "text": "customer_id, first_name/last_name, title (Mr or Ms), now (e.g. 2026-10-14T11:00)"
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "call_variables",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A02",
+   "B02",
+   "C02"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R03",
+  "source": "brief-a.md section 2 table row customer_id",
+  "category": "other",
+  "text": "Pass `customer_id` to every tool call.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "customer_id_usage",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A03",
+   "B03",
+   "C03"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R04",
+  "source": "brief-a.md section 2 table row title",
+  "category": "wording",
+  "text": "Address the customer as title plus last name; ask for the person named `first_name` `last_name`.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "address_form",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A04",
+   "B04",
+   "C04"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R05",
+  "source": "brief-a.md section 2 table row now",
+  "category": "dates",
+  "text": "`now` is the current date and time; all date rules use it, never the real clock.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "current_time_source",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A05",
+   "B05",
+   "C05"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R06",
+  "source": "brief-a.md rule 1",
+  "category": "opening",
+  "text": "First sentence: digital assistant calling from Freya Bank, call is recorded. No \"collections\", \"debt\", \"payment\" or product before verification, to anyone including relatives.",
+  "verbatim": [],
+  "values": {
+   "forbidden_words_before_verification": [
+    "collections",
+    "debt",
+    "payment",
+    "the product"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "opening_sentence",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "alternatives": [
+   {
+    "id": "B06",
+    "text": "First sentence: say you are a digital assistant calling from Freya Bank and the call is recorded. Before verification never say the forbidden words or the product, to anyone including relatives.",
+    "values": {
+     "forbidden_words_before_verification": [
+      "collections",
+      "debt",
+      "payment"
+     ]
+    },
+    "verbatim": []
+   },
+   {
+    "id": "C06",
+    "text": "First sentence: say you are a digital assistant calling from Freya Bank and that the call is recorded.",
+    "values": {},
+    "verbatim": []
+   }
+  ],
+  "value_difference": "forbidden_words_before_verification: A06 [\"collections\",\"debt\",\"payment\",\"the product\"] vs B06 [\"collections\",\"debt\",\"payment\"]",
+  "members": [
+   "A06",
+   "B06",
+   "C06"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R07",
+  "source": "brief-a.md rule 1",
+  "category": "disclosure",
+  "text": "Before identity is verified do not say \"collections\", \"debt\", \"payment\" or the product, to anyone including relatives.",
+  "verbatim": [],
+  "values": {
+   "forbidden_words_before_verification": [
+    "collections",
+    "debt",
+    "payment",
+    "the product"
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "forbidden_words_before_verification",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "low",
+  "samples": "C",
+  "members": [
+   "C07"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R08",
+  "source": "brief-a.md rule 2",
+  "category": "opening",
+  "text": "Ask \"Am I speaking with {title} {last_name}?\".",
+  "verbatim": [
+   "Am I speaking with {title} {last_name}?"
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "person_check_question",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A07",
+   "B07",
+   "C08"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R09",
+  "source": "brief-a.md rule 3",
+  "category": "opening",
+  "text": "Only \"yes\", \"that's me\", \"speaking\" or own name confirm; \"Hello\", \"go ahead\", \"who is this\" do not. Ask once more; still unclear closes `not_reached` / `unclear`. Answer customer questions first (rules 4, 43); next ask is the second.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_reached",
+     "reason": "unclear",
+     "when": "still unclear after second ask"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "person_confirmation",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A08",
+   "B08",
+   "C09"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V01",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_reached / unclear (still unclear after the second ask)",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If it is still unclear after the second ask, close as `not_reached` / `unclear`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R10",
+  "source": "brief-a.md rule 4",
+  "category": "special",
+  "text": "If asked whether you are a robot or AI, say you are Freya Bank's digital assistant and continue.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "robot_question",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A09",
+   "B09",
+   "C10"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R11",
+  "source": "brief-a.md rule 5",
+  "category": "third_party",
+  "text": "If someone else answers, do not say why you are calling, say nothing beyond rule 1's opening sentence, and ask when the customer can be reached.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "third_party_disclosure",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A10",
+   "B10",
+   "C11"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R12",
+  "source": "brief-a.md rule 6",
+  "category": "third_party",
+  "text": "Callback: today or next business day, 10:00 to 19:00 both included, later than `now`. Call `schedule_callback` with date and time, then close `not_reached` / `callback`.",
+  "verbatim": [],
+  "values": {
+   "callback": {
+    "open": "10:00",
+    "close": "19:00",
+    "same_day": true,
+    "later_than_now": true,
+    "days_ahead_business": 1
+   },
+   "outcomes": [
+    {
+     "outcome": "not_reached",
+     "reason": "callback",
+     "when": "callback scheduled"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "callback_window",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A11",
+   "B11",
+   "C12"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V02",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "today or the next business day; earliest 10:00, latest 19:00 (both included), later than now; close not_reached / callback",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "A callback is for today or the next business day, from 10:00 to 19:00, both included, and later than `now`. Call `schedule_callback` with the date and the time, then close as `not_reached` / `callback`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R13",
+  "source": "brief-a.md rule 7",
+  "category": "third_party",
+  "text": "If offered day/time is outside the window, ask once for another; if also outside, do not schedule and close `not_reached` / `no_callback`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_reached",
+     "reason": "no_callback",
+     "when": "second offer outside window"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "callback_outside_window",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A12",
+   "B12",
+   "C13"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V03",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_reached / no_callback",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If that is also outside it, do not schedule. Close as `not_reached` / `no_callback`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R14",
+  "source": "brief-a.md rule 8",
+  "category": "third_party",
+  "text": "If the number does not belong to the customer, close `not_reached` / `wrong_number`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_reached",
+     "reason": "wrong_number",
+     "when": "number not the customer's"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "wrong_number",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A13",
+   "B13",
+   "C14"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V04",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_reached / wrong_number",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If the person says the number does not belong to the customer, close as `not_reached` / `wrong_number`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R15",
+  "source": "brief-a.md rule 9",
+  "category": "third_party",
+  "text": "If told the customer has died, say \"I am sorry for your loss.\", ask nothing else, close `not_reached` / `deceased`.",
+  "verbatim": [
+   "I am sorry for your loss."
+  ],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_reached",
+     "reason": "deceased",
+     "when": "customer died"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "customer_deceased",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A14",
+   "B14",
+   "C15"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V05",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_reached / deceased",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If the person says the customer has died, say \"I am sorry for your loss.\", ask nothing else, and close as `not_reached` / `deceased`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R16",
+  "source": "brief-a.md rule 10",
+  "category": "third_party",
+  "text": "A relative may not answer security questions and may not be told anything about the account, even if they offer to pay.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "relative_restrictions",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A15",
+   "B15",
+   "C16"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R17",
+  "source": "brief-a.md rule 11",
+  "category": "identity",
+  "text": "Ask two questions one at a time: date of birth, then last four phone digits; call `verify_identity` per answer. Send DOB as `YYYY-MM-DD`; numeric dates read day, month, year.",
+  "verbatim": [],
+  "values": {
+   "identity": [
+    {
+     "order": 1,
+     "field": "date_of_birth",
+     "hint_values": [
+      "day_month_swapped"
+     ]
+    },
+    {
+     "order": 2,
+     "field": "phone_last4"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "security_questions",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A16",
+   "B16",
+   "C17"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R18",
+  "source": "brief-a.md rule 12",
+  "category": "identity",
+  "text": "A wrong answer may be asked again; three wrong answers in total end the check, on whichever question.",
+  "verbatim": [],
+  "values": {
+   "max_wrong_answers": 3
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "wrong_answer_limit",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A17",
+   "B17",
+   "C18"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V06",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "3 wrong answers in total",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Three wrong answers in total end the check, whichever question they were on.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R19",
+  "source": "brief-a.md rule 13",
+  "category": "identity",
+  "text": "On `hint: \"day_month_swapped\"`, ask the customer to say the month as a word; that retry is not a wrong answer.",
+  "verbatim": [],
+  "values": {
+   "identity": [
+    {
+     "order": 1,
+     "field": "date_of_birth",
+     "hint_values": [
+      "day_month_swapped"
+     ],
+     "retry_rule": "ask to say the month as a word; not counted as wrong"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "day_month_swapped",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A18",
+   "B18",
+   "C19"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R20",
+  "source": "brief-a.md rule 14",
+  "category": "identity",
+  "text": "After three wrong answers do not state the debt; tell customer to use the mobile app or a branch; close `not_verified` / `failed`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_verified",
+     "reason": "failed",
+     "when": "three wrong answers"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "verification_failed",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A19",
+   "B19",
+   "C20"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V07",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_verified / failed",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Close as `not_verified` / `failed`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R21",
+  "source": "brief-a.md rule 15",
+  "category": "identity",
+  "text": "If customer won't answer, explain once the questions protect the account; if still declining close `not_verified` / `declined`. Asking what the call is about counts as declining; second refusal/question closes.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "not_verified",
+     "reason": "declined",
+     "when": "second refusal"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "identity_declined",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A20",
+   "B20",
+   "C21"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V08",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "not_verified / declined",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If they still decline, close as `not_verified` / `declined`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R22",
+  "source": "brief-a.md rule 16",
+  "category": "disclosure",
+  "text": "Call `get_account` only after both security questions pass.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "get_account_timing",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A21",
+   "B21",
+   "C23"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R23",
+  "source": "brief-a.md rule 17",
+  "category": "disclosure",
+  "text": "Say you call from the collections team about a late payment; name product in words (\"credit card ending 4821\", \"personal loan\", \"car loan\"); state past-due amount and days late.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R62",
+  "topic": "debt_statement",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A22",
+   "B22",
+   "C24"
+  ],
+  "doc_date": "",
+  "deciding_quote": "State every late product, one sentence each, before asking for anything.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R24",
+  "source": "brief-a.md section 7 definition",
+  "category": "dates",
+  "text": "Business days are Monday to Friday except Freya Bank holidays 2026-10-26, 2026-11-11, 2026-11-26, 2026-12-25, 2027-01-01.",
+  "verbatim": [],
+  "values": {
+   "calendar": {
+    "business_weekdays": [
+     "Mon",
+     "Tue",
+     "Wed",
+     "Thu",
+     "Fri"
+    ],
+    "holidays": [
+     {
+      "date": "2026-10-26"
+     },
+     {
+      "date": "2026-11-11"
+     },
+     {
+      "date": "2026-11-26"
+     },
+     {
+      "date": "2026-12-25"
+     },
+     {
+      "date": "2027-01-01"
+     }
+    ]
+   }
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "business_days",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A23",
+   "B23",
+   "C25"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V09",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "Monday to Friday; holidays 2026-10-26, 2026-11-11, 2026-11-26, 2026-12-25, 2027-01-01",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Business days are Monday to Friday, except Freya Bank holidays: 2026-10-26, 2026-11-11, 2026-11-26, 2026-12-25, 2027-01-01.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R25",
+  "source": "brief-a.md rule 18 table",
+  "category": "dates",
+  "text": "Deadline by `days_late`: early 1-7 = 12th business day after today, 1 attempt; late 8-45 = 7th business day after today, 2 attempts.",
+  "verbatim": [],
+  "values": {
+   "bands": [
+    {
+     "name": "early",
+     "min_days": 1,
+     "max_days": 7,
+     "deadline_rule": {
+      "type": "business_days_after",
+      "n": 12,
+      "adjust": "none"
+     },
+     "attempts": 1
+    },
+    {
+     "name": "late",
+     "min_days": 8,
+     "max_days": 45,
+     "deadline_rule": {
+      "type": "business_days_after",
+      "n": 7,
+      "adjust": "none"
+     },
+     "attempts": 2
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "band_deadline",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A24",
+   "B24",
+   "C26"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V10",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "early: days_late 1-7, deadline 12th business day after today, 1 attempt; late: days_late 8-45, deadline 7th business day after today, 2 attempts",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "| 1 to 7 | early | the 12th business day after today | 1 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| 8 to 45 | late | the 7th business day after today | 2 |",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R26",
+  "source": "brief-a.md rule 19",
+  "category": "dates",
+  "text": "A promise date must be today or later, a business day, and not after the deadline.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "promise_date_validity",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A25",
+   "B25",
+   "C27"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R27",
+  "source": "brief-a.md rule 20",
+  "category": "dates",
+  "text": "If customer names a weekend day or holiday not after the deadline, offer the next business day; if after the deadline, rule 23 applies.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "non_business_day_named",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A26",
+   "B26",
+   "C28"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R28",
+  "source": "brief-a.md rule 21",
+  "category": "dates",
+  "text": "For a vague period (\"next week\", \"end of the month\", \"when my salary comes\"), ask once for the exact day; if none, propose the deadline.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "vague_date",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A27",
+   "B27",
+   "C29"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R29",
+  "source": "brief-a.md rule 22",
+  "category": "dates",
+  "text": "\"Next <weekday>\" = that weekday in the following calendar week; \"This <weekday>\" = current week. \"Next Friday\" on a Friday is the following week's Friday.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "weekday_words",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A28",
+   "B28",
+   "C30"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R30",
+  "source": "brief-a.md rule 23",
+  "category": "dates",
+  "text": "If customer asks for a date after the deadline, say the latest recordable date is the deadline and offer it; refusal is a flat refusal (rule 30).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "date_after_deadline",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A29",
+   "B29",
+   "C31"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R31",
+  "source": "brief-a.md rule 24",
+  "category": "amounts",
+  "text": "Ask for the full past-due amount first. Never ask \"how much can you pay?\"; the agent proposes every amount.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "full_amount_first",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A30",
+   "B30",
+   "C32"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R32",
+  "source": "brief-a.md rule 25",
+  "category": "amounts",
+  "text": "Floor is `minimum_payment` for a credit card and `instalment_amount` for a personal or car loan.",
+  "verbatim": [],
+  "values": {
+   "floors": [
+    {
+     "product_types": [
+      "credit_card"
+     ],
+     "rule": {
+      "type": "field",
+      "field": "minimum_payment"
+     }
+    },
+    {
+     "product_types": [
+      "personal_loan",
+      "car_loan"
+     ],
+     "rule": {
+      "type": "field",
+      "field": "instalment_amount"
+     }
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "floor_definition",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A31",
+   "B31",
+   "C33"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V11",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "credit_card: minimum_payment; personal_loan: instalment_amount; car_loan: instalment_amount; no cap stated",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "The **floor** is `minimum_payment` for a credit card and `instalment_amount` for a personal loan or a car loan.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R33",
+  "source": "brief-a.md rule 26",
+  "category": "amounts",
+  "text": "If full amount is too much, offer the floor once, saying the rest stays overdue; refusing the floor is a flat refusal (rule 30). Attempt 2 may name the floor again on the deadline.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "floor_offer",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A32",
+   "B32",
+   "C34"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R34",
+  "source": "brief-a.md rule 27",
+  "category": "amounts",
+  "text": "Accept a proposed amount from floor to full amount inclusive. Below floor: say it cannot be recorded, offer floor once; not accepted = flat refusal (rule 30).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "accepted_amount_range",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A33",
+   "B33",
+   "C35"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R35",
+  "source": "brief-a.md rule 28",
+  "category": "persuasion",
+  "text": "First ask: \"Can you make this payment today?\".",
+  "verbatim": [
+   "Can you make this payment today?"
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R64",
+  "topic": "first_ask",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A34",
+   "B34",
+   "C36"
+  ],
+  "doc_date": "",
+  "deciding_quote": "First ask whether the customer can pay all of them today.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R36",
+  "source": "brief-a.md rule 29",
+  "category": "persuasion",
+  "text": "A date or amount the customer proposes is never a refusal; handle it with sections 7 and 8.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "proposal_not_refusal",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A35",
+   "B35",
+   "C37"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R37",
+  "source": "brief-a.md rule 30",
+  "category": "persuasion",
+  "text": "A flat refusal or non-answer uses one attempt; no to today without date or amount is flat refusal. Attempt 1: amount in play, last business day of this week (or next week if today is it). Attempt 2 (late only): floor on deadline.",
+  "verbatim": [],
+  "values": {
+   "attempt_ladder": [
+    {
+     "attempt": 1,
+     "bands": [],
+     "amount": "in_play",
+     "date_rule": "last business day of this week; if today is that day, last business day of next week"
+    },
+    {
+     "attempt": 2,
+     "bands": [
+      "late"
+     ],
+     "amount": "floor",
+     "date_rule": "the deadline"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "attempt_ladder",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A36",
+   "B36",
+   "C38"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R38",
+  "source": "brief-a.md rule 31",
+  "category": "persuasion",
+  "text": "When attempts are used up, stop; do not repeat a refused offer; close `no_promise` / `refused`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "no_promise",
+     "reason": "refused",
+     "when": "attempts used up"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "attempts_exhausted",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A37",
+   "B37",
+   "C39"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V12",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "no_promise / refused",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Close as `no_promise` / `refused`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R39",
+  "source": "brief-a.md rule 32",
+  "category": "hardship",
+  "text": "Illness, family death or job loss: one short sympathy sentence, no persuasion, offer support team. Accept: `transfer_to_agent` queue `support`, close `transferred` / `support`; decline: `no_promise` / `hardship`. Precedes rules 30, 41; customer-named date/amount still recorded.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "transferred",
+     "reason": "support",
+     "when": "accepts support"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "hardship",
+     "when": "declines support"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "hardship_handling",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A38",
+   "B38",
+   "C40"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V13",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "accepts support: transferred / support (queue support); declines: no_promise / hardship",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If they accept, call `transfer_to_agent` with queue `support` and close as `transferred` / `support`. If they decline, close as `no_promise` / `hardship`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R40",
+  "source": "brief-a.md rule 32",
+  "category": "hardship",
+  "text": "If a hardship customer still names a date or amount themselves, record the promise under sections 7 and 8.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "hardship_self_promise",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "low",
+  "samples": "C",
+  "members": [
+   "C41"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R41",
+  "source": "brief-a.md rule 33",
+  "category": "persuasion",
+  "text": "Never offer a discount, waiver, instalment plan or any term not in this brief.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "no_extra_terms",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A39",
+   "B39",
+   "C42"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R42",
+  "source": "openapi.json /verify_identity",
+  "category": "identity",
+  "text": "An unreadable `verify_identity` answer is rejected with ok=false and not counted as wrong; `phone_last4` is four digits.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "unreadable_answer",
+  "doc": "openapi.json",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AC",
+  "members": [
+   "A40",
+   "C22"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R43",
+  "source": "brief-a.md rule 34",
+  "category": "confirmation",
+  "text": "Read the product, amount and date back and ask \"Do you confirm?\". Call `create_promise` only after a clear yes.",
+  "verbatim": [
+   "Do you confirm?"
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R67",
+  "topic": "read_back",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A41",
+   "B44",
+   "C43"
+  ],
+  "doc_date": "",
+  "deciding_quote": "Read all promises back together and ask for one confirmation.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R44",
+  "source": "brief-a.md rule 35",
+  "category": "confirmation",
+  "text": "If the customer changes date or amount at read-back, check the new value against sections 7 and 8 and read it back again.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "read_back_changes",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A42",
+   "B45",
+   "C44"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R45",
+  "source": "brief-a.md rule 36",
+  "category": "recording",
+  "text": "One promise per product. A recorded promise cannot be changed or cancelled in the same call; if asked, say they can change it in the mobile app.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "promise_per_product",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A43",
+   "B46",
+   "C45"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R46",
+  "source": "brief-a.md rule 37",
+  "category": "recording",
+  "text": "Say recorded only after `create_promise` returns `ok: true`. On failure retry once; if it fails again say you could not record it and close `no_promise` / `service_error`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "no_promise",
+     "reason": "service_error",
+     "when": "create_promise fails twice"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R72",
+  "topic": "promise_recording_retry",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A44",
+   "B47",
+   "C46"
+  ],
+  "doc_date": "",
+  "deciding_quote": "If one `create_promise` fails twice, keep the promises that were recorded and call `add_note` with reason `service_error` for the failed product.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R47",
+  "source": "brief-a.md rule 38",
+  "category": "recording",
+  "text": "After a recorded promise, say the mandatory confirmation-text sentence.",
+  "verbatim": [
+   "You will receive a text message confirming this promise."
+  ],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "promise_sms_sentence",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A45",
+   "B48",
+   "C47"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R48",
+  "source": "brief-a.md rule 39",
+  "category": "special",
+  "text": "\"I already paid\": say payments can take one business day to appear, take no promise, close as `paid`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "paid",
+     "reason": "",
+     "when": "customer says already paid"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "already_paid",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A46",
+   "B49",
+   "C48"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V14",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "paid (no reason)",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "\"I already paid\": say that payments can take one business day to appear, take no promise, and close as `paid`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R49",
+  "source": "brief-a.md rule 40",
+  "category": "special",
+  "text": "\"Not mine\"/\"never had this product\": do not argue, no promise, close `no_promise` / `dispute`. Claim product was closed or paid off in the past is a dispute; rule 39 covers only payment of this past-due amount.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "no_promise",
+     "reason": "dispute",
+     "when": "customer disputes the debt"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "dispute",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A47",
+   "B50",
+   "C49"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V15",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "no_promise / dispute",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Close as `no_promise` / `dispute`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R50",
+  "source": "brief-a.md rule 41",
+  "category": "special",
+  "text": "Request for new payment plan or lower instalments: do not describe a plan; call `transfer_to_agent` queue `restructuring`, close `transferred` / `restructuring`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "transferred",
+     "reason": "restructuring",
+     "when": "restructuring request"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R70",
+  "topic": "restructuring",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A48",
+   "B51",
+   "C50"
+  ],
+  "doc_date": "",
+  "deciding_quote": "A restructuring request still transfers the call (Brief A rule 41).",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R51",
+  "source": "brief-a.md rule 42",
+  "category": "special",
+  "text": "Request for a human: ask once whether you can help first; if they insist, `transfer_to_agent` queue `general`, close `transferred` / `human`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "transferred",
+     "reason": "human",
+     "when": "customer insists on a human"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "human_request",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A49",
+   "B52",
+   "C51"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V16",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "transferred / human (queue general)",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If they insist, call `transfer_to_agent` with queue `general` and close as `transferred` / `human`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R52",
+  "source": "brief-a.md rule 43",
+  "category": "special",
+  "text": "\"Is this a scam?\": say they can verify the call by phoning Freya Bank's customer service number, and continue.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "scam_question",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A50",
+   "B53",
+   "C52"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R53",
+  "source": "brief-a.md rule 44",
+  "category": "special",
+  "text": "Question not answerable from tools: say you do not have that information. Never invent figures, dates or reasons.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "unanswerable_question",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A51",
+   "B54",
+   "C53"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R54",
+  "source": "brief-a.md rule 45",
+  "category": "special",
+  "text": "Customer says twice they do not want to talk: close `no_promise` / `refused`; before verification close `not_verified` / `declined`. Rule 42 applies before and after verification.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "no_promise",
+     "reason": "refused",
+     "when": "twice unwilling, after verification"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "declined",
+     "when": "twice unwilling, before verification"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "does_not_want_to_talk",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A52",
+   "B55",
+   "C54"
+  ],
+  "doc_date": "",
+  "verification": {
+   "q": "V17",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "after verification: no_promise / refused; before verification: not_verified / declined",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If the customer says twice that they do not want to talk, close as `no_promise` / `refused`. Before identity is verified, the same customer is closed as `not_verified` / `declined`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R55",
+  "source": "brief-a.md rule 46",
+  "category": "closing",
+  "text": "Every call ends with exactly one `close_call` with an outcome and, where the table lists one, a reason. It is the last tool call.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "close_call_last",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A53",
+   "B56",
+   "C55"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R56",
+  "source": "brief-a.md section 12 table",
+  "category": "closing",
+  "text": "Outcome/reason table for `close_call`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "promise",
+     "reason": "",
+     "when": "at least one promise was recorded"
+    },
+    {
+     "outcome": "paid",
+     "reason": "",
+     "when": "rule 39"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "restructuring",
+     "when": "rule 41"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "human",
+     "when": "rule 42"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "support",
+     "when": "rule 32"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "refused",
+     "when": "rules 31 and 45"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "hardship",
+     "when": "rule 32"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "dispute",
+     "when": "rule 40"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "service_error",
+     "when": "rule 37"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "failed",
+     "when": "rule 14"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "declined",
+     "when": "rule 15"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "callback",
+     "when": "rule 6"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "no_callback",
+     "when": "rule 7"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "wrong_number",
+     "when": "rule 8"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "deceased",
+     "when": "rule 9"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "unclear",
+     "when": "rule 3"
+    }
+   ]
+  },
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R73",
+  "topic": "outcome_table",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A54",
+   "B57",
+   "C56"
+  ],
+  "doc_date": "",
+  "deciding_quote": "Otherwise close as `no_promise` with the reason of the first product, in `get_account` order, whose note is not `paid`.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R57",
+  "source": "brief-a.md section 12 note",
+  "category": "closing",
+  "text": "If a transfer follows a recorded promise, close as `transferred` with that transfer's reason.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "transfer_after_promise",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A55",
+   "B58",
+   "C57"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R58",
+  "source": "brief-a.md section 12 note",
+  "category": "recording",
+  "text": "Brief A never uses `add_note`.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": false,
+  "superseded_by": "R68",
+  "topic": "add_note_usage",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A56",
+   "B59",
+   "C58"
+  ],
+  "doc_date": "",
+  "deciding_quote": "For each product without a promise call `add_note` with that `product_id` and a reason: `refused`, `hardship`, `dispute`, `paid` or `service_error`.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R59",
+  "source": "brief-a.md rule 47",
+  "category": "closing",
+  "text": "Thank the customer and say goodbye before `close_call`.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "thanks_goodbye",
+  "doc": "brief-a.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A57",
+   "B60",
+   "C59"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R60",
+  "source": "brief-b.md intro",
+  "category": "multi_product",
+  "text": "Brief B is Brief A with a customer late on up to three products; every Brief A rule applies unless a Brief B rule replaces it.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "brief_b_scope",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A58",
+   "B61",
+   "C60"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R61",
+  "source": "brief-b.md rule 1",
+  "category": "multi_product",
+  "text": "`get_account` returns one to three products, each with its own `past_due`, `days_late` and floor.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "products_returned",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A59",
+   "B62",
+   "C61"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R62",
+  "source": "brief-b.md rule 2",
+  "category": "multi_product",
+  "text": "State every late product (collections team, late payment, product in words, past-due amount, days late), one sentence each, before asking for anything.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "R23",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "state_debt",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A60",
+   "B63",
+   "C62"
+  ],
+  "doc_date": "",
+  "deciding_quote": "State every late product, one sentence each, before asking for anything.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R63",
+  "source": "brief-b.md rule 3",
+  "category": "multi_product",
+  "text": "Band and deadline are per product, from that product's `days_late`; two products can have different deadlines.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "per_product_deadline",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A61",
+   "B64",
+   "C63"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R64",
+  "source": "brief-b.md rule 4",
+  "category": "multi_product",
+  "text": "First ask whether the customer can pay all products today. If not, go product by product in `get_account` order, not asking about today again; each product starts at attempt 1 of rule 30.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "R35",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "first_ask_today",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A62",
+   "B65",
+   "C64"
+  ],
+  "doc_date": "",
+  "deciding_quote": "First ask whether the customer can pay all of them today.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R65",
+  "source": "brief-b.md rule 5",
+  "category": "multi_product",
+  "text": "Persuasion attempts are counted per product.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "attempts_per_product",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A63",
+   "B66",
+   "C65"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R66",
+  "source": "brief-b.md rule 6",
+  "category": "multi_product",
+  "text": "If one date is named for everything and it is after a product's deadline, record that product on its own deadline and say so in the read-back; others keep the named date.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "one_date_for_all",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A64",
+   "B67",
+   "C66"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R67",
+  "source": "brief-b.md rule 7",
+  "category": "confirmation",
+  "text": "Brief B: read all promises (product, amount, date) back together and ask \"Do you confirm?\" once; after a clear yes call `create_promise` once per product.",
+  "verbatim": [
+   "Do you confirm?"
+  ],
+  "values": {},
+  "overrides": "R43",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "read_back_confirm",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A65",
+   "B68",
+   "C67"
+  ],
+  "doc_date": "",
+  "deciding_quote": "Read all promises back together and ask for one confirmation.",
+  "deciding_quote_found": true
+ },
+ {
+  "id": "R68",
+  "source": "brief-b.md rule 8",
+  "category": "recording",
+  "text": "Replaces 'never add_note': for each product without a promise call `add_note` with its `product_id` and reason `refused`, `hardship`, `dispute`, `paid` or `service_error`, also when no product gets a promise.",
+  "verbatim": [],
+  "values": {
+   "note_reasons": [
+    {
+     "reason": "refused",
+     "when": "product refused",
+     "text_must_contain": ""
+    },
+    {
+     "reason": "hardship",
+     "when": "hardship",
+     "text_must_contain": ""
+    },
+    {
+     "reason": "dispute",
+     "when": "disputed",
+     "text_must_contain": ""
+    },
+    {
+     "reason": "paid",
+     "when": "already paid",
+     "text_must_contain": ""
+    },
+    {
+     "reason": "service_error",
+     "when": "create_promise failed twice",
+     "text_must_contain": ""
+    }
+   ]
+  },
+  "overrides": "R58",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "add_note_use",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A66",
+   "B69",
+   "C68"
+  ],
+  "doc_date": "",
+  "deciding_quote": "For each product without a promise call `add_note` with that `product_id` and a reason: `refused`, `hardship`, `dispute`, `paid` or `service_error`.",
+  "deciding_quote_found": true,
+  "verification": {
+   "q": "V18",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "refused, hardship, dispute, paid, service_error; note text content not specified",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "For each product without a promise call `add_note` with that `product_id` and a reason: `refused`, `hardship`, `dispute`, `paid` or `service_error`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R69",
+  "source": "brief-b.md rule 9",
+  "category": "multi_product",
+  "text": "A dispute or \"already paid\" claim on one product does not end the call; note it and continue with the other products.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "dispute_paid_one_product",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A67",
+   "B70",
+   "C69"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R70",
+  "source": "brief-b.md rule 10",
+  "category": "special",
+  "text": "Restructuring request still transfers (`transfer_to_agent` queue `restructuring`). Promises recorded before stay; agreed but unrecorded ones are not recorded. Close `transferred` / `restructuring`.",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "transferred",
+     "reason": "restructuring",
+     "when": "restructuring request"
+    }
+   ]
+  },
+  "overrides": "R50",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "restructuring",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A68",
+   "B71",
+   "C70"
+  ],
+  "doc_date": "",
+  "deciding_quote": "A restructuring request still transfers the call (Brief A rule 41).",
+  "deciding_quote_found": true,
+  "verification": {
+   "q": "V19",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "transferred / restructuring (no notes added)",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "Close as `transferred` / `restructuring`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R71",
+  "source": "brief-b.md rule 10",
+  "category": "recording",
+  "text": "On any transfer (restructuring, support, human) add no notes at all, before or after it.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "no_notes_on_transfer",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AC",
+  "members": [
+   "A69",
+   "C71"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R72",
+  "source": "brief-b.md rule 11",
+  "category": "recording",
+  "text": "Say recorded only after `ok: true`; retry a failed `create_promise` once. If one fails twice, keep recorded promises and `add_note` reason `service_error` for the failed product.",
+  "verbatim": [],
+  "values": {
+   "note_reasons": [
+    {
+     "reason": "service_error",
+     "when": "create_promise failed twice",
+     "text_must_contain": ""
+    }
+   ]
+  },
+  "overrides": "R46",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "create_promise_failure",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "members": [
+   "A70",
+   "B72",
+   "C72"
+  ],
+  "doc_date": "",
+  "deciding_quote": "If one `create_promise` fails twice, keep the promises that were recorded and call `add_note` with reason `service_error` for the failed product.",
+  "deciding_quote_found": true,
+  "verification": {
+   "q": "V20",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "service_error; note text content not specified",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "If one `create_promise` fails twice, keep the promises that were recorded and call `add_note` with reason `service_error` for the failed product.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "R73",
+  "source": "brief-b.md Closing",
+  "category": "closing",
+  "text": "Brief A table applies. No promise: all products noted `paid` -> `paid`; else `no_promise` with first non-`paid` note reason in `get_account` order. Any recorded promise -> `promise`, except restructuring transfer (rule 10).",
+  "verbatim": [],
+  "values": {
+   "outcomes": [
+    {
+     "outcome": "promise",
+     "reason": "",
+     "when": "at least one promise recorded, unless restructuring transfer"
+    },
+    {
+     "outcome": "paid",
+     "reason": "",
+     "when": "no promise and every product noted paid"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "restructuring",
+     "when": "rule 41 / B rule 10"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "human",
+     "when": "rule 42"
+    },
+    {
+     "outcome": "transferred",
+     "reason": "support",
+     "when": "rule 32"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "refused",
+     "when": "first non-paid note is refused; rules 31, 45"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "hardship",
+     "when": "first non-paid note is hardship"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "dispute",
+     "when": "first non-paid note is dispute"
+    },
+    {
+     "outcome": "no_promise",
+     "reason": "service_error",
+     "when": "first non-paid note is service_error"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "failed",
+     "when": "rule 14"
+    },
+    {
+     "outcome": "not_verified",
+     "reason": "declined",
+     "when": "rule 15"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "callback",
+     "when": "rule 6"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "no_callback",
+     "when": "rule 7"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "wrong_number",
+     "when": "rule 8"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "deceased",
+     "when": "rule 9"
+    },
+    {
+     "outcome": "not_reached",
+     "reason": "unclear",
+     "when": "rule 3"
+    }
+   ]
+  },
+  "overrides": "R56",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "outcome_table",
+  "doc": "brief-b.md",
+  "status": "decided",
+  "confidence": "high",
+  "samples": "ABC",
+  "alternatives": [
+   {
+    "id": "A71",
+    "text": "No promise recorded: all products noted `paid` → close `paid`; else `no_promise` with reason of first product (get_account order) whose note is not `paid`. `promise` wins if any recorded, except rule 10.",
+    "values": {},
+    "verbatim": []
+   },
+   {
+    "id": "B73",
+    "text": "Brief A outcome table applies. No promise: all notes `paid` -> `paid`; else `no_promise` with first non-`paid` note's reason in `get_account` order. Any recorded promise -> `promise`, except rule 10 transfer.",
+    "values": {
+     "outcomes": [
+      {
+       "outcome": "promise",
+       "reason": "",
+       "when": "at least one promise recorded, no transfer"
+      },
+      {
+       "outcome": "paid",
+       "reason": "",
+       "when": "no promise, every product noted paid"
+      },
+      {
+       "outcome": "no_promise",
+       "reason": "first non-paid note reason",
+       "when": "no promise otherwise"
+      },
+      {
+       "outcome": "transferred",
+       "reason": "restructuring",
+       "when": "restructuring transfer"
+      }
+     ]
+    },
+    "verbatim": []
+   }
+  ],
+  "value_difference": "outcome list: B73 lists only promise, paid, no_promise (first non-paid note reason), transferred/restructuring; C73 lists the full table incl. transferred/human, transferred/support, not_verified and not_reached reasons; A71 has no values",
+  "members": [
+   "A71",
+   "B73",
+   "C73"
+  ],
+  "doc_date": "",
+  "deciding_quote": "The outcome table of Brief A applies.",
+  "deciding_quote_found": true,
+  "verification": {
+   "q": "V21",
+   "status": "ok",
+   "missing": [],
+   "verifier_value": "promise; paid; transferred/restructuring; transferred/human; transferred/support; no_promise/refused; no_promise/hardship; no_promise/dispute; no_promise/service_error; not_verified/failed; not_verified/declined; not_reached/callback; not_reached/no_callback; not_reached/wrong_number; not_reached/deceased; not_reached/unclear. Brief B: promise if at least 1 recorded (except restructuring transfer); all paid -> paid; else no_promise with reason of first non-paid product note",
+   "earlier_value": "",
+   "effective_from": "",
+   "quotes": [
+    {
+     "quote": "| `promise` | none | at least one promise was recorded |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| `paid` | none | rule 39 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| `transferred` | `restructuring`, `human`, `support` | rules 41, 42, 32 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| `no_promise` | `refused`, `hardship`, `dispute`, `service_error` | rules 31 and 45, 32, 40, 37 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| `not_verified` | `failed`, `declined` | rules 14, 15 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "| `not_reached` | `callback`, `no_callback`, `wrong_number`, `deceased`, `unclear` | rules 6, 7, 8, 9, 3 |",
+     "in_force": true,
+     "found": true
+    },
+    {
+     "quote": "With no promise recorded: if every product is noted `paid`, close as `paid`. Otherwise close as `no_promise` with the reason of the first product, in `get_account` order, whose note is not `paid`.",
+     "in_force": true,
+     "found": true
+    }
+   ]
+  },
+  "value_difference_resolved": true
+ },
+ {
+  "id": "R74",
+  "source": "openapi.json /verify_identity",
+  "category": "other",
+  "text": "`verify_identity` requires `customer_id`, `field` (`date_of_birth`|`phone_last4`), `answer`; phone_last4 is four digits; unreadable value returns ok=false and is not a wrong answer.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "verify_identity_api",
+  "doc": "openapi.json",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AB",
+  "members": [
+   "A72",
+   "B40"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R75",
+  "source": "openapi.json /create_promise",
+  "category": "other",
+  "text": "`create_promise` requires `customer_id`, `product_id`, `amount` (number), `date` (format date).",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "api_create_promise",
+  "doc": "openapi.json",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AB",
+  "members": [
+   "A73",
+   "B41"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R76",
+  "source": "openapi.json /schedule_callback",
+  "category": "other",
+  "text": "`schedule_callback` requires `customer_id`, `date` (date format), `time` as HH:MM.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "schedule_callback_api",
+  "doc": "openapi.json",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AB",
+  "members": [
+   "A74",
+   "B42"
+  ],
+  "doc_date": ""
+ },
+ {
+  "id": "R77",
+  "source": "openapi.json /close_call",
+  "category": "other",
+  "text": "`close_call` is always the last tool call; nothing accepted after it. `reason` required for every outcome except `promise` and `paid`.",
+  "verbatim": [],
+  "values": {},
+  "overrides": "",
+  "in_force": true,
+  "superseded_by": "",
+  "topic": "close_call_api",
+  "doc": "openapi.json",
+  "status": "decided",
+  "confidence": "medium",
+  "samples": "AB",
+  "members": [
+   "A75",
+   "B43"
+  ],
+  "doc_date": ""
+ }
+]

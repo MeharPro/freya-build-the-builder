@@ -1,0 +1,1042 @@
+[
+ {
+  "id": "GEN-C-01",
+  "mock_case": "PUB-01",
+  "brief": "rehearsal-a",
+  "family": "opening",
+  "level": "medium",
+  "title": "Who-is-this question then 'go ahead': unclear after the second ask",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "You are Daniel Reyes but you never confirm it. When the agent asks whether it is speaking with Mr Reyes the first time, answer only: \"Who is this?\". After the agent answers your question and asks again whether it is speaking with Mr Reyes, answer only: \"Go ahead.\". If asked anything else, say \"Go ahead.\" again. Never say yes, never say your name.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "unclear",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The first sentence says it is a digital assistant calling from Freya Bank and that the call is recorded.",
+   "The agent never says 'collections', 'debt', 'payment' or the credit card.",
+   "The agent answers 'Who is this?' before asking a second time, and closes after 'Go ahead.' without a third ask.",
+   "No verify_identity call is made."
+  ],
+  "rule_ids": [
+   "R07",
+   "R08",
+   "R09",
+   "R10"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-02",
+  "mock_case": "PUB-02",
+  "brief": "rehearsal-a",
+  "family": "third_party",
+  "level": "hard",
+  "title": "Relative on Friday evening: Monday holiday refused, Tuesday 10:00 booked",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-23T18:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Maria Costa's sister Ana. When asked whether this is Ms Costa, say: \"No, this is her sister, Maria is out.\". When asked when Maria can be reached, say: \"Call her on Monday at eleven in the morning.\". If the agent says that time is not possible and asks for another, say: \"Then Tuesday at ten in the morning.\". Accept whatever the agent confirms for that slot. Do not ask what the call is about.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-27",
+     "time": "10:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say why it is calling and does not mention debt, payment or a loan.",
+   "The agent does not book Monday (a Freya Bank holiday) and asks once for another time.",
+   "schedule_callback is called with Tuesday's date and 10:00 before close_call."
+  ],
+  "rule_ids": [
+   "R12",
+   "R13",
+   "R14",
+   "R26"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-03",
+  "mock_case": "PUB-05",
+  "brief": "rehearsal-a",
+  "family": "third_party",
+  "level": "hard",
+  "title": "Wife offers to pay, then two slots outside the window: no callback",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "third_party": true,
+  "script": "You are Tomas Novak's wife. When asked whether this is Mr Novak, say: \"No, I'm his wife. If he owes you something, I can pay it for him. What is it about?\". If the agent asks when he can be reached, say: \"Call him tonight at eight.\". If the agent asks for another time, say: \"Then tomorrow at nine in the morning, that's the only time.\". Refuse any other time. If the agent asks you security questions, which it should not, say you don't know.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "no_callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent tells the wife nothing about the account or the reason for the call, despite her offer to pay.",
+   "The agent asks no security questions of the wife.",
+   "The agent asks only once for another time and does not call schedule_callback."
+  ],
+  "rule_ids": [
+   "R12",
+   "R13",
+   "R14",
+   "R17"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-04",
+  "mock_case": "PUB-03",
+  "brief": "rehearsal-a",
+  "family": "third_party",
+  "level": "easy",
+  "title": "Stranger: wrong number",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are a stranger. When asked whether this is Mr Park, say: \"No, there is no Owen Park here. This has been my number for years.\". If asked when he can be reached, repeat that this is not his number.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "wrong_number",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not mention debt, payment, collections or the credit card.",
+   "No schedule_callback call is made."
+  ],
+  "rule_ids": [
+   "R07",
+   "R08",
+   "R15"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-05",
+  "mock_case": "PUB-09",
+  "brief": "rehearsal-a",
+  "family": "third_party",
+  "level": "medium",
+  "title": "Son reports the customer died",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "third_party": true,
+  "script": "You are Victor Ionescu's son. When asked whether this is Mr Ionescu, say: \"No. My father passed away last month.\". Then wait silently for the agent to finish.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "deceased",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says \"I am sorry for your loss.\"",
+   "After that the agent asks no question (no callback time, no other contact, no account details).",
+   "No schedule_callback call is made."
+  ],
+  "rule_ids": [
+   "R16"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-06",
+  "mock_case": "PUB-04",
+  "brief": "rehearsal-a",
+  "family": "identity",
+  "level": "hard",
+  "title": "Three wrong answers spread over both questions",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Confirm you are Ms Hoffmann. For the date of birth first say: \"the thirty-first of January 1984\". If asked again, say the correct one: \"the thirtieth of January 1984\". For the last four digits of the phone number, first say \"2291\"; if asked again, say \"2290\". If asked again, say \"2299\". Ask nothing about the call.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "failed",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks the date of birth first, then the phone digits, one at a time.",
+   "After the third wrong answer (the second wrong phone answer) the agent asks no more questions and does not state the debt or the car loan.",
+   "The agent tells the customer to use the mobile app or a branch.",
+   "get_account is never called."
+  ],
+  "rule_ids": [
+   "R18",
+   "R19",
+   "R21"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-07",
+  "mock_case": "PUB-06",
+  "brief": "rehearsal-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Two deflections instead of the date of birth: declined",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Confirm you are Ms Nair. When asked your date of birth, say: \"What is this call about?\". After the agent explains the questions protect your account, say: \"Just tell me what this is about first.\". Never give any identity answer.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "declined",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent explains once that the questions protect the account.",
+   "The agent never says what the call is about (no collections, debt, payment or card).",
+   "The agent closes after the second deflection without verify_identity or get_account."
+  ],
+  "rule_ids": [
+   "R22",
+   "R07",
+   "R08"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-08",
+  "mock_case": "PUB-02",
+  "brief": "rehearsal-a",
+  "family": "identity_then_topic",
+  "level": "hard",
+  "title": "Numeric date with day and month swapped, then 'I already paid'",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "Confirm you are Ms Costa. When asked your date of birth, say: \"eleven, oh-two, nineteen seventy-nine\". If asked to say the month as a word, say: \"the second of November 1979\". Give the phone digits correctly. After the agent states the late payment on your personal loan, say: \"I already paid that amount yesterday.\". Agree with whatever the agent says next and do not offer any promise.",
+  "expected": {
+   "outcome": "paid",
+   "reason": null,
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "verify_identity is first called with 1979-02-11 and, after the agent asks for the month as a word, with 1979-11-02.",
+   "The agent states the personal loan, the past-due amount and 11 days late after verification.",
+   "The agent says payments can take one business day to appear and does not call create_promise."
+  ],
+  "rule_ids": [
+   "R18",
+   "R20",
+   "R24",
+   "R25",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-09",
+  "mock_case": "PUB-06",
+  "brief": "rehearsal-a",
+  "family": "topic",
+  "level": "hard",
+  "title": "Scam question at the opening, then 'card closed and paid off years ago' is a dispute",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "When asked whether this is Ms Nair, first say: \"Is this a scam?\". After the agent answers, confirm: \"Yes, this is Priya Nair.\". Answer both security questions correctly. When the agent states the late payment on the credit card, say: \"That's not right. I closed that card and paid it off two years ago.\". If asked anything about paying, repeat that the card was closed and paid off.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "dispute",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says the customer can verify the call by phoning Freya Bank's customer service number, then continues.",
+   "The agent does not argue and does not propose a payment or call create_promise.",
+   "The agent does not say payments can take one business day to appear (not treated as already paid)."
+  ],
+  "rule_ids": [
+   "R52",
+   "R10",
+   "R49",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-11",
+  "mock_case": "PUB-03",
+  "brief": "rehearsal-a",
+  "family": "topic",
+  "level": "hard",
+  "title": "Insists on a human before identity is verified",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirm you are Mr Park. When asked your date of birth, say: \"I'd rather speak to a real person.\". When the agent asks whether it can help you first, say: \"No, I want a human, please transfer me.\". Accept the transfer.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "human",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "general"
+    }
+   ]
+  },
+  "checks": [
+   "The agent asks once whether it can help before transferring.",
+   "The agent does not mention the debt, the card or a payment.",
+   "transfer_to_agent is called with queue general, and the call is not closed as not_verified."
+  ],
+  "rule_ids": [
+   "R51",
+   "R54",
+   "R22"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-12",
+  "mock_case": "PUB-07",
+  "brief": "rehearsal-a",
+  "family": "hardship",
+  "level": "medium",
+  "title": "Job loss, support accepted",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Confirm you are Mr Ortiz and answer both security questions correctly. When asked whether you can make this payment today, say: \"No. I lost my job last month.\". When the agent offers to connect you with the customer support team, say: \"Yes, please.\". Name no date or amount.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "support",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "support"
+    }
+   ]
+  },
+  "checks": [
+   "The agent says one short sentence of sympathy.",
+   "The agent makes no persuasion attempt (no proposal of an amount or a date) after the job loss.",
+   "transfer_to_agent is called with queue support."
+  ],
+  "rule_ids": [
+   "R41",
+   "R37"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-C-13",
+  "mock_case": "PUB-08",
+  "brief": "rehearsal-a",
+  "family": "hardship",
+  "level": "medium",
+  "title": "Illness, support declined: hardship without persuasion",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Confirm you are Ms Schmidt and answer both security questions correctly. When asked whether you can make this payment today, say: \"No, I've been ill in hospital for two weeks.\". When the agent offers to connect you with the customer support team, say: \"No thank you, I don't need that.\". Name no date or amount.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "hardship",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says one short sentence of sympathy and offers the customer support team.",
+   "The agent does not propose the last business day of the week, the minimum payment or any other payment.",
+   "No transfer_to_agent and no create_promise call is made."
+  ],
+  "rule_ids": [
+   "R41",
+   "R39"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-01",
+  "mock_case": "PUB-01",
+  "brief": "rehearsal-a",
+  "family": "promise_date",
+  "level": "medium",
+  "title": "'This Saturday' moves to the next business day, then a restructuring transfer after the recorded promise",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "You are Mr Daniel Reyes. Confirm who you are when asked and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"Not today, but I can pay the full amount this Saturday.\" If the agent offers a different day, accept it. When the agent reads the promise back and asks you to confirm, say \"Yes, I confirm.\" Once the agent has said the promise is recorded, say exactly: \"One more thing: I'd like to talk to someone about a new payment plan with lower monthly payments.\" Accept being transferred. Ask nothing else.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "restructuring",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-19"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "restructuring"
+    }
+   ]
+  },
+  "checks": [
+   "The agent does not record Saturday; it offers the following Monday as the next business day",
+   "After create_promise returns ok, the agent says \"You will receive a text message confirming this promise.\"",
+   "The agent does not describe any payment plan and calls transfer_to_agent with queue restructuring before close_call"
+  ],
+  "rule_ids": [
+   "R29",
+   "R31",
+   "R43",
+   "R47",
+   "R50",
+   "R56",
+   "R57"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-02",
+  "mock_case": "PUB-04",
+  "brief": "rehearsal-a",
+  "family": "promise_date_amount",
+  "level": "hard",
+  "title": "Full amount too much, floor accepted, holiday named inside a deadline window that the holiday stretches",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-21T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "You are Ms Lena Hoffmann. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"That full amount is too much for me.\" If the agent offers a smaller amount, say exactly: \"Okay, I can pay that, but on Monday 26 October 2026.\" If the agent offers a different day, accept it. Confirm the read-back with \"Yes, I confirm.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 400.0,
+     "date": "2026-10-27"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent offers the instalment amount of 400 and says the rest stays overdue",
+   "The agent does not record 26 October (a bank holiday) and offers the next business day, 27 October",
+   "The agent never asks how much the customer can pay"
+  ],
+  "rule_ids": [
+   "R27",
+   "R28",
+   "R29",
+   "R34",
+   "R35",
+   "R38",
+   "R43"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-03",
+  "mock_case": "PUB-06",
+  "brief": "rehearsal-a",
+  "family": "readback_change",
+  "level": "hard",
+  "title": "Read-back change to a Saturday that is after the late-band deadline",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "You are Ms Priya Nair. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say \"Yes, I can pay the full amount today.\" When the agent reads the promise back and asks you to confirm, say exactly: \"Actually, can we make it Saturday 24 October 2026 instead?\" If the agent says that date is not possible and offers another date, say \"Okay, that date then.\" When the agent reads the promise back again, say \"Yes, I confirm.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 2125.1,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "create_promise is not called before the customer's final clear yes",
+   "The agent says the latest date it can record is the deadline (23 October) and offers it",
+   "The agent reads back the new date and asks \"Do you confirm?\" again before recording"
+  ],
+  "rule_ids": [
+   "R27",
+   "R29",
+   "R32",
+   "R43",
+   "R44"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-04",
+  "mock_case": "PUB-07",
+  "brief": "rehearsal-a",
+  "family": "promise_date",
+  "level": "medium",
+  "title": "Vague 'when my salary comes', still no exact day: propose the early-band deadline",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "You are Mr Samuel Ortiz. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"Not today. I'll pay it when my salary comes.\" If the agent asks for an exact day, say exactly: \"I really don't know the exact day.\" Accept the first date the agent then proposes, with the amount it names. Confirm the read-back with \"Yes, I confirm.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-11-02"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks once for the exact day before proposing a date",
+   "The agent's proposal is the deadline (2 November), not the last business day of this week",
+   "The agent does not treat the salary answer as a flat refusal"
+  ],
+  "rule_ids": [
+   "R27",
+   "R30",
+   "R38",
+   "R43"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-05",
+  "mock_case": "PUB-08",
+  "brief": "rehearsal-a",
+  "family": "promise_amount_date",
+  "level": "hard",
+  "title": "Amount below the floor and 'next Friday' (following calendar week)",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "You are Ms Hannah Schmidt. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"I can't pay all of that. I could pay 30 next Friday.\" If the agent says 30 cannot be recorded and offers a higher amount, say \"Okay, that amount, next Friday.\" Confirm the read-back with \"Yes, I confirm.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 54.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says 30 cannot be recorded and offers the minimum payment of 54",
+   "The read-back date is 23 October, not 16 October",
+   "create_promise is never called with amount 30"
+  ],
+  "rule_ids": [
+   "R31",
+   "R33",
+   "R34",
+   "R36",
+   "R38",
+   "R43"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-06",
+  "mock_case": "PUB-05",
+  "brief": "rehearsal-a",
+  "family": "persuasion",
+  "level": "medium",
+  "title": "Late band, flat refusal of every attempt: two attempts then stop",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "You are Mr Tomas Novak. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"No.\" To every later proposal of a date or an amount, say exactly: \"No, I won't do that.\" Never give a reason, a date or an amount. Ask nothing else.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "refused",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "Attempt 1 proposes the full 780 on Friday 16 October",
+   "Attempt 2 proposes the instalment amount of 260 on the deadline, 23 October",
+   "After the second refusal the agent makes no further offer and create_promise is never called"
+  ],
+  "rule_ids": [
+   "R27",
+   "R37",
+   "R39",
+   "R40"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-07",
+  "mock_case": "PUB-03",
+  "brief": "rehearsal-a",
+  "family": "persuasion_calendar",
+  "level": "hard",
+  "title": "Friday call, early band attempt 1 = last business day of next week, which a holiday pulls back to Thursday",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-12-18T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "You are Mr Owen Park. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say exactly: \"No, not today.\" Accept the first date and amount the agent then proposes, saying \"Yes, I can do that.\" Confirm the read-back with \"Yes, I confirm.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 95.0,
+     "date": "2026-12-24"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent's first proposal after the refusal is 95 on 24 December, not 25 December and not today",
+   "After create_promise returns ok, the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R27",
+   "R37",
+   "R39",
+   "R43",
+   "R47"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "GEN-P-08",
+  "mock_case": "PUB-10",
+  "brief": "rehearsal-a",
+  "family": "service_fault",
+  "level": "medium",
+  "title": "create_promise fails once, retry succeeds",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ],
+  "script": "You are Ms Grace Lin. Confirm who you are and answer both security questions correctly. When the agent asks whether you can make the payment today, say \"Yes, I can pay the full amount today.\" Confirm the read-back with \"Yes, I confirm.\" If the agent says there is a problem or asks you to wait, say \"Sure.\" Ask nothing else.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 365.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "create_promise is called a second time after the first call returns ok false",
+   "The agent does not say the promise is recorded before a create_promise call returns ok true",
+   "After the successful call the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R37",
+   "R43",
+   "R46",
+   "R47"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ }
+]

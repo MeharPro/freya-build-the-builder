@@ -1,0 +1,87 @@
+{
+ "name": "third party: a relative answers; nothing about the account, ask when the customer can be reached",
+ "variables": {
+  "customer_id": "c_smoke",
+  "first_name": "Maria",
+  "last_name": "Costa",
+  "title": "Ms",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  "Hello?",
+  "This is her husband, she is not here. What is this about?",
+  "She should be back tomorrow morning, around eleven."
+ ],
+ "expect": [
+  {
+   "after_turn": 1,
+   "not_contains": [
+    "debt",
+    "collection",
+    "payment",
+    "amount",
+    "overdue",
+    "past due",
+    "re:\\bowes?\\b",
+    "re:\\blate\\b",
+    "loan",
+    "credit card",
+    "balance"
+   ],
+   "note": "Opening wording and bank name must be checked against the current brief; this script checks disclosure only."
+  },
+  {
+   "after_turn": 2,
+   "not_contains": [
+    "debt",
+    "collection",
+    "payment",
+    "amount",
+    "overdue",
+    "past due",
+    "re:\\bowes?\\b",
+    "re:\\blate\\b",
+    "loan",
+    "credit card",
+    "balance",
+    "arrears"
+   ],
+   "contains_any": [
+    "reach",
+    "re:\\bwhen\\b",
+    "call back",
+    "callback",
+    "call her",
+    "good time",
+    "best time",
+    "available"
+   ],
+   "note": "the word 'account' is allowed: 'I can only speak with the account holder' is the compliant answer; what must not appear is anything about the account"
+  },
+  {
+   "after_turn": 3,
+   "cumulative": true,
+   "not_contains": [
+    "debt",
+    "collection",
+    "payment",
+    "amount",
+    "overdue",
+    "past due",
+    "re:\\bowes?\\b",
+    "re:\\blate\\b",
+    "loan",
+    "credit card",
+    "balance",
+    "arrears"
+   ]
+  },
+  {
+   "tools_not_called": [
+    "verify_identity",
+    "get_account",
+    "create_promise"
+   ]
+  }
+ ]
+}

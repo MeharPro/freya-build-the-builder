@@ -1,0 +1,23 @@
+documents: 5 part(s) in 1 file(s); dated parts: brief-d.md part 2 2026-10-06, brief-d.md part 3 2026-10-06, brief-d.md part 4 2026-10-14, brief-d.md part 5 2026-09-01
+each sample is written by 2 parallel calls, one per group of parts: 1,2 | 3,4,5
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample A (documents in forward order), parts 1,2
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample A (documents in forward order), parts 3,4,5
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample B (documents in reverse order), parts 1,2
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample B (documents in reverse order), parts 3,4,5
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample C (documents in latest-dated first order), parts 1,2
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-d.md, sample C (documents in latest-dated first order), parts 3,4,5
+sample A: 101 rules (81 s $0.24, 70 s $0.19)
+sample B: 101 rules (74 s $0.21, 80 s $0.22)
+sample C: 100 rules (78 s $0.22, 76 s $0.21)
+model call: claude-opus-5-5 | purpose: merge 3 sampled inventories (self-consistency union, flag minority rules and differing values)
+merged inventory: 117 rules (85 high, 15 medium, 17 low confidence; 0 with differing sampled values)
+self-check: missing numbered rules none, missing tokens ['wrong_answers_left']
+model call: claude-opus-5-5 | purpose: gap-fill the rule inventory (these values/tokens from the brief appear nowhere in the inventory: wrong_answers_left)
+gap-fill: 0 added, 1 replaced -> 117 rules | self-check: missing numbered rules none, missing tokens none
+dated-decision blocks: 12 | verification questions: 32
+model call: claude-opus-5-5 | purpose: resolve 12 dated-decision block(s) (which candidate is in force, deciding quote, effective date)
+model call: claude-opus-5-5 | purpose: chain-of-verification: quote the sentences that set 30 value(s) (fresh context, brief only) [1/2]
+model call: claude-opus-5-5 | purpose: chain-of-verification: quote the sentences that set 2 value(s) (fresh context, brief only) [2/2]
+dated decisions: call dates 2026-10-14..?; T1 R02=not_policy,R81=superseded; T2 R17=superseded,R18=not_policy,R83=superseded,R111=in_force; T3 R25=not_policy; T4 R26=in_force,R113=in_force; T5 R37=not_policy; T6 R67=in_force,R115=in_force; T7 R69=superseded,R71=superseded,R109=in_force; T8 R74=superseded,R110=in_force; T9 R77=superseded,R102=superseded,R103=in_force; T10 R78=superseded,R106=in_force; T11 R80=superseded,R107=in_force,R108=not_policy; T12 R100=superseded,R104=in_force
+verification: 32 checked, 29 ok, R17 mismatch, R71 mismatch, R102 mismatch
+stale values (replaced by a later rule, still in another rule in force): R43 ['hard'] (replaced R69 -> R109)

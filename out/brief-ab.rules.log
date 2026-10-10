@@ -1,0 +1,19 @@
+documents: 16 part(s) in 2 file(s); dated parts: none
+each sample is written by 2 parallel calls, one per group of parts: 1,2,3,4,5,6,7,8,9,10 | 11,12,13,14,15,16
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample A (documents in forward order), parts 1,2,3,4,5,6,7,8,9,10
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample A (documents in forward order), parts 11,12,13,14,15,16
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample B (documents in reverse order), parts 1,2,3,4,5,6,7,8,9,10
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample B (documents in reverse order), parts 11,12,13,14,15,16
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample C (documents in latest-dated first order), parts 1,2,3,4,5,6,7,8,9,10
+model call: claude-opus-5-5 | purpose: extract the rule inventory from brief-a.md, brief-b.md, sample C (documents in latest-dated first order), parts 11,12,13,14,15,16
+sample A: 75 rules (44 s $0.13, 42 s $0.12)
+sample B: 73 rules (49 s $0.14, 41 s $0.11)
+sample C: 73 rules (51 s $0.14, 50 s $0.14)
+model call: claude-opus-5-5 | purpose: merge 3 sampled inventories (self-consistency union, flag minority rules and differing values)
+merged inventory: 77 rules (69 high, 6 medium, 2 low confidence; 2 with differing sampled values)
+self-check: missing numbered rules none, missing tokens none
+dated-decision blocks: 7 | verification questions: 21
+model call: claude-opus-5-5 | purpose: resolve 7 dated-decision block(s) (which candidate is in force, deciding quote, effective date)
+model call: claude-opus-5-5 | purpose: chain-of-verification: quote the sentences that set 21 value(s) (fresh context, brief only)
+dated decisions: call dates 2026-10-14..2027-01-01; T1 R23=superseded,R62=in_force; T2 R35=superseded,R64=in_force; T3 R43=superseded,R67=in_force; T4 R46=superseded,R72=in_force; T5 R50=superseded,R70=in_force; T6 R56=superseded,R73=in_force; T7 R58=superseded,R68=in_force
+verification: 21 checked, 21 ok, no mismatch

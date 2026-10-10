@@ -1,0 +1,2893 @@
+[
+ {
+  "id": "EXT-A-01",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "opening",
+  "level": "medium",
+  "title": "Unclear answers to the identity question twice",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "When asked whether you are Mr Reyes, say only 'Hello?'. When asked again, say only 'Yeah, go ahead.' Never say yes, never say your name, never give any other answer to that question.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "unclear",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks \"Am I speaking with Mr Reyes?\" a second time after 'Hello?'",
+   "The agent does not say \"collections\", \"debt\", \"payment\" or the product",
+   "verify_identity is not called"
+  ],
+  "rule_ids": [
+   "R09",
+   "R10",
+   "R07",
+   "R56"
+  ],
+  "expected_confidence": "low",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-02",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "opening",
+  "level": "easy",
+  "title": "Asks if it is a robot, then confirms and pays today",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Before answering whether you are Mr Park, ask 'Wait, am I talking to a robot?'. After the answer, say 'Yes, that's me.' Answer both security questions correctly. Says he can pay the full amount today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 95.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says it is Freya Bank's digital assistant when asked about being a robot, then asks again \"Am I speaking with Mr Park?\"",
+   "The agent asks \"Can you make this payment today?\"",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R11",
+   "R09",
+   "R10",
+   "R18",
+   "R27",
+   "R37",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-03",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "special_questions",
+  "level": "medium",
+  "title": "Asks if it is a scam, then pays on a later day",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Before answering whether you are Ms Schmidt, ask 'Is this a scam?'. After the answer, confirm you are Hannah Schmidt. Answer both security questions correctly. Cannot pay today. Offers to pay the full amount on Thursday the 22nd of October. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 180.0,
+     "date": "2026-10-22"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent answers the scam question by saying the call can be verified by phoning Freya Bank's customer service number, before asking again for Ms Schmidt.",
+   "The agent does not mention collections, debt, payment or the credit card before both security questions pass.",
+   "The agent asks \"Do you confirm?\" before calling create_promise.",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R09",
+   "R10",
+   "R53",
+   "R07",
+   "R27",
+   "R28",
+   "R38",
+   "R44",
+   "R47",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-04",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "easy",
+  "title": "Sister answers, callback later today",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Maria's sister. You ask who is calling. Maria is at work; she can be reached today at four in the afternoon.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-14",
+     "time": "16:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says nothing beyond being Freya Bank's digital assistant on a recorded call; no reason for the call, no debt, payment, collections or product.",
+   "The agent calls schedule_callback for today at 16:00 before close_call.",
+   "verify_identity is never called."
+  ],
+  "rule_ids": [
+   "R07",
+   "R12",
+   "R13",
+   "R17",
+   "R63"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-05",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "medium",
+  "title": "Only times outside the callback window",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Maria's husband. When asked when she can be reached, say 'tonight at nine'. If asked for another time, say 'Saturday morning, nothing else'. You give no other time.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "no_callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After 'tonight at nine' the agent asks once for another time.",
+   "schedule_callback is never called.",
+   "The agent does not say why it is calling."
+  ],
+  "rule_ids": [
+   "R12",
+   "R13",
+   "R14"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-06",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "easy",
+  "title": "Wrong number",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You do not know anyone called Maria Costa. This has been your number for years. Say so when asked for her.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "wrong_number",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not mention debt, payment, collections or a loan.",
+   "schedule_callback is not called."
+  ],
+  "rule_ids": [
+   "R15",
+   "R07"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-07",
+  "mock_case": "PUB-05",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "easy",
+  "title": "The customer has died",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "third_party": true,
+  "script": "You are Tomas Novak's wife. When asked for him, say quietly that Tomas passed away last month.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "deceased",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says \"I am sorry for your loss.\"",
+   "The agent asks no further question after hearing of the death.",
+   "No debt, payment or loan is mentioned."
+  ],
+  "rule_ids": [
+   "R16",
+   "R07"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-08",
+  "mock_case": "PUB-06",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "medium",
+  "title": "Husband offers to pay, then gives 7 pm tomorrow",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Priya's husband. Ask what the call is about. Say you can pay whatever she owes right now if they tell you the amount. When asked when Priya can be reached, say tomorrow at seven in the evening.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "19:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say why it is calling and states no amount, debt, payment or product to the husband.",
+   "create_promise and verify_identity are never called.",
+   "schedule_callback is called for tomorrow at 19:00."
+  ],
+  "rule_ids": [
+   "R07",
+   "R12",
+   "R13",
+   "R17",
+   "R63"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-09",
+  "mock_case": "PUB-07",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Gives the date of birth month first, then says the month as a word",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Confirm you are Samuel Ortiz. When asked your date of birth, say it only as numbers with the month first: 'twelve, five, nineteen seventy-five'. If asked to say the month as a word, say 'the fifth of December 1975'. Give the last four digits 7093 when asked. Says he can pay the full amount today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The first verify_identity call for date_of_birth sends 1975-05-12, reading the numbers as day, month, year.",
+   "After the day_month_swapped hint the agent asks the customer to say the month as a word, and then sends 1975-12-05.",
+   "The agent asks \"Can you make this payment today?\".",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R19",
+   "R21",
+   "R18",
+   "R24",
+   "R37",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-10",
+  "mock_case": "PUB-04",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "One wrong phone answer, then right",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Confirm you are Lena Hoffmann. Give your date of birth correctly. For the phone number, first say 2291; when asked again, say 2219. Cannot pay today. Offers to pay the full amount on Wednesday the 21st of October. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1250.0,
+     "date": "2026-10-21"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After the wrong answer 2291 the agent asks for the phone digits again instead of ending the call.",
+   "The agent names the car loan and states the past-due amount and the days late only after both questions pass.",
+   "The agent asks \"Do you confirm?\" before calling create_promise."
+  ],
+  "rule_ids": [
+   "R20",
+   "R27",
+   "R28",
+   "R38",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-11",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Refuses once, hears why, then answers",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Confirm you are Daniel Reyes. When first asked your date of birth, say 'Why do you need that? I'm not giving you that.' After the agent explains, give your date of birth and then the last four digits correctly. Cannot pay today, will pay the full amount tomorrow. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-15"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After the first refusal the agent explains that the questions protect the account and does not close the call.",
+   "The agent does not mention debt, payment, collections or the credit card before identity is verified.",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R23",
+   "R18",
+   "R27",
+   "R28",
+   "R38",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-12",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "easy",
+  "title": "Refuses the security questions twice",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirm you are Owen Park. When asked your date of birth, refuse: 'I don't give that out on the phone.' After the agent explains, refuse again: 'No, I'm still not answering that.' Never give a security answer.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "declined",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent explains once that the security questions protect the account.",
+   "get_account is never called and the agent does not mention debt, payment or the credit card.",
+   "The call closes after the second refusal."
+  ],
+  "rule_ids": [
+   "R23",
+   "R07",
+   "R24"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-13",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Asks what the call is about instead of answering, twice",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Confirm you are Hannah Schmidt. When asked your date of birth, ask 'What is this call about?' instead of answering. After the agent replies, ask again 'First tell me what this is about.' Never give a security answer.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "declined",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say collections, debt, payment or the credit card in reply to either question.",
+   "The agent explains once that the questions protect the account.",
+   "get_account is never called."
+  ],
+  "rule_ids": [
+   "R23",
+   "R07"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-14",
+  "mock_case": "PUB-06",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Three wrong answers split across both questions",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Confirm you are Priya Nair. First give the date of birth as 17 June 1986; when asked again give 17 May 1986. For the phone number, first say 1520, then when asked again say 1205. Then ask how much you owe.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "failed",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After the third wrong answer the agent states no amount and no product, even when asked how much is owed.",
+   "The agent tells the customer to use the mobile app or a branch.",
+   "get_account is never called."
+  ],
+  "rule_ids": [
+   "R20",
+   "R22",
+   "R18",
+   "R24"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-15",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "amounts",
+  "level": "easy",
+  "title": "Proposes an amount between the floor and the full amount",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'I can pay 200 today, not the whole thing.' Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 200.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks for the full past-due amount (420) first with 'Can you make this payment today?'",
+   "The agent accepts 200 without offering the minimum payment or arguing for more",
+   "The agent reads back the credit card ending 4821, 200 and today's date and asks 'Do you confirm?' before create_promise",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R24",
+   "R25",
+   "R33",
+   "R34",
+   "R36",
+   "R37",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56",
+   "R59"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-16",
+  "mock_case": "PUB-06",
+  "brief": "brief-a",
+  "family": "amounts",
+  "level": "medium",
+  "title": "Proposes below the floor, accepts the floor",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'I can pay 300 on Friday.' When told 300 cannot be recorded, accept the minimum payment on Friday 16 October. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 637.5,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says 300 cannot be recorded and offers the minimum payment (637.50)",
+   "The agent does not ask 'how much can you pay?'",
+   "The agent reads back the credit card ending 1903, 637.50 and the Friday of this week and asks 'Do you confirm?' before create_promise",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R28",
+   "R31",
+   "R34",
+   "R36",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-17",
+  "mock_case": "PUB-04",
+  "brief": "brief-a",
+  "family": "amounts",
+  "level": "medium",
+  "title": "Below the floor, refuses the floor",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'I can only pay 100 euros.' Refuse every other amount or date the agent proposes: 'No, only 100.'",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "refused",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says 100 cannot be recorded and offers the instalment amount (400)",
+   "The agent never records a promise for 100 and never calls create_promise",
+   "The agent offers no discount, waiver or instalment plan",
+   "The call closes with close_call no_promise / refused"
+  ],
+  "rule_ids": [
+   "R27",
+   "R34",
+   "R36",
+   "R39",
+   "R40",
+   "R41",
+   "R43",
+   "R56",
+   "R59"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-18",
+  "mock_case": "PUB-09",
+  "brief": "brief-a",
+  "family": "persuasion",
+  "level": "hard",
+  "title": "Full amount too much, refuses the floor, accepts attempt 2",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say the full amount is too much. Say no to the first two offers the agent makes after that. Accept when the agent offers the instalment amount on the latest possible date (Friday 23 October). Never ask for a new plan or lower instalments. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 700.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After 'too much' the agent offers the instalment amount (700) and says the rest stays overdue",
+   "Attempt 1 proposes 700 on the last business day of this week",
+   "Attempt 2 proposes 700 on the deadline, and the agent reads it back with 'Do you confirm?'",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R34",
+   "R35",
+   "R39",
+   "R40",
+   "R41",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-19",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "easy",
+  "title": "Names a Saturday",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Offers to pay the full amount on Saturday the 17th. Accepts the next business day when offered. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 180.0,
+     "date": "2026-10-19"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not record the Saturday and offers the following Monday",
+   "The agent reads back the credit card ending 5512, 180 and the Monday date and asks 'Do you confirm?'",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R26",
+   "R27",
+   "R28",
+   "R29",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-20",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "medium",
+  "title": "'Next Friday' said on a Wednesday",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says 'I can pay the full amount next Friday.' If asked which date, say 'next Friday, not this one.' Confirms at the read-back if the date is the 23rd of October.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent reads 'next Friday' as the Friday of the following week, not this week's Friday",
+   "The agent reads back the credit card ending 4821, 420 and that date and asks 'Do you confirm?'",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R28",
+   "R31",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-21",
+  "mock_case": "PUB-05",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "medium",
+  "title": "Vague period twice, accepts the deadline",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says 'sometime next week'. When asked for the exact day, says 'when my salary comes, I don't know the day'. Accepts the date the agent proposes for the full amount. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 780.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks once for the exact day after 'sometime next week'",
+   "After the second vague answer the agent proposes the deadline and asks no further date questions",
+   "The agent reads back the personal loan, 780 and the deadline date and asks 'Do you confirm?'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R30",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-22",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "easy",
+  "title": "Names a date before today",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says he will pay the full amount on the 12th of October. When told that date is not possible, says Tuesday the 20th instead. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 95.0,
+     "date": "2026-10-20"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not record 12 October and says that date cannot be used",
+   "The agent reads back the credit card ending 0377, 95 and 20 October and asks 'Do you confirm?'",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R28",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-23",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "hard",
+  "title": "Names a holiday after the deadline",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "Confirm you are Maria Costa and answer both security questions correctly. Cannot pay today. Offers to pay the full amount on Monday the 26th of October. Accepts the latest possible date when offered. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 310.5,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says the latest date it can record is the deadline and offers it",
+   "The agent does not offer the business day after the holiday",
+   "The agent reads back the personal loan, 310.50 and the deadline date and asks 'Do you confirm?'"
+  ],
+  "rule_ids": [
+   "R26",
+   "R27",
+   "R29",
+   "R32",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-24",
+  "mock_case": "PUB-07",
+  "brief": "brief-a",
+  "family": "persuasion",
+  "level": "easy",
+  "title": "Flat refusal, accepts attempt 1",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'No.' and nothing else. Accept the next offer the agent makes. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent first asks 'Can you make this payment today?'",
+   "After 'No.' the agent proposes the full 540 on the last business day of this week, not the floor",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R27",
+   "R37",
+   "R39",
+   "R40",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-25",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "persuasion",
+  "level": "medium",
+  "title": "Early band refuses attempt 1",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'No, I'm not paying.' Refuse every offer with 'No.' Do not give a reason, a date or an amount. Do not say you do not want to talk.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "refused",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent makes exactly one persuasion offer: the full 180 on the last business day of this week",
+   "After that offer is refused the agent makes no further offer, and does not offer the minimum payment",
+   "create_promise is never called and the call closes no_promise / refused"
+  ],
+  "rule_ids": [
+   "R27",
+   "R39",
+   "R40",
+   "R41",
+   "R43",
+   "R56",
+   "R59"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-26",
+  "mock_case": "PUB-10",
+  "brief": "brief-a",
+  "family": "persuasion",
+  "level": "medium",
+  "title": "Late band refuses both attempts",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'No.' Refuse every offer with 'No, I won't.' Do not give a reason, a date or an amount. Do not say you do not want to talk.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "refused",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "Attempt 1 proposes the full 365 on the last business day of this week",
+   "Attempt 2 proposes the minimum payment 109.50 on the deadline",
+   "After the second refusal the agent makes no more offers, does not call create_promise, and closes no_promise / refused"
+  ],
+  "rule_ids": [
+   "R27",
+   "R34",
+   "R39",
+   "R40",
+   "R41",
+   "R43",
+   "R56",
+   "R59"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-27",
+  "mock_case": "PUB-06",
+  "brief": "brief-a",
+  "family": "hardship",
+  "level": "easy",
+  "title": "Illness, accepts the support team",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. After hearing the amount, say you have been in hospital for weeks and cannot think about money. Accept when offered to be connected to the support team.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "support",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "support"
+    }
+   ]
+  },
+  "checks": [
+   "After the illness is mentioned, the agent says one short sentence of sympathy.",
+   "The agent makes no persuasion attempt (proposes no date or amount) after the illness is mentioned.",
+   "The agent offers to connect the customer with the customer support team and calls transfer_to_agent with queue support before close_call."
+  ],
+  "rule_ids": [
+   "R42",
+   "R43",
+   "R56",
+   "R59"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-28",
+  "mock_case": "PUB-09",
+  "brief": "brief-a",
+  "family": "hardship",
+  "level": "hard",
+  "title": "Death in the family, but names a date and an amount",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. After hearing the amount, say your mother died last month and things are hard, but you can pay 700 on Thursday the 22nd of October. Decline a transfer to another team. Never ask for a new plan or lower instalments. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 700.0,
+     "date": "2026-10-22"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says one short sentence of sympathy and makes no persuasion attempt of its own.",
+   "The agent reads back personal loan, 700 and 22 October and asks \"Do you confirm?\" before create_promise.",
+   "After create_promise succeeds the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R42",
+   "R27",
+   "R28",
+   "R36",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-29",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "dispute",
+  "level": "easy",
+  "title": "Says the card was closed years ago",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Verified. After hearing the amount, say 'I closed that credit card years ago, I don't owe anything.' Repeat it if pressed.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "dispute",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not argue that the debt is owed.",
+   "The agent does not propose a payment or call create_promise.",
+   "The agent does not treat the claim as already paid (no mention that payments take one business day to appear)."
+  ],
+  "rule_ids": [
+   "R50",
+   "R49",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-30",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "human_request",
+  "level": "easy",
+  "title": "Asks for a person and insists",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. After hearing the amount, say 'I want to speak to a real person.' When asked whether the agent can help, say 'No, put me through to a person.'",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "human",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "general"
+    }
+   ]
+  },
+  "checks": [
+   "The agent asks once whether it can help before transferring.",
+   "The agent calls transfer_to_agent with queue general before close_call."
+  ],
+  "rule_ids": [
+   "R52",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-31",
+  "mock_case": "PUB-07",
+  "brief": "brief-a",
+  "family": "promise_then_transfer",
+  "level": "medium",
+  "title": "Promise recorded, then asks for a person",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. Says he can pay the full amount today. Confirms at the read-back. After the agent says the promise is recorded, say 'Now I'd like to talk to a person, please.' When asked whether the agent can help, insist on a person.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "human",
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "general"
+    }
+   ]
+  },
+  "checks": [
+   "The agent asks \"Can you make this payment today?\".",
+   "After create_promise succeeds the agent says \"You will receive a text message confirming this promise.\"",
+   "The agent asks once whether it can help, then calls transfer_to_agent with queue general before close_call."
+  ],
+  "rule_ids": [
+   "R37",
+   "R44",
+   "R47",
+   "R48",
+   "R52",
+   "R57",
+   "R27"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-32",
+  "mock_case": "PUB-04",
+  "brief": "brief-a",
+  "family": "refusal",
+  "level": "medium",
+  "title": "Does not want to talk, twice, after verification",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. After hearing the amount, say 'I don't want to talk about this.' When the agent continues, say 'I said I don't want to talk to you.'",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "refused",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not call create_promise.",
+   "The agent closes the call after the second statement that the customer does not want to talk, thanking the customer and saying goodbye first."
+  ],
+  "rule_ids": [
+   "R55",
+   "R39",
+   "R41",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-33",
+  "mock_case": "PUB-05",
+  "brief": "brief-a",
+  "family": "refusal",
+  "level": "medium",
+  "title": "Does not want to talk, twice, before verification",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Confirm you are Tomas Novak. When asked your date of birth, say 'I don't want to talk to you.' When the agent continues, say 'I told you, I don't want to talk.'",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "declined",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say \"collections\", \"debt\", \"payment\" or the product at any point.",
+   "The agent does not call get_account.",
+   "The agent explains once that the questions protect the customer's account."
+  ],
+  "rule_ids": [
+   "R55",
+   "R23",
+   "R07",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-34",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "readback_change",
+  "level": "medium",
+  "title": "Changes the amount at the read-back",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Agrees to pay the full amount this Friday. At the read-back, say 'Actually, make it 250 instead.' Confirm the new read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 250.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent reads back again with 250 and asks \"Do you confirm?\" before calling create_promise.",
+   "create_promise is called once, with amount 250.",
+   "After create_promise succeeds the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R39",
+   "R40",
+   "R45",
+   "R36",
+   "R34",
+   "R44",
+   "R48",
+   "R31"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-35",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "post_record_change",
+  "level": "medium",
+  "title": "Asks to change the promise after it is recorded",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Cannot pay today; will pay the full amount tomorrow. Confirms at the read-back. After the agent says it is recorded, ask 'Can I move that to Monday instead?'",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 180.0,
+     "date": "2026-10-15"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says the promise can be changed in the mobile app.",
+   "create_promise is called only once; the agent does not record a second promise for Monday.",
+   "After create_promise succeeds the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R46",
+   "R44",
+   "R47",
+   "R48",
+   "R28"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-36",
+  "mock_case": "PUB-10",
+  "brief": "brief-a",
+  "family": "service_fault",
+  "level": "medium",
+  "title": "Promise service fails once, floor accepted today",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say the full amount is too much. Accept the minimum payment today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 109.5,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "When the customer says the full amount is too much, the agent offers the minimum payment and says the rest stays overdue.",
+   "The agent does not say the promise is recorded after the first failed create_promise and retries create_promise once.",
+   "After the second create_promise succeeds the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R35",
+   "R34",
+   "R47",
+   "R48",
+   "R44",
+   "R27"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-37",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "persuasion_dates",
+  "level": "hard",
+  "title": "Friday call: attempt 1 is next week's Friday",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-16T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'No.' and nothing else. Accept the next offer. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks \"Can you make this payment today?\".",
+   "After the no, the agent proposes the full past-due amount on the last business day of next week, not on today."
+  ],
+  "rule_ids": [
+   "R39",
+   "R40",
+   "R37",
+   "R44",
+   "R48",
+   "R27"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-38",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "persuasion_dates",
+  "level": "medium",
+  "title": "Friday call: 'this Friday' is today",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-16T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Verified. When asked whether you can pay today, say 'I'll pay the full amount this Friday.' Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 95.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent reads back the credit card ending 0377, 95 and today's date and asks \"Do you confirm?\".",
+   "The agent does not move the date to next week's Friday."
+  ],
+  "rule_ids": [
+   "R31",
+   "R28",
+   "R38",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-39",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party_callback",
+  "level": "medium",
+  "title": "Evening call: callback at 19:00 today",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T18:30"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Maria's husband. She is out. When asked when she can be reached, say 'Try at seven tonight.'",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-14",
+     "time": "19:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say 'collections', 'debt', 'payment' or the product, and does not say why it is calling.",
+   "The agent does not ask the husband any security question.",
+   "schedule_callback is called with today's date and time 19:00 before close_call."
+  ],
+  "rule_ids": [
+   "R06",
+   "R07",
+   "R12",
+   "R13",
+   "R17",
+   "R56",
+   "R59",
+   "R63"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-40",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party_callback",
+  "level": "medium",
+  "title": "Evening call: 20:00 refused, tomorrow 10:00 booked",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T18:30"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "You are Maria's husband. When asked when she can be reached, say 'Tonight at eight.' If asked for another time, say 'Tomorrow morning at ten.'",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "10:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not schedule a callback at 20:00 and asks once for another time.",
+   "schedule_callback is called with tomorrow's date (Thursday 15 October) at 10:00.",
+   "The agent does not say why it is calling or mention debt, payment or the product."
+  ],
+  "rule_ids": [
+   "R06",
+   "R07",
+   "R12",
+   "R13",
+   "R14",
+   "R17",
+   "R56",
+   "R59",
+   "R63"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-41",
+  "mock_case": "PUB-04",
+  "brief": "brief-a",
+  "family": "deadline_holiday",
+  "level": "hard",
+  "title": "Late-band deadline across the 26 October holiday",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-23T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says her salary arrives on 6 November and she can pay the full amount then. Accepts the latest possible date when offered. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1250.0,
+     "date": "2026-11-04"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks 'Can you make this payment today?' before any other date is discussed.",
+   "The agent says the latest date it can record is the deadline (Wednesday 4 November) and offers it instead of 6 November.",
+   "The agent reads back car loan, 1250 and the date and asks 'Do you confirm?' before create_promise.",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R24",
+   "R25",
+   "R26",
+   "R27",
+   "R28",
+   "R32",
+   "R37",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56",
+   "R62"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "EXT-A-42",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "vague_date_deadline",
+  "level": "hard",
+  "title": "Early-band deadline across the 11 and 26 November holidays",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-11-10T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says 'in a couple of weeks'. When asked for the exact day, says 'I don't know, when my salary comes'. Accepts the date the agent proposes for the full amount. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-11-30"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "After 'in a couple of weeks' the agent asks once for the exact day.",
+   "After the second vague answer the agent proposes the deadline (Monday 30 November) for the full 420, not the end of this week.",
+   "The agent never asks 'how much can you pay?'.",
+   "After create_promise succeeds the agent says 'You will receive a text message confirming this promise.'"
+  ],
+  "rule_ids": [
+   "R24",
+   "R25",
+   "R26",
+   "R27",
+   "R28",
+   "R30",
+   "R33",
+   "R37",
+   "R38",
+   "R44",
+   "R47",
+   "R48",
+   "R56",
+   "R62"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-01",
+  "mock_case": "PUB-01",
+  "brief": "brief-a",
+  "family": "happy_path",
+  "level": "easy",
+  "title": "Confirms identity and pays the full amount today",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Confirms he is Daniel Reyes. Date of birth 14 March 1988, last four digits 4471. Says he can pay the full amount today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks \"Can you make this payment today?\"",
+   "The agent names the credit card ending 4821, the past-due amount 420 and that it is 6 days late",
+   "The agent asks \"Do you confirm?\" before create_promise is called",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R06",
+   "R08",
+   "R18",
+   "R24",
+   "R25",
+   "R27",
+   "R37",
+   "R44",
+   "R47",
+   "R48",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-02",
+  "mock_case": "PUB-02",
+  "brief": "brief-a",
+  "family": "third_party",
+  "level": "medium",
+  "title": "A relative answers",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "third_party": true,
+  "script": "The person who answers is her husband. Asks what the call is about and offers to pay himself. Says Maria can be reached tomorrow morning around eleven.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "11:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not say \"collections\", \"debt\", \"payment\" or the product to the husband",
+   "The agent does not ask the husband security questions and does not accept a payment from him",
+   "get_account and create_promise are not called"
+  ],
+  "rule_ids": [
+   "R07",
+   "R12",
+   "R13",
+   "R17",
+   "R63",
+   "R56"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-03",
+  "mock_case": "PUB-03",
+  "brief": "brief-a",
+  "family": "identity",
+  "level": "medium",
+  "title": "Three wrong answers",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirms the name. Gives date of birth 12 July 1991, then 21 August 1992, then 21 July 1990. Gets annoyed and asks how much he owes.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "failed",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent does not state any amount, the product or the debt after the third wrong answer",
+   "The agent tells the customer to use the mobile app or a branch",
+   "get_account is not called"
+  ],
+  "rule_ids": [
+   "R18",
+   "R20",
+   "R22",
+   "R07",
+   "R61",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-04",
+  "mock_case": "PUB-04",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "medium",
+  "title": "Wants a date after the deadline",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. Says her salary arrives on 6 November and she can pay then. Asks whether she is talking to a robot. Accepts the latest possible date when it is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1250.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says it is Freya Bank's digital assistant when asked about being a robot",
+   "The agent says the latest date it can record is the deadline and offers it instead of 6 November",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R11",
+   "R27",
+   "R28",
+   "R32",
+   "R33",
+   "R44",
+   "R48"
+  ],
+  "expected_confidence": "medium",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-05",
+  "mock_case": "PUB-05",
+  "brief": "brief-a",
+  "family": "hardship",
+  "level": "medium",
+  "title": "Lost his job, declines the support team",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Says he lost his job last month and cannot pay anything. Asks for a discount. Does not want to be transferred.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "hardship",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says one short sentence of sympathy and makes no persuasion attempt (no date or amount proposed after the job loss)",
+   "The agent offers to connect him with the customer support team",
+   "The agent does not offer a discount, waiver or instalment plan",
+   "transfer_to_agent is not called"
+  ],
+  "rule_ids": [
+   "R42",
+   "R43",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-06",
+  "mock_case": "PUB-06",
+  "brief": "brief-a",
+  "family": "amounts",
+  "level": "medium",
+  "title": "Full amount is too much, accepts the floor",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. Says the full amount is too much right now. If asked how much she can pay, says 'you tell me'. Accepts the minimum payment for this Friday.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 637.5,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent never asks \"how much can you pay?\" or anything like it",
+   "The agent offers the minimum payment and says the rest stays overdue",
+   "The agent asks \"Do you confirm?\" before create_promise is called"
+  ],
+  "rule_ids": [
+   "R33",
+   "R34",
+   "R35",
+   "R31",
+   "R27",
+   "R28",
+   "R44"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-07",
+  "mock_case": "PUB-07",
+  "brief": "brief-a",
+  "family": "dates",
+  "level": "hard",
+  "title": "A vague period, then a holiday",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says 'the week after next'. When asked for the exact day, says Monday the 26th. Accepts the next business day when it is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-27"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent asks once for the exact day after 'the week after next'",
+   "The agent does not record 26 October and offers the next business day instead",
+   "The agent asks \"Do you confirm?\" before create_promise is called"
+  ],
+  "rule_ids": [
+   "R30",
+   "R29",
+   "R26",
+   "R27",
+   "R28",
+   "R39",
+   "R44"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-08",
+  "mock_case": "PUB-08",
+  "brief": "brief-a",
+  "family": "special",
+  "level": "easy",
+  "title": "Says she already paid",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Says she paid it in the app this morning.",
+  "expected": {
+   "outcome": "paid",
+   "reason": null,
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "The agent says payments can take one business day to appear",
+   "create_promise is not called"
+  ],
+  "rule_ids": [
+   "R49",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-09",
+  "mock_case": "PUB-09",
+  "brief": "brief-a",
+  "family": "special",
+  "level": "easy",
+  "title": "Asks for a new payment plan",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. Says he cannot pay this amount and wants lower instalments.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "restructuring",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "restructuring"
+    }
+   ]
+  },
+  "checks": [
+   "The agent does not describe any payment plan or new instalment terms",
+   "transfer_to_agent is called with queue restructuring before close_call"
+  ],
+  "rule_ids": [
+   "R51",
+   "R43",
+   "R56"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ },
+ {
+  "id": "PUB-10",
+  "mock_case": "PUB-10",
+  "brief": "brief-a",
+  "family": "recording",
+  "level": "medium",
+  "title": "The promise service fails on the first call",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ],
+  "script": "Verified. Cannot pay today. Agrees to pay the full amount this Friday and confirms.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 365.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "create_promise is called a second time after the first failure",
+   "The agent does not say the promise is recorded before create_promise returns ok: true",
+   "After the promise is recorded the agent says \"You will receive a text message confirming this promise.\""
+  ],
+  "rule_ids": [
+   "R39",
+   "R40",
+   "R47",
+   "R48",
+   "R27",
+   "R44"
+  ],
+  "expected_confidence": "high",
+  "generated_by": "builder/cases.py"
+ }
+]

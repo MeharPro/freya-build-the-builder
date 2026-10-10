@@ -1,0 +1,88 @@
+{
+ "name": "opening: the customer answers; no debt talk before identity, then a security question",
+ "variables": {
+  "customer_id": "c_smoke",
+  "first_name": "Daniel",
+  "last_name": "Reyes",
+  "title": "Mr",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  "Hello?",
+  "Yes, this is me"
+ ],
+ "expect": [
+  {
+   "after_turn": 1,
+   "not_contains": [
+    "debt",
+    "collection",
+    "payment",
+    "amount",
+    "overdue",
+    "past due",
+    "re:\\bowes?\\b",
+    "re:\\blate\\b",
+    "loan",
+    "credit card",
+    "balance"
+   ],
+   "note": "Opening wording and bank name must be checked against the current brief; this script checks disclosure only."
+  },
+  {
+   "after_turn": 1,
+   "contains_any": [
+    "Reyes",
+    "Daniel"
+   ]
+  },
+  {
+   "after_turn": 2,
+   "cumulative": true,
+   "not_contains": [
+    "debt",
+    "collection",
+    "payment",
+    "amount",
+    "overdue",
+    "past due",
+    "re:\\bowes?\\b",
+    "re:\\blate\\b",
+    "loan",
+    "credit card",
+    "balance"
+   ]
+  },
+  {
+   "after_turn": 2,
+   "contains_any": [
+    "date of birth",
+    "re:\\bborn\\b",
+    "birth",
+    "last four",
+    "last 4",
+    "postcode",
+    "post code",
+    "company number",
+    "founded",
+    "security",
+    "identity",
+    "re:\\bverif",
+    "re:\\bconfirm"
+   ]
+  },
+  {
+   "after_turn": 2,
+   "tools_not_called": [
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "schedule_callback",
+    "add_note",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "note": "no bank tool before the first security answer; the engine's own code_exec/end_call are not bank tools (a workflow that enters a code node after the customer confirms is fine)"
+  }
+ ]
+}

@@ -1,0 +1,58 @@
+{
+ "case": "PUB-01",
+ "rep": 2,
+ "workflow_id": "9cf0839d-66c4-4f9f-91df-8f9f2698b2d1",
+ "call_id": null,
+ "customer_id": "c_b219fb6e-1d0",
+ "variables": {
+  "customer_id": "c_b219fb6e-1d0",
+  "first_name": "Daniel",
+  "last_name": "Reyes",
+  "title": "Mr",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "",
+   "status": 503,
+   "seconds": 48.6,
+   "error": "HTTP 503: Internal server error",
+   "ended_by_agent": false,
+   "first_turn_retries": 3
+  }
+ ],
+ "end": null,
+ "transcript": [
+  "customer: Hello?",
+  "agent: (no reply: HTTP 503: Internal server error)"
+ ],
+ "tool_calls": [],
+ "ledger": {
+  "ok": true,
+  "case": "PUB-01",
+  "team": "4d03f63f4e0d8cc0ec31bb9b",
+  "now": "2026-10-14T11:00",
+  "verified": {},
+  "wrong": 0,
+  "hinted": false,
+  "promises": [],
+  "notes": [],
+  "callbacks": [],
+  "transfers": [],
+  "outcome": null,
+  "reason": null,
+  "failures": {},
+  "calls": []
+ },
+ "judge": null,
+ "failed": [
+  "outcome (None, None), expected ('promise', None)",
+  "promises [], expected [('p1', 420.0, '2026-10-14')]",
+  "the call was not closed with close_call",
+  "conversation: no call was started, nothing to judge"
+ ],
+ "pass": false,
+ "stop": "no call started: HTTP 503: Internal server error"
+}

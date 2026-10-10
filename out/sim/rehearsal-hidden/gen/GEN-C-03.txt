@@ -1,0 +1,41 @@
+# GEN-C-03 Wife offers to pay, then two slots outside the window: no callback
+# workflow f523ddf6-4d31-419d-9b6e-c68d58e59ad8 | call 103804e8-a75e-4bba-b909-c1dd19209703 | customer c_8752147c-dc0 | 2026-10-10 20:27:00
+# customer model claude-haiku-5-5 | judge model claude-sonnet-5-5 (claude) | stop: ended by the agent (end_call in the call log after HTTP 502) | transcript from: GET /api/v2/call/103804e8-a75e-4bba-b909-c1dd19209703
+# RESULT: FAIL | conversation: The agent asked "Could you provide another time?" twice, after the wife's 8pm and 9am offers, so it did not ask only once for another time. It did not disclose anything about the account, asked no security questions, and did not call schedule_callback.
+
+customer: Hello?
+agent: Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with Mr Novak?
+customer: No, I'm his wife. If he owes you something, I can pay it for him. What is it about?
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> third_party: someone else answered who1 == 'someone_else'
+   [node] setup -> third_party
+agent: I can only discuss this with Mr Novak personally. When would he be reachable for a callback?
+customer: Tomas is out right now, so I can't say when he'll be free. Call him tonight at eight.
+agent: I can only call back today or on the next business day between 10:00 and 19:00. Could you provide another time?
+customer: Tomas is out right now, so tomorrow at nine in the morning is the only time I can offer.
+agent: I can only call back today or on the next business day between 10:00 and 19:00. Could you provide another time?
+customer: Tomas is out right now. Tomorrow at nine in the morning is the only time I can offer.
+   [node] third_party -> fin_no_callback
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'no_callback'\nexcept Exception:\n pass\n"}
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_no_callback -> end_no_callback: always always
+   [node] fin_no_callback -> end_no_callback
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "Thank you for your help. Goodbye."}
+   [call] ended: assistant-ended-call
+agent: Thank you for your help. Goodbye.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "no_callback", "outcome": "not_reached", "customer_id": "c_8752147c-dc0"}
+   [tool] close_call -> HTTP 200 data={"ok": true}
+
+## tool calls (4)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-26', '2026-11-11', '2026-11-26', '2026-12-25', '2027-01-01'])\nBWD = set([0, 1, 2, 3, 4])\nWDRULE = 'this_week'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat... -> HTTP 200 data=null
+2. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'not_reached'\n vars['reason'] = 'no_callback'\nexcept Exception:\n pass\n"} -> HTTP 200 data=null
+3. end_call args={"message_mode": "custom", "spoken_message": "Thank you for your help. Goodbye."} -> success Call ended
+4. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "no_callback", "outcome": "not_reached", "customer_id": "c_8752147c-dc0"} -> HTTP 200 data={"ok": true}
+
+## ledger: outcome=not_reached reason=no_callback promises=[] notes=[] callbacks=[] transfers=[] calls=['close_call']
+
+## judge (claude-sonnet-5-5): fail - The agent asked "Could you provide another time?" twice, after the wife's 8pm and 9am offers, so it did not ask only once for another time. It did not disclose anything about the account, asked no security questions, and did not call schedule_callback.

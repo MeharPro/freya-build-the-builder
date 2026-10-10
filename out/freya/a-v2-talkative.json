@@ -1,0 +1,457 @@
+{
+ "agent_id": "2f2a0c4e-7511-4c9b-a50a-9bcebed6849e",
+ "simulation_id": "472e468c-7b81-4f5b-982a-0188512b0a63",
+ "iteration_id": "3da4ac5b-f17f-4056-8947-4935dca1ffba",
+ "seconds": 481,
+ "passed": 5,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Happy path",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-04",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-09",
+   "family": "Restructuring",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "easy",
+   "family": "Happy path",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('promise', None)",
+    "promises [], expected [('p1', 420.0, '2026-10-14')]",
+    "conversation: The conversation failed to meet the success criteria because the identity verification process was never completed. Specifically: 1. Only the first security question (date of birth) was passed; the second question (phone number digits) was never answered. 2. The 'create_promise' tool was never called, failing the requirement that it be called exactly once. 3. The 'text-message' sentence was never "
+   ],
+   "call_id": "24d2d0ba-e78a-4607-8544-5affbdf0314f",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_e3e4f24c-604",
+   "slowest_turn_s": 1.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": true,
+   "failed": [],
+   "call_id": "57e643c1-c33f-4281-a549-e9d13d1027a3",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_eed71a98-483",
+   "slowest_turn_s": 3.3,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": true,
+   "failed": [],
+   "call_id": "c545f38c-3557-4723-bb26-3d730a80396c",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_2e3958aa-281",
+   "slowest_turn_s": 1.4,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-04",
+   "level": "medium",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('promise', None)",
+    "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+    "conversation: The conversation failed to meet all criteria because the call was terminated by the assistant after the user failed to provide the second security verification answer. Consequently, no promise date (specifically the 23 October deadline) was discussed or established. Additionally, while the agent identified itself as a digital assistant in the greeting, it was never explicitly asked this by the use"
+   ],
+   "call_id": "5ce1c20f-1e9f-49a9-9e4e-790ca5d0fd35",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_3269cdbb-c0c",
+   "slowest_turn_s": 0.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": false,
+   "failed": [
+    "conversation: The assistant failed to meet the 'one sentence of sympathy' criterion because it expressed sympathy twice: first in Message 2 regarding the user's hectic morning ('I'm sorry to hear that, Mr Novak.') and again in Message 8 regarding the user's job loss ('I am very sorry to hear about your job loss, Mr Novak.'). While each instance was a single sentence, the total quantity of sympathy exceeded the "
+   ],
+   "call_id": "e5dbb25c-7ca2-4021-9872-086ce1594050",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_e0fde5b2-8b6",
+   "slowest_turn_s": 2.0,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "outcome ('transferred', 'restructuring'), expected ('promise', None)",
+    "promises [], expected [('p1', 637.5, '2026-10-16')]",
+    "transfers [{'queue': 'restructuring'}], expected []",
+    "conversation: 1. The agent correctly avoided asking the user how much they could pay. 2. The agent correctly offered the minimum payment of 637.50 once and included the note about the rest remaining overdue. 3. The agent failed to secure a promise for 637.50 on Friday 16 October; instead, the agent transferred the call to another team when the user asked about other options. 4. The call ended properly via an ag"
+   ],
+   "call_id": "fb8741b6-98e7-48ff-b00e-46e632eb84b4",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "customer_id": "c_316081ea-f33",
+   "slowest_turn_s": 1.4,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-07",
+   "level": "hard",
+   "family": "Dates",
+   "pass": true,
+   "failed": [],
+   "call_id": "04af089a-9151-4bfb-b089-190083a48fcc",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_27e38ddf-6db",
+   "slowest_turn_s": 1.7,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-08",
+   "level": "medium",
+   "family": "Already paid",
+   "pass": true,
+   "failed": [],
+   "call_id": "1fdb39d8-3268-4f84-8a87-27b04c0b88b0",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_3bf88a20-7bd",
+   "slowest_turn_s": 9.1,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Restructuring",
+   "pass": false,
+   "failed": [
+    "outcome ('not_verified', 'declined'), expected ('transferred', 'restructuring')",
+    "transfers [], expected [{'queue': 'restructuring'}]",
+    "conversation: - The criterion \"transfer_to_agent called with queue restructuring\" was not met as the system events show the call was ended by the assistant using `end_call` and `close_call` rather than being transferred to an agent. - The agent correctly refrained from describing a plan of its own. - No promises were recorded in the conversation."
+   ],
+   "call_id": "95312b5d-6d1f-4235-bd4a-53671f375411",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_b36048da-b97",
+   "slowest_turn_s": 0.8,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": true,
+   "failed": [],
+   "call_id": "9578a1cc-aac8-4687-a515-52d66d205e76",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_b87388bf-ec5",
+   "slowest_turn_s": 3.8,
+   "ended": "assistant-ended-call"
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "easy",
+    "family": "Happy path",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('promise', None)",
+     "promises [], expected [('p1', 420.0, '2026-10-14')]",
+     "conversation: The conversation failed to meet the success criteria because the identity verification process was never completed. Specifically: 1. Only the first security question (date of birth) was passed; the second question (phone number digits) was never answered. 2. The 'create_promise' tool was never called, failing the requirement that it be called exactly once. 3. The 'text-message' sentence was never "
+    ],
+    "call_id": "24d2d0ba-e78a-4607-8544-5affbdf0314f",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_e3e4f24c-604",
+    "slowest_turn_s": 1.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": true,
+    "failed": [],
+    "call_id": "57e643c1-c33f-4281-a549-e9d13d1027a3",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_eed71a98-483",
+    "slowest_turn_s": 3.3,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": true,
+    "failed": [],
+    "call_id": "c545f38c-3557-4723-bb26-3d730a80396c",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_2e3958aa-281",
+    "slowest_turn_s": 1.4,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-04",
+    "level": "medium",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('promise', None)",
+     "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+     "conversation: The conversation failed to meet all criteria because the call was terminated by the assistant after the user failed to provide the second security verification answer. Consequently, no promise date (specifically the 23 October deadline) was discussed or established. Additionally, while the agent identified itself as a digital assistant in the greeting, it was never explicitly asked this by the use"
+    ],
+    "call_id": "5ce1c20f-1e9f-49a9-9e4e-790ca5d0fd35",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_3269cdbb-c0c",
+    "slowest_turn_s": 0.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": false,
+    "failed": [
+     "conversation: The assistant failed to meet the 'one sentence of sympathy' criterion because it expressed sympathy twice: first in Message 2 regarding the user's hectic morning ('I'm sorry to hear that, Mr Novak.') and again in Message 8 regarding the user's job loss ('I am very sorry to hear about your job loss, Mr Novak.'). While each instance was a single sentence, the total quantity of sympathy exceeded the "
+    ],
+    "call_id": "e5dbb25c-7ca2-4021-9872-086ce1594050",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_e0fde5b2-8b6",
+    "slowest_turn_s": 2.0,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "outcome ('transferred', 'restructuring'), expected ('promise', None)",
+     "promises [], expected [('p1', 637.5, '2026-10-16')]",
+     "transfers [{'queue': 'restructuring'}], expected []",
+     "conversation: 1. The agent correctly avoided asking the user how much they could pay. 2. The agent correctly offered the minimum payment of 637.50 once and included the note about the rest remaining overdue. 3. The agent failed to secure a promise for 637.50 on Friday 16 October; instead, the agent transferred the call to another team when the user asked about other options. 4. The call ended properly via an ag"
+    ],
+    "call_id": "fb8741b6-98e7-48ff-b00e-46e632eb84b4",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "transfer_to_agent",
+     "close_call"
+    ],
+    "customer_id": "c_316081ea-f33",
+    "slowest_turn_s": 1.4,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-07",
+    "level": "hard",
+    "family": "Dates",
+    "pass": true,
+    "failed": [],
+    "call_id": "04af089a-9151-4bfb-b089-190083a48fcc",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_27e38ddf-6db",
+    "slowest_turn_s": 1.7,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-08",
+    "level": "medium",
+    "family": "Already paid",
+    "pass": true,
+    "failed": [],
+    "call_id": "1fdb39d8-3268-4f84-8a87-27b04c0b88b0",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_3bf88a20-7bd",
+    "slowest_turn_s": 9.1,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Restructuring",
+    "pass": false,
+    "failed": [
+     "outcome ('not_verified', 'declined'), expected ('transferred', 'restructuring')",
+     "transfers [], expected [{'queue': 'restructuring'}]",
+     "conversation: - The criterion \"transfer_to_agent called with queue restructuring\" was not met as the system events show the call was ended by the assistant using `end_call` and `close_call` rather than being transferred to an agent. - The agent correctly refrained from describing a plan of its own. - No promises were recorded in the conversation."
+    ],
+    "call_id": "95312b5d-6d1f-4235-bd4a-53671f375411",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_b36048da-b97",
+    "slowest_turn_s": 0.8,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": true,
+    "failed": [],
+    "call_id": "9578a1cc-aac8-4687-a515-52d66d205e76",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_b87388bf-ec5",
+    "slowest_turn_s": 3.8,
+    "ended": "assistant-ended-call"
+   }
+  ]
+ ]
+}

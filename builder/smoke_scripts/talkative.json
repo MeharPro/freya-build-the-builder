@@ -1,0 +1,33 @@
+{
+ "name": "talkative: small talk before every answer, one cut-off line at the second security question; identity passes with each value sent once, no sympathy for the small talk, no close before the account is read",
+ "note": "Run with a practice customer: --case <id> --practice (generated cases: --cases <file>). {{answer1}}/{{answer2}} are the case's security answers in the order of its identity block (--answers '[...]' overrides). Brief-agnostic: no bank value, product or wording; only the security-question vocabulary may need the brief's own words.",
+ "turns": [
+  "Hello?",
+  "Oh hello, sorry, what a morning, the bus was late and it is pouring with rain here. Yes, this is me speaking.",
+  "Ah right, I have just put the kettle on, my sister is staying with us this week so the house is chaos. It's {{answer1}}.",
+  "Hang on, the neighbour's dog is barking again, it does that every single time the post comes, so it's",
+  "Sorry about that, where was I. {{answer2}}."
+ ],
+ "expect": [
+  {"after_turn": 1, "contains_any": ["{{last_name}}", "{{first_name}}"],
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance", "arrears"]},
+  {"after_turn": 2, "contains_any": ["date of birth", "re:\\bborn\\b", "birth", "last four", "last 4", "digits", "postcode", "post code", "company number", "founded", "security", "identity", "re:\\bverif", "re:\\bconfirm"],
+   "no_tool_calls": true,
+   "note": "small talk plus 'yes, this is me' is a confirmation: a security question follows, no bank tool yet"},
+  {"after_turn": 3, "tool": {"name": "verify_identity", "count": 1, "values_in_order": ["{{answer1_raw}}"], "results_true": ["ok", "verified"]},
+   "note": "the answer after the small talk is sent once, with the right value"},
+  {"after_turn": 4, "tool": {"name": "verify_identity", "count": 1},
+   "tools_not_called": ["close_call", "transfer_to_agent", "get_account"],
+   "note": "a sentence cut off before the answer is not an answer and not a refusal: no call with a half value, no close"},
+  {"after_turn": 4, "contains_any": ["?", "go on", "cut off", "again"], "note": "the agent asks again or asks the customer to go on, instead of moving on"},
+  {"after_turn": 4, "cumulative": true,
+   "not_contains": ["debt", "collection", "payment", "amount", "overdue", "past due", "re:\\bowes?\\b", "re:\\blate\\b", "loan", "credit card", "balance", "arrears"]},
+  {"after_turn": 5, "tool": {"name": "verify_identity", "count": 2, "values_in_order": ["{{answer1_raw}}", "{{answer2_raw}}"], "results_true": ["ok", "verified"]}},
+  {"after_turn": 5, "tools_called_any": ["get_account"], "tools_not_called": ["close_call", "transfer_to_agent", "create_promise"],
+   "note": "identity passed: the account is read and the call goes on; nothing is closed or recorded on small talk"},
+  {"after_turn": 5, "cumulative": true,
+   "not_contains": ["sorry to hear", "sorry about that", "sorry about the", "sorry for your", "that sounds", "sounds like a", "sounds stressful", "sounds tough", "must be hard", "must be frustrating", "must have been", "i understand how", "hope your day", "hope things", "enjoy your", "what a shame"],
+   "note": "no sympathy sentence for small talk (a brief's single sympathy sentence is for hardship, not for rain or a busy morning)"},
+  {"tools_not_called": ["transfer_to_agent"]}
+ ]
+}

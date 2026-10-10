@@ -1,0 +1,66 @@
+# PUB-05 Lost his job, declines the care team
+# workflow 68dc5046-318c-4d4f-bae5-3d602d05a7f9 | call 1fe925f6-45fc-477a-ba22-3e13248428a5 | customer c_39b72213-ada | 2026-10-10 17:35:19
+# customer model gpt-5-mini | judge model gpt-5 (openai) | stop: close_call in the ledger | transcript from: GET /api/v2/call/1fe925f6-45fc-477a-ba22-3e13248428a5
+# RESULT: PASS
+
+customer: Hello?
+agent: Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded. Am I speaking with Tomas Novak?
+customer: Yes, this is Tomas Novak.
+   [route] opening -> setup: always always
+   [node] opening -> setup
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tu...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] setup -> ask_phone: the customer confirmed who they are who1 == 'customer'
+   [node] setup -> ask_phone
+agent: What are the last four digits of the mobile number registered with the bank?
+customer: The last four digits are 8846.
+   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "phone_last4", "answer": "8846", "customer_id": "c_39b72213-ada"}
+   [tool] verify_identity -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Now ask the second security question: What is your date of birth?"}
+   [route] ask_phone -> ask_dob: phone digits correct (verify_identity_response.data.verified == 'true' OR verify_identity_response.data.verified == 'True')
+   [node] ask_phone -> ask_dob
+agent: What is your date of birth?
+customer: My date of birth is ninth September nineteen ninety.
+   [tool] verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1990-09-09", "customer_id": "c_39b72213-ada"}
+   [tool] verify_identity -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": true, "what_to_do_next": "Both security questions passed. Identity is verified."}
+   [route] ask_dob -> load_account: identity verified (verify_identity_response.data.all_verified == 'true' OR verify_identity_response.data.all_verified == 'True')
+   [node] ask_dob -> load_account
+   [tool] api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={"customer_id": "c_39b72213-ada"}
+   [tool] api_call -> HTTP 200 data={"ok": true, "products": [{"product_id": "p1", "type": "personal_loan", "past_due": 780, "days_late": 21, "instalment_amount": 260}]}
+   [route] load_account -> prepare: always always
+   [node] load_account -> prepare
+   [tool] code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tu...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] prepare -> negotiate: always always
+   [node] prepare -> negotiate
+agent: Thank you, Mr Novak. I am calling from the payments team of Nordvik Savings Bank about an overdue amount on your personal loan. The overdue amount is 780, and it is 21 days overdue. Are you able to settle the full overdue amount today?
+customer: I lost my job last month and I cannot pay anything right now. Is there any discount or hardship arrangement you can offer?
+   [route] negotiate -> hardship: hardship topic == 'hardship'
+   [node] negotiate -> hardship
+agent: I am sorry to hear that. I will not ask you for a payment today. The bank's care team can review your situation. May I connect you with them now?
+customer: No, please do not transfer me. Can you tell me what discounts or hardship arrangements you can offer?
+   [route] hardship -> fin_financial_distress: declines the care team care_choice == 'decline'
+   [node] hardship -> fin_financial_distress
+   [tool] code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'no_promise'\n vars['reason'] = 'financial_distress'\nexcept Exception:\n pass\ntry:\n vars['reduction_line'] = ' I cannot offer any reduction, and the figures are those on the account.' if str(vars.ge...
+   [tool] code_exec -> HTTP 200 data=null
+   [route] fin_financial_distress -> end_financial_distress: always always
+   [node] fin_financial_distress -> end_financial_distress
+   [tool] end_call args={"message_mode": "custom", "spoken_message": "I understand. I cannot offer any reduction, and the figures are those on the account. The care team will contact you within three business days. Thank you for your time, Mr Novak. Goodbye from Nordvik Savings Ba...
+   [call] ended: assistant-ended-call
+agent: I understand. I cannot offer any reduction, and the figures are those on the account. The care team will contact you within three business days. Thank you for your time, Mr Novak. Goodbye from Nordvik Savings Bank.
+   [tool] end_call -> success Call ended
+   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "financial_distress", "outcome": "no_promise", "customer_id": "c_39b72213-ada"}
+   [tool] close_call -> HTTP 200 data={"ok": false, "error": "this outcome needs one of these reasons: refused, hardship, dispute, service_error"}
+
+## tool calls (8)
+1. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tu... -> HTTP 200 data=null
+2. verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "phone_last4", "answer": "8846", "customer_id": "c_39b72213-ada"} -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": false, "what_to_do_next": "Correct. Now ask the second security question: What is your date of birth?"}
+3. verify_identity POST https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity body={"field": "date_of_birth", "answer": "1990-09-09", "customer_id": "c_39b72213-ada"} -> HTTP 200 data={"ok": true, "verified": true, "wrong_answers_left": 3, "all_verified": true, "what_to_do_next": "Both security questions passed. Identity is verified."}
+4. api_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/get_account body={"customer_id": "c_39b72213-ada"} -> HTTP 200 data={"ok": true, "products": [{"product_id": "p1", "type": "personal_loan", "past_due": 780, "days_late": 21, "instalment_amount": 260}]}
+5. code_exec args={"timeout_ms": 10000, "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tu... -> HTTP 200 data=null
+6. code_exec args={"timeout_ms": 10000, "code": "try:\n vars['outcome'] = 'no_promise'\n vars['reason'] = 'financial_distress'\nexcept Exception:\n pass\ntry:\n vars['reduction_line'] = ' I cannot offer any reduction, and the figures are those on the account.' if str(vars.ge... -> HTTP 200 data=null
+7. end_call args={"message_mode": "custom", "spoken_message": "I understand. I cannot offer any reduction, and the figures are those on the account. The care team will contact you within three business days. Thank you for your time, Mr Novak. Goodbye from Nordvik Savings Ba... -> success Call ended
+8. close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={"reason": "financial_distress", "outcome": "no_promise", "customer_id": "c_39b72213-ada"} -> HTTP 200 data={"ok": false, "error": "this outcome needs one of these reasons: refused, hardship, dispute, service_error"}
+
+## ledger: outcome=no_promise reason=financial_distress promises=[] notes=[] callbacks=[] transfers=[] calls=['verify_identity', 'verify_identity', 'get_account', 'close_call']
+
+## judge (gpt-5): pass - All criteria hold: the exact hardship sentence was said; no amount/date proposed after hardship; reduction was declined with no plan/waiver; care team offered once and follow-up stated; no transfer_to_agent; close_call used no_promise with reason financial_distress.

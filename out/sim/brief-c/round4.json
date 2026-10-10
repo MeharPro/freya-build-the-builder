@@ -1,0 +1,817 @@
+{
+ "runner": "sim",
+ "workflow_id": "68dc5046-318c-4d4f-bae5-3d602d05a7f9",
+ "agent_id": "01b1a04f-fecb-4f14-915f-c63145296333",
+ "simulation_id": null,
+ "iteration_id": null,
+ "seconds": 350,
+ "passed": 8,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Happy path",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-04",
+   "family": "Dates",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-09",
+   "family": "Restructuring",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "easy",
+   "family": "Happy path",
+   "pass": true,
+   "failed": [],
+   "call_id": "18b79db8-d6e5-4631-ad91-0244dab61698",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_aec2efa8-5c9",
+   "transcript": "out/sim/brief-c/round4/PUB-01.txt",
+   "turns": 6,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria are satisfied: the opening names the virtual assistant and recording without mentioning restricted terms before verification; identity checks occur in the correct order with get_account after both pass; create_promise is made exactly once for 420.00 on 2026-10-14 after a read-back ending in 'Shall I record this?'; the registered-email confirmation is stated; and close_call is sent with outcome promise and reason full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/18b79db8-d6e5-4631-ad91-0244dab61698",
+   "slowest_turn_s": 2.6,
+   "close_from_args": {
+    "args": {
+     "reason": "full",
+     "outcome": "promise"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": true,
+   "failed": [],
+   "call_id": "e1cd3b42-6c67-4690-8137-3cab635eead9",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_f3a3776d-c44",
+   "transcript": "out/sim/brief-c/round4/PUB-02.txt",
+   "turns": 3,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: the agent only stated it was a private matter to discuss personally, did not discuss the account or accept payment, scheduled the callback for 2026-10-15 at 11:00, and closed the call as not_reached with reason scheduled.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/e1cd3b42-6c67-4690-8137-3cab635eead9",
+   "slowest_turn_s": 2.0,
+   "close_from_args": {
+    "args": {
+     "reason": "scheduled",
+     "outcome": "not_reached"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: callback, no_callback, wrong_number, deceased, unclear"
+    }
+   }
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": true,
+   "failed": [],
+   "call_id": "d125e7c9-fe2d-406d-b3c3-5712619ac95f",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_e37ad512-e32",
+   "transcript": "out/sim/brief-c/round4/PUB-03.txt",
+   "turns": 5,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: phone last4 was asked first and passed with 6630 before DOB; after the second wrong DOB (21 Aug 1992) the agent ended without asking again; no amounts/products/reasons were disclosed and the agent directed to call the number on the card/statement; close_call was sent as not_verified with reason exhausted.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/d125e7c9-fe2d-406d-b3c3-5712619ac95f",
+   "slowest_turn_s": 1.9,
+   "close_from_args": {
+    "args": {
+     "reason": "exhausted",
+     "outcome": "not_verified"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: failed, declined"
+    }
+   }
+  },
+  {
+   "id": "PUB-04",
+   "level": "medium",
+   "family": "Dates",
+   "pass": true,
+   "failed": [],
+   "call_id": "67bc4ed2-eacc-42b2-a5db-c1d45bf822bb",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_a7e12c44-fa0",
+   "transcript": "out/sim/brief-c/round4/PUB-04.txt",
+   "turns": 7,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria are met: the agent disclosed being Nordvik\u2019s automated/virtual assistant and that the call is recorded; it did not treat Nov 6 as a refusal and proposed Oct 20; the recorded promise is 1250.00 on 2026-10-20; and close_call used outcome promise with reason full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/67bc4ed2-eacc-42b2-a5db-c1d45bf822bb",
+   "slowest_turn_s": 5.4,
+   "close_from_args": {
+    "args": {
+     "reason": "full",
+     "outcome": "promise"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": true,
+   "failed": [],
+   "call_id": "17975b67-cc3b-4b42-9643-2f576d4db4b3",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_18a1938a-482",
+   "transcript": "out/sim/brief-c/round4/PUB-05.txt",
+   "turns": 6,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: the exact hardship sentence was said, no amount/date proposed after hardship, no discount/plan/waiver discussed, care team offered once then promise of contact in three business days, no transfer_to_agent, and close_call used no_promise with reason financial_distress.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/17975b67-cc3b-4b42-9643-2f576d4db4b3",
+   "slowest_turn_s": 3.5,
+   "close_from_args": {
+    "args": {
+     "reason": "financial_distress",
+     "outcome": "no_promise"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: refused, hardship, dispute, service_error"
+    }
+   }
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": true,
+   "failed": [],
+   "call_id": "b67bb643-2498-4b0f-a500-d959afd87b2a",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_fde45ce8-bac",
+   "transcript": "out/sim/brief-c/round4/PUB-06.txt",
+   "turns": 8,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: the agent never asked how much she could pay; proposed 851.00 once with a note the remainder stays overdue; marked Fri 16 Oct as a holiday and offered Sat 17 Oct; recorded a promise for 851.00 on 2026-10-17 and closed the call with outcome=promise, reason=partial.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/b67bb643-2498-4b0f-a500-d959afd87b2a",
+   "slowest_turn_s": 2.2,
+   "close_from_args": {
+    "args": {
+     "reason": "partial",
+     "outcome": "promise"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  },
+  {
+   "id": "PUB-07",
+   "level": "hard",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', 'full')",
+    "the call was not closed with close_call"
+   ],
+   "call_id": "744a862a-bb41-4d0f-87d4-02cc3713f091",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise"
+   ],
+   "customer_id": "c_b1f5ed22-b59",
+   "transcript": "out/sim/brief-c/round4/PUB-07.txt",
+   "turns": 7,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "Agent asked once for the exact day after \u2018the week after next\u2019; accepted Monday 26 October without offering alternatives; recorded 540.00 on 2026-10-26 (green-band); close_call attempted with outcome promise and reason full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/744a862a-bb41-4d0f-87d4-02cc3713f091",
+   "slowest_turn_s": 3.4
+  },
+  {
+   "id": "PUB-08",
+   "level": "medium",
+   "family": "Already paid",
+   "pass": false,
+   "failed": [
+    "conversation: The agent asked, \u201cAre you able to settle the full overdue amount today?\u201d, which is a persuasion attempt and violates the no-persuasion criterion. The other criteria are satisfied."
+   ],
+   "call_id": "6b111e2a-93b1-4ae4-9e15-9563784d53c0",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "close_call"
+   ],
+   "customer_id": "c_ecbe52ad-7ea",
+   "transcript": "out/sim/brief-c/round4/PUB-08.txt",
+   "turns": 5,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "fail",
+    "reason": "The agent asked, \u201cAre you able to settle the full overdue amount today?\u201d, which is a persuasion attempt and violates the no-persuasion criterion. The other criteria are satisfied.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/6b111e2a-93b1-4ae4-9e15-9563784d53c0",
+   "slowest_turn_s": 1.8,
+   "close_from_args": {
+    "args": {
+     "reason": "self_reported",
+     "outcome": "paid"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Restructuring",
+   "pass": true,
+   "failed": [],
+   "call_id": "1f974945-2e26-499d-86f5-a21eaad34fca",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "transfer_to_agent",
+    "close_call"
+   ],
+   "customer_id": "c_6b98238c-fbe",
+   "transcript": "out/sim/brief-c/round4/PUB-09.txt",
+   "turns": 7,
+   "stop": "close_call in the ledger",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria hold: the agent did not discuss plan figures, stated the plan review team handles it and asked consent before transfer, used transfer_to_agent with queue restructuring with no promise recorded, and closed the call as transferred with reason plan_review.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/1f974945-2e26-499d-86f5-a21eaad34fca",
+   "slowest_turn_s": 1.4,
+   "close_from_args": {
+    "args": {
+     "reason": "plan_review",
+     "outcome": "transferred"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: restructuring, human, support"
+    }
+   }
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": true,
+   "failed": [],
+   "call_id": "0c9a4a63-ef2f-4899-96f4-2481930a1f08",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_8bb4bbf3-08e",
+   "transcript": "out/sim/brief-c/round4/PUB-10.txt",
+   "turns": 7,
+   "stop": "ended by the agent (endedByAgent)",
+   "judge": {
+    "outcome": "pass",
+    "reason": "All criteria are met: the agent identified Fri 16 Oct as a holiday and offered Sat 17 Oct; retried create_promise and recorded exactly one promise for 365.00 on 2026-10-17; only acknowledged and sent registered-email confirmation after success; and close_call used outcome promise with reason full.",
+    "model": "gpt-5"
+   },
+   "ended": "assistant-ended-call",
+   "transcript_source": "GET /api/v2/call/0c9a4a63-ef2f-4899-96f4-2481930a1f08",
+   "slowest_turn_s": 3.4,
+   "close_from_args": {
+    "args": {
+     "reason": "full",
+     "outcome": "promise"
+    },
+    "mock_result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: "
+    }
+   }
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "easy",
+    "family": "Happy path",
+    "pass": true,
+    "failed": [],
+    "call_id": "18b79db8-d6e5-4631-ad91-0244dab61698",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_aec2efa8-5c9",
+    "transcript": "out/sim/brief-c/round4/PUB-01.txt",
+    "turns": 6,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria are satisfied: the opening names the virtual assistant and recording without mentioning restricted terms before verification; identity checks occur in the correct order with get_account after both pass; create_promise is made exactly once for 420.00 on 2026-10-14 after a read-back ending in 'Shall I record this?'; the registered-email confirmation is stated; and close_call is sent with outcome promise and reason full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/18b79db8-d6e5-4631-ad91-0244dab61698",
+    "slowest_turn_s": 2.6,
+    "close_from_args": {
+     "args": {
+      "reason": "full",
+      "outcome": "promise"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: "
+     }
+    }
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": true,
+    "failed": [],
+    "call_id": "e1cd3b42-6c67-4690-8137-3cab635eead9",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_f3a3776d-c44",
+    "transcript": "out/sim/brief-c/round4/PUB-02.txt",
+    "turns": 3,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: the agent only stated it was a private matter to discuss personally, did not discuss the account or accept payment, scheduled the callback for 2026-10-15 at 11:00, and closed the call as not_reached with reason scheduled.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/e1cd3b42-6c67-4690-8137-3cab635eead9",
+    "slowest_turn_s": 2.0,
+    "close_from_args": {
+     "args": {
+      "reason": "scheduled",
+      "outcome": "not_reached"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: callback, no_callback, wrong_number, deceased, unclear"
+     }
+    }
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": true,
+    "failed": [],
+    "call_id": "d125e7c9-fe2d-406d-b3c3-5712619ac95f",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_e37ad512-e32",
+    "transcript": "out/sim/brief-c/round4/PUB-03.txt",
+    "turns": 5,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: phone last4 was asked first and passed with 6630 before DOB; after the second wrong DOB (21 Aug 1992) the agent ended without asking again; no amounts/products/reasons were disclosed and the agent directed to call the number on the card/statement; close_call was sent as not_verified with reason exhausted.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/d125e7c9-fe2d-406d-b3c3-5712619ac95f",
+    "slowest_turn_s": 1.9,
+    "close_from_args": {
+     "args": {
+      "reason": "exhausted",
+      "outcome": "not_verified"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: failed, declined"
+     }
+    }
+   },
+   {
+    "id": "PUB-04",
+    "level": "medium",
+    "family": "Dates",
+    "pass": true,
+    "failed": [],
+    "call_id": "67bc4ed2-eacc-42b2-a5db-c1d45bf822bb",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_a7e12c44-fa0",
+    "transcript": "out/sim/brief-c/round4/PUB-04.txt",
+    "turns": 7,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria are met: the agent disclosed being Nordvik\u2019s automated/virtual assistant and that the call is recorded; it did not treat Nov 6 as a refusal and proposed Oct 20; the recorded promise is 1250.00 on 2026-10-20; and close_call used outcome promise with reason full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/67bc4ed2-eacc-42b2-a5db-c1d45bf822bb",
+    "slowest_turn_s": 5.4,
+    "close_from_args": {
+     "args": {
+      "reason": "full",
+      "outcome": "promise"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: "
+     }
+    }
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": true,
+    "failed": [],
+    "call_id": "17975b67-cc3b-4b42-9643-2f576d4db4b3",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_18a1938a-482",
+    "transcript": "out/sim/brief-c/round4/PUB-05.txt",
+    "turns": 6,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: the exact hardship sentence was said, no amount/date proposed after hardship, no discount/plan/waiver discussed, care team offered once then promise of contact in three business days, no transfer_to_agent, and close_call used no_promise with reason financial_distress.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/17975b67-cc3b-4b42-9643-2f576d4db4b3",
+    "slowest_turn_s": 3.5,
+    "close_from_args": {
+     "args": {
+      "reason": "financial_distress",
+      "outcome": "no_promise"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: refused, hardship, dispute, service_error"
+     }
+    }
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": true,
+    "failed": [],
+    "call_id": "b67bb643-2498-4b0f-a500-d959afd87b2a",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_fde45ce8-bac",
+    "transcript": "out/sim/brief-c/round4/PUB-06.txt",
+    "turns": 8,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: the agent never asked how much she could pay; proposed 851.00 once with a note the remainder stays overdue; marked Fri 16 Oct as a holiday and offered Sat 17 Oct; recorded a promise for 851.00 on 2026-10-17 and closed the call with outcome=promise, reason=partial.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/b67bb643-2498-4b0f-a500-d959afd87b2a",
+    "slowest_turn_s": 2.2,
+    "close_from_args": {
+     "args": {
+      "reason": "partial",
+      "outcome": "promise"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: "
+     }
+    }
+   },
+   {
+    "id": "PUB-07",
+    "level": "hard",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', 'full')",
+     "the call was not closed with close_call"
+    ],
+    "call_id": "744a862a-bb41-4d0f-87d4-02cc3713f091",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise"
+    ],
+    "customer_id": "c_b1f5ed22-b59",
+    "transcript": "out/sim/brief-c/round4/PUB-07.txt",
+    "turns": 7,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "Agent asked once for the exact day after \u2018the week after next\u2019; accepted Monday 26 October without offering alternatives; recorded 540.00 on 2026-10-26 (green-band); close_call attempted with outcome promise and reason full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/744a862a-bb41-4d0f-87d4-02cc3713f091",
+    "slowest_turn_s": 3.4
+   },
+   {
+    "id": "PUB-08",
+    "level": "medium",
+    "family": "Already paid",
+    "pass": false,
+    "failed": [
+     "conversation: The agent asked, \u201cAre you able to settle the full overdue amount today?\u201d, which is a persuasion attempt and violates the no-persuasion criterion. The other criteria are satisfied."
+    ],
+    "call_id": "6b111e2a-93b1-4ae4-9e15-9563784d53c0",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "close_call"
+    ],
+    "customer_id": "c_ecbe52ad-7ea",
+    "transcript": "out/sim/brief-c/round4/PUB-08.txt",
+    "turns": 5,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "fail",
+     "reason": "The agent asked, \u201cAre you able to settle the full overdue amount today?\u201d, which is a persuasion attempt and violates the no-persuasion criterion. The other criteria are satisfied.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/6b111e2a-93b1-4ae4-9e15-9563784d53c0",
+    "slowest_turn_s": 1.8,
+    "close_from_args": {
+     "args": {
+      "reason": "self_reported",
+      "outcome": "paid"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: "
+     }
+    }
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Restructuring",
+    "pass": true,
+    "failed": [],
+    "call_id": "1f974945-2e26-499d-86f5-a21eaad34fca",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "transfer_to_agent",
+     "close_call"
+    ],
+    "customer_id": "c_6b98238c-fbe",
+    "transcript": "out/sim/brief-c/round4/PUB-09.txt",
+    "turns": 7,
+    "stop": "close_call in the ledger",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria hold: the agent did not discuss plan figures, stated the plan review team handles it and asked consent before transfer, used transfer_to_agent with queue restructuring with no promise recorded, and closed the call as transferred with reason plan_review.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/1f974945-2e26-499d-86f5-a21eaad34fca",
+    "slowest_turn_s": 1.4,
+    "close_from_args": {
+     "args": {
+      "reason": "plan_review",
+      "outcome": "transferred"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: restructuring, human, support"
+     }
+    }
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": true,
+    "failed": [],
+    "call_id": "0c9a4a63-ef2f-4899-96f4-2481930a1f08",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_8bb4bbf3-08e",
+    "transcript": "out/sim/brief-c/round4/PUB-10.txt",
+    "turns": 7,
+    "stop": "ended by the agent (endedByAgent)",
+    "judge": {
+     "outcome": "pass",
+     "reason": "All criteria are met: the agent identified Fri 16 Oct as a holiday and offered Sat 17 Oct; retried create_promise and recorded exactly one promise for 365.00 on 2026-10-17; only acknowledged and sent registered-email confirmation after success; and close_call used outcome promise with reason full.",
+     "model": "gpt-5"
+    },
+    "ended": "assistant-ended-call",
+    "transcript_source": "GET /api/v2/call/0c9a4a63-ef2f-4899-96f4-2481930a1f08",
+    "slowest_turn_s": 3.4,
+    "close_from_args": {
+     "args": {
+      "reason": "full",
+      "outcome": "promise"
+     },
+     "mock_result": {
+      "ok": false,
+      "error": "this outcome needs one of these reasons: "
+     }
+    }
+   }
+  ]
+ ],
+ "customer_model": "gpt-5-mini",
+ "judge_model": "gpt-5",
+ "provider": "openai",
+ "counts": {
+  "chat_turns": 61,
+  "customer_calls": 51,
+  "judge_calls": 10,
+  "ledger_polls": 89,
+  "call_fetches": 20
+ }
+}

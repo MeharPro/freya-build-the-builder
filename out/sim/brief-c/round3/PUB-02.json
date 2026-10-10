@@ -1,0 +1,237 @@
+{
+ "case": "PUB-02",
+ "rep": 1,
+ "workflow_id": "68dc5046-318c-4d4f-bae5-3d602d05a7f9",
+ "call_id": "95574fd4-833d-4303-8672-2a42d94068a4",
+ "customer_id": "c_6d4519ad-d3a",
+ "variables": {
+  "customer_id": "c_6d4519ad-d3a",
+  "first_name": "Maria",
+  "last_name": "Costa",
+  "title": "Ms",
+  "now": "2026-10-14T11:00"
+ },
+ "turns": [
+  {
+   "n": 1,
+   "customer": "Hello?",
+   "agent": "Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded. Am I speaking with Maria Costa?",
+   "status": 200,
+   "seconds": 4.9,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_4_1791654174765"
+  },
+  {
+   "n": 2,
+   "customer": "No, this is her husband.",
+   "agent": "I am calling from Nordvik Savings Bank on a private matter that I can discuss with the customer personally. When can Maria Costa be reached?",
+   "status": 200,
+   "seconds": 3.5,
+   "error": null,
+   "ended_by_agent": false,
+   "message_id": "msg_10_1791654179713"
+  },
+  {
+   "n": 3,
+   "customer": "She can be reached tomorrow morning around eleven.",
+   "agent": "Thank you, we will call back then. Thank you for your time. Goodbye from Nordvik Savings Bank.",
+   "status": 502,
+   "seconds": 10.7,
+   "error": "HTTP 502: error code: 502 | reply recovered from the call log after 7 s; the agent ended the call",
+   "ended_by_agent": true
+  }
+ ],
+ "end": {
+  "callId": "95574fd4-833d-4303-8672-2a42d94068a4",
+  "ended": true,
+  "endedReason": "assistant-ended-call",
+  "alreadyEnded": true
+ },
+ "transcript": [
+  "customer: Hello?",
+  "agent: Good day, this is the virtual assistant of Nordvik Savings Bank, and this call is recorded. Am I speaking with Maria Costa?",
+  "customer: No, this is her husband.",
+  "   [route] opening -> setup: always always",
+  "   [node] opening -> setup",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"import datetime, json, re\\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\\nBWD = set([0, 1, 2, 3, 4, 5])\\nWDRULE = 'first_after'\\nWD = ['Monday', 'Tu...",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] setup -> third_party: someone else answered who1 == 'someone_else'",
+  "   [node] setup -> third_party",
+  "agent: I am calling from Nordvik Savings Bank on a private matter that I can discuss with the customer personally. When can Maria Costa be reached?",
+  "customer: She can be reached tomorrow morning around eleven.",
+  "   [tool] schedule_callback POST https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback body={\"date\": \"2026-10-15\", \"time\": \"11:00\", \"customer_id\": \"c_6d4519ad-d3a\"}",
+  "   [tool] schedule_callback -> HTTP 200 data={\"ok\": true, \"what_to_do_next\": \"Callback booked.\"}",
+  "   [route] third_party -> fin_scheduled: callback booked (schedule_callback_response.data.ok == 'true' OR schedule_callback_response.data.ok == 'True')",
+  "   [node] third_party -> fin_scheduled",
+  "   [tool] code_exec args={\"timeout_ms\": 10000, \"code\": \"try:\\n vars['outcome'] = 'not_reached'\\n vars['reason'] = 'scheduled'\\nexcept Exception:\\n pass\\n\"}",
+  "   [tool] code_exec -> HTTP 200 data=null",
+  "   [route] fin_scheduled -> end_scheduled: always always",
+  "   [node] fin_scheduled -> end_scheduled",
+  "   [tool] end_call args={\"message_mode\": \"custom\", \"spoken_message\": \"Thank you, we will call back then. Thank you for your time. Goodbye from Nordvik Savings Bank.\"}",
+  "   [call] ended: assistant-ended-call",
+  "agent: Thank you, we will call back then. Thank you for your time. Goodbye from Nordvik Savings Bank.",
+  "   [tool] end_call -> success Call ended",
+  "   [tool] close_call POST https://freya-bank-mock.freyavoice.workers.dev/v1/close_call body={\"reason\": \"scheduled\", \"outcome\": \"not_reached\", \"customer_id\": \"c_6d4519ad-d3a\"}",
+  "   [tool] close_call -> HTTP 200 data={\"ok\": false, \"error\": \"this outcome needs one of these reasons: callback, no_callback, wrong_number, deceased, unclear\"}"
+ ],
+ "tool_calls": [
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "import datetime, json, re\nHOL = set(['2026-10-16', '2026-11-02', '2026-11-21', '2026-12-08', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31'])\nBWD = set([0, 1, 2, 3, 4, 5])\nWDRULE = 'first_after'\nWD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\nMO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\ndef isbd(d):\n    return d.weekday() in BWD and d.isoformat() not in HOL\ndef txt(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1] + ' ' + str(d.year)\ndef txt_short(d):\n    return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month - 1]\ndef addbd(d, n):\n    c = 0\n    guard = 0\n    while c < n and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n        if isbd(d):\n            c += 1\n    return d\ndef next_bd(d):\n    guard = 0\n    while not isbd(d) and guard < 4000:\n        d = d + datetime.timedelta(days=1)\n        guard += 1\n    return d\ndef lastbd_of_week(monday):\n    for k in range(6, -1, -1):\n        d = monday + datetime.timedelta(days=k)\n        if isbd(d):\n            return d\n    return None\ndef weekday_table(today):\n    monday = today - datetime.timedelta(days=today.weekday())\n    tab = []\n    for i in range(7):\n        a = monday + datetime.timedelta(days=i)\n        b = a + datetime.timedelta(days=7)\n        t1 = '\"this ' + WD[i] + '\" = ' + txt(a) + (' (already past)' if a < today else '')\n        tab.append(t1 + '; \"next ' + WD[i] + '\" = ' + txt(b))\n    return '\\n'.join(tab)\ndef weekday_table_first_after(today):\n    tab = []\n    for k in range(1, 8):\n        a = today + datetime.timedelta(days=k)\n        tab.append('\"this ' + WD[a.weekday()] + '\" = \"next ' + WD[a.weekday()] + '\" = ' + txt(a))\n    return '\\n'.join(tab)\nif WDRULE == 'first_after':\n    weekday_table = weekday_table_first_after\ndef calendar_text(today, deadline, extra_days=10):\n    cal = []\n    d = today\n    while d <= deadline + datetime.timedelta(days=extra_days):\n        if d > deadline:\n            tag = 'AFTER THE DEADLINE, not allowed'\n        elif isbd(d):\n            tag = 'allowed'\n        elif d.weekday() not in BWD:\n            tag = 'not a business day (' + WD[d.weekday()] + '), not allowed'\n        else:\n            tag = 'bank holiday, not allowed'\n        nb = next_bd(d)\n        extra = ''\n        if tag.startswith('not a business day') or tag.startswith('bank'):\n            extra = ' -> next business day ' + txt_short(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')\n        cal.append(d.isoformat() + ' ' + txt_short(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)\n        d = d + datetime.timedelta(days=1)\n    return '\\n'.join(cal)\ndef fmt(x):\n    try:\n        x = float(x)\n    except Exception:\n        return str(x)\n    s = '%.2f' % x\n    return s[:-3] if s.endswith('.00') else s\ntry:\n    raw = str(vars.get('now') or '').strip()\n    try:\n        nowdt = datetime.datetime.fromisoformat(raw[:16])\n    except Exception:\n        nowdt = datetime.datetime.fromisoformat(raw[:10] + 'T09:00')\n    today = nowdt.date()\n    vars['today_iso'] = today.isoformat()\n    vars['today_text'] = txt(today)\n    vars['now_time'] = nowdt.strftime('%H:%M')\n    vars['weekday_table'] = weekday_table(today)\n    lines = []\n    cur = nowdt.strftime('%H:%M')\n    if cur < '18:00':\n        start = '09:00' if cur < '09:00' else 'after ' + cur\n        lines.append('Today, ' + txt(today) + ' (' + today.isoformat() + '), from ' + start + ' up to 18:00.')\n    nbd = today\n    for _i in range(2):\n        nbd = addbd(nbd, 1)\n        lines.append(txt(nbd) + ' (' + nbd.isoformat() + '), from 09:00 up to 18:00 included.')\n    tom = today + datetime.timedelta(days=1)\n    extra = 'Tomorrow is ' + txt(tom) + '.'\n    if not isbd(tom):\n        extra += ' Tomorrow is NOT allowed, it is not a business day.'\n    vars['callback_text'] = 'The ONLY allowed callback times are:\\n- ' + '\\n- '.join(lines) + '\\n' + extra + ' Any other day or time is outside the window.'\n    vars['green_deadline'] = addbd(today, 9).isoformat()\n    vars['amber_deadline'] = addbd(today, 4).isoformat()\n    vars['attempt1_date'] = addbd(today, 1).isoformat()\n    vars['setup_state'] = 'ok'\nexcept Exception as e:\n    vars['setup_state'] = 'error ' + str(e)\n    vars.setdefault('callback_text', 'Callbacks: today later than now up to 18:00, or the next business day from 09:00 to 18:00.')\n    vars.setdefault('today_text', str(vars.get('now')))\n    vars.setdefault('today_iso', str(vars.get('now'))[:10])\n    vars.setdefault('now_time', '')\n    vars.setdefault('weekday_table', '')\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "schedule_callback",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "date": "2026-10-15",
+     "time": "11:00",
+     "customer_id": "c_6d4519ad-d3a"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": true,
+     "what_to_do_next": "Callback booked."
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "code_exec",
+   "args": {
+    "timeout_ms": 10000,
+    "code": "try:\n    vars['outcome'] = 'not_reached'\n    vars['reason'] = 'scheduled'\nexcept Exception:\n    pass\n"
+   },
+   "result": {
+    "status": "success",
+    "data": null,
+    "message": "Code executed successfully",
+    "status_code": 200
+   }
+  },
+  {
+   "tool": "end_call",
+   "args": {
+    "message_mode": "custom",
+    "spoken_message": "Thank you, we will call back then. Thank you for your time. Goodbye from Nordvik Savings Bank."
+   },
+   "result": {
+    "status": "success",
+    "message": "Call ended"
+   }
+  },
+  {
+   "tool": "close_call",
+   "args": {
+    "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "reason": "scheduled",
+     "outcome": "not_reached",
+     "customer_id": "c_6d4519ad-d3a"
+    }
+   },
+   "result": {
+    "status": "success",
+    "data": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: callback, no_callback, wrong_number, deceased, unclear"
+    },
+    "message": "Successfully executed POST request",
+    "status_code": 200,
+    "header": {
+     "Date": "Sat, 10 Oct 2026 17:43:15 GMT",
+     "Content-Type": "application/json",
+     "Transfer-Encoding": "chunked",
+     "Connection": "keep-alive",
+     "Report-To": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fZoRUEifrDi8YvCZXR6p3iFVW%2B36UX3LGh%2FnPBjhbVHxJTjacD%2F5KSxBJfaHQ1PrhbD8h33z0Hij8Z04u5Xxxo3DW0%2FKijJVkiNPsHGUPcL%2FCNkh3RRp9dztcZULjp4y0dZ%2BLlY29TIONexAxbBjnAYpcSOfgHSKEQ%3D%3D\"}]}",
+     "Nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+     "Content-Encoding": "gzip",
+     "Server": "cloudflare",
+     "CF-RAY": "a4876d225b8dcea0-FRA",
+     "alt-svc": "h3=\":443\"; ma=86400"
+    }
+   }
+  }
+ ],
+ "ledger": {
+  "ok": true,
+  "case": "PUB-02",
+  "team": "4d03f63f4e0d8cc0ec31bb9b",
+  "now": "2026-10-14T11:00",
+  "verified": {},
+  "wrong": 0,
+  "hinted": false,
+  "promises": [],
+  "notes": [],
+  "callbacks": [
+   {
+    "date": "2026-10-15",
+    "time": "11:00"
+   }
+  ],
+  "transfers": [],
+  "outcome": "not_reached",
+  "reason": "scheduled",
+  "failures": {
+   "schedule_callback": 0,
+   "close_call": 0
+  },
+  "calls": [
+   {
+    "n": 1,
+    "tool": "schedule_callback",
+    "args": {
+     "date": "2026-10-15",
+     "time": "11:00"
+    },
+    "status": 200,
+    "result": {
+     "ok": true
+    }
+   },
+   {
+    "n": 2,
+    "tool": "close_call",
+    "args": {
+     "reason": "scheduled",
+     "outcome": "not_reached"
+    },
+    "status": 200,
+    "result": {
+     "ok": false,
+     "error": "this outcome needs one of these reasons: callback, no_callback, wrong_number, deceased, unclear"
+    }
+   }
+  ],
+  "last_at": 1791654195583
+ },
+ "judge": {
+  "outcome": "pass",
+  "reason": "The agent only stated it was a private matter, discussed no account details with the husband and did not call verify_identity or get_account; schedule_callback was made for 2026-10-15 at 11:00; and close_call was issued as not_reached with reason scheduled.",
+  "model": "gpt-5"
+ },
+ "failed": [],
+ "pass": true,
+ "stop": "ended by the agent (endedByAgent)"
+}

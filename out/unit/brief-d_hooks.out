@@ -1,0 +1,28 @@
+PASS promise_pre 2026-10-30 -> 2026-10-29 
+PASS promise_pre 2026-10-30 -> 2026-10-21 
+PASS promise_pre 2026-10-17 -> 2026-10-16 
+PASS promise_pre 2026-10-26 -> 2026-10-26 
+PASS promise_pre id + amount cap 
+PASS promise_pre amount capped to past_due 
+PASS promise_post fail 1 asks a retry 
+PASS promise_post fail 2 asks a retry 
+PASS promise_post ok on 3rd try records 
+PASS promise_post 3 fails -> service_error note 
+PASS verify_post {'ok': True, 'verified': False, 'wrong_answers_left': 2} 
+PASS verify_post {'ok': True, 'verified': False, 'wrong_answers_left': 1} 
+PASS verify_post {'ok': True, 'verified': False, 'wrong_answers_left': 2, 'hint': 'day_month_swapped'} 
+PASS verify_post {'ok': True, 'verified': True, 'all_verified': True, 'wrong_answers_left': 2} 
+PASS ask_dob routes left 1 or 0 to fin_failed 
+PASS finalize rec='' notes='p1:refused,p2:dispute' 
+PASS finalize rec='' notes='p1:refused,p2:service_error,p3:hardship' 
+PASS finalize rec='' notes='p1:hardship' 
+PASS finalize rec='p1' notes='p2:refused,p3:refused' 
+PASS finalize rec='' notes='p1:paid,p2:paid' 
+PASS finalize rec='' notes='p1:paid,p2:refused' 
+PASS finalize rec='' notes='p1:paid,p2:dispute' 
+PASS fin_promise 
+PASS fin_hardship 
+PASS fin_paid 
+PASS fin_failed 
+PASS close_call keeps PRM on promise 
+0 failed
