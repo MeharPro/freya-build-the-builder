@@ -146,7 +146,7 @@ def request_response(payload, timeout=None):
 def request_options(model, effort=None):
     return {"model": model, "store": False, "include": ["reasoning.encrypted_content"],
             "reasoning": {"effort": effort or os.getenv("OPENAI_REASONING_EFFORT", "medium")},
-            "max_output_tokens": 24000}
+            "max_output_tokens": int(os.getenv("OPENAI_MAX_OUTPUT_TOKENS", "60000"))}
 
 
 async def ask_json_openai(prompt, system_prompt, schema, purpose, model, log, effort=None):
