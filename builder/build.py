@@ -155,6 +155,34 @@ class Trace:
         self.log.close(); self.jsonl.close()
 
 
+def log_decisions(trace, rules_path):
+    """Reviewer-facing decision log: which rule superseded which, on whose dated document, with the deciding quote,
+    and which statements were read but are not policy. Read-only over the inventory; never changes a rule."""
+    try:
+        data = json.loads(Path(rules_path).read_text(encoding="utf-8"))
+        rules = data.get("rules", data) if isinstance(data, dict) else data
+        by_id = {r.get("id"): r for r in rules if isinstance(r, dict)}
+        in_force = [r for r in by_id.values() if r.get("in_force", True)]
+        trace.line("inventory: %d rules, %d in force, %d superseded, %d not policy" % (
+            len(by_id), len(in_force), sum(1 for r in by_id.values() if r.get("superseded_by")),
+            sum(1 for r in by_id.values() if r.get("not_policy"))))
+        for r in by_id.values():
+            new = by_id.get(r.get("superseded_by"))
+            if not new:
+                continue
+            quote = " ".join(str(new.get("deciding_quote") or r.get("deciding_quote") or "").split())[:200]
+            trace.line("DECISION %s supersedes %s | %s (%s) over %s (%s) | %s%s" % (
+                new.get("id"), r.get("id"), new.get("doc") or new.get("source", "")[:60], new.get("doc_date") or "undated",
+                r.get("doc") or r.get("source", "")[:60], r.get("doc_date") or "undated",
+                " ".join(str(new.get("text", "")).split())[:160], (" | quote: " + quote) if quote else ""))
+        for r in by_id.values():
+            if r.get("not_policy"):
+                trace.line("NOT POLICY %s (%s): %s" % (r.get("id"), r.get("status") or "discussed",
+                                                       " ".join(str(r.get("text", "")).split())[:160]))
+    except Exception as e:
+        trace.line("decision log skipped: %s" % e)
+
+
 def run_step(trace, name, cmd, timeout):
     """Run a helper script, copy its 'model call' lines and summary into the trace, return (returncode, stdout)."""
     trace.line("step %s: %s" % (name, " ".join(cmd)))
@@ -419,6 +447,10 @@ async def execute_build(a):
         trace.line("case folder %s: %d files, %d bundled into %s (%d bytes)" % (
             a.case_folder, len(index), sum(i["included"] for i in index), out_md.relative_to(ROOT), out_md.stat().st_size))
         trace.raw({"case_files": index})
+        unread = [i.get("path") for i in index if not i.get("included")]
+        if unread:
+            # A document the bundle could not read is a document the agent will not follow: say so where a reviewer looks.
+            trace.line("WARNING %d case file(s) not bundled (unreadable or skipped): %s" % (len(unread), ", ".join(map(str, unread))))
         if a.derive_api:
             code, _ = run_step(trace, "apispec", [PY, "builder/apispec.py", a.briefs[0], "--mock-url", a.mock_url,
                                                   "--out", a.tool_api], 600)
@@ -455,6 +487,7 @@ async def execute_build(a):
             split = str(min(6, max(2, -(-brief_bytes // 45000))))
             required_step(trace, budget, "rules", [PY, "builder/rules.py", *a.briefs, "--api", a.tool_api,
                                                    "--out", str(rules_path), "--split", split], 660, reserve=180)
+            log_decisions(trace, rules_path)
         inventory_hashes = {str(p): sha256(p) for p in (ROOT / "out").glob(slot + ".rules*") if p.is_file()}
         spec_path = ROOT / "out" / (slot + ".spec.json")
         if spec_path.is_file():
