@@ -1,0 +1,116 @@
+[
+ {
+  "path": "README.md",
+  "bytes": 1300,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "BRIEF.md",
+  "bytes": 4683,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "cloudflare-mock/example/example-response.json",
+  "bytes": 87,
+  "kind": "json",
+  "included": true
+ },
+ {
+  "path": "cloudflare-mock/example/worker.js",
+  "bytes": 1791,
+  "kind": "js",
+  "included": true
+ },
+ {
+  "path": "cloudflare-mock/example/wrangler.toml",
+  "bytes": 75,
+  "kind": "toml",
+  "included": true
+ },
+ {
+  "path": "cloudflare-mock/README.md",
+  "bytes": 3204,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "example-scenarios.md",
+  "bytes": 7005,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/documents/2025-08-14-cards-faq.md",
+  "bytes": 4843,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/documents/2026-09-10-ivr-prompt-sheet.md",
+  "bytes": 8060,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/documents/2026-10-01-service-contract.md",
+  "bytes": 19610,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/emails/2026-09-24-kickoff-questions.txt",
+  "bytes": 8087,
+  "kind": "txt",
+  "included": true
+ },
+ {
+  "path": "sources/emails/2026-10-09-decisions-recap.txt",
+  "bytes": 4012,
+  "kind": "txt",
+  "included": true
+ },
+ {
+  "path": "sources/emails/attachments/2026-09-02-statement-debt-analysis.md",
+  "bytes": 16393,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+  "bytes": 28973,
+  "kind": "md",
+  "included": true
+ },
+ {
+  "path": "sources/meetings/2026-10-07-analysis-session-transcript.txt",
+  "bytes": 31908,
+  "kind": "txt",
+  "included": true
+ },
+ {
+  "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+  "bytes": 11377,
+  "kind": "txt",
+  "included": true
+ },
+ {
+  "path": "statement-debt-call-flow.pdf",
+  "bytes": 49629,
+  "kind": "pdf",
+  "included": true
+ },
+ {
+  "path": "test-environment/test-customers.json",
+  "bytes": 707265,
+  "kind": "json",
+  "included": true
+ },
+ {
+  "path": "test-environment/test-customers.md",
+  "bytes": 7691,
+  "kind": "md",
+  "included": true
+ }
+]

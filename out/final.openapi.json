@@ -1,0 +1,2121 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Freya Bank voice assistant: statement and debt services",
+    "version": "1.0.0",
+    "description": "The seven services the voice assistant calls for the credit card statement debt use case (Freya Bank service contract, 1 October 2026, Mert Koç). Every service is POST, JSON in, JSON out, UTF-8. The request body has the envelope {\"data\": {...service fields...}, \"call\": {\"ani\": \"<caller's number>\", \"lang\": \"tr\"}}. The request schemas below list only the fields inside data."
+  },
+  "servers": [
+    {
+      "url": "https://freya-bank-mock.mehar-144.workers.dev/voice/v1"
+    }
+  ],
+  "paths": {
+    "/cards.list": {
+      "post": {
+        "operationId": "cards_list",
+        "summary": "Lists the caller's active credit cards that the assistant may talk about. Call it first, at the start of every call, with the customerNumber call variable, before any other service.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerNo": {
+                    "type": "string",
+                    "description": "The caller's 8-digit customer number. Use the customerNumber call variable. Never ask the caller for it. May be sent as a string or a number."
+                  },
+                  "aiFlow": {
+                    "type": "string",
+                    "description": "Which use case is asking. Always \"CardOps\" for this flow (not validated in test).",
+                    "enum": [
+                      "CardOps"
+                    ]
+                  }
+                },
+                "required": [
+                  "customerNo",
+                  "aiFlow"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success (result.returnCode \"1\"). Gives the eligible cards.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "cards": {
+                          "type": "array",
+                          "description": "The customer's active cards (status A).",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "cardNumber": {
+                                "type": "string",
+                                "description": "Card number, masked in test (first 6 + last 4, e.g. 540000******1234). Send it EXACTLY like this to every card service. Never read it out."
+                              },
+                              "cardNumberLast4": {
+                                "type": "string",
+                                "description": "Last four digits, the only digits that may be spoken (digit by digit). Not unique: two cards can have the same last four."
+                              },
+                              "productName": {
+                                "type": "string",
+                                "description": "Card name, free text from the card system. Use as is. May be empty: then introduce the card by its last four only."
+                              },
+                              "status": {
+                                "type": "string",
+                                "description": "Always \"A\" (active)."
+                              },
+                              "isMainCard": {
+                                "type": "boolean",
+                                "description": "false for a card that is not the customer's own main card (supplementary). It is still in the list."
+                              }
+                            }
+                          }
+                        },
+                        "validCardsCount": {
+                          "type": "integer",
+                          "description": "Number of eligible cards."
+                        },
+                        "exitState": {
+                          "type": "string",
+                          "enum": [
+                            "1_CARD",
+                            "MULTI_CARD"
+                          ],
+                          "description": "1_CARD = one card, take it without asking; MULTI_CARD = ask which card."
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string",
+                          "description": "Bank trace id"
+                        },
+                        "returnCode": {
+                          "type": "string",
+                          "description": "\"1\" on success"
+                        },
+                        "messageText": {
+                          "type": "string",
+                          "description": "For logs only, never read out"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): a required field is missing or empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FB_IVR_CHANNEL_102 (type WARNING): the customer has no valid card (message \"Müşteriye ait geçerli kart bilgisi bulunamadı.\"). Also returned for a customer not in the test data. This is the no-eligible-card case, NOT a broken service.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error on the bank's side (message \"Teknik hata: ABORTED: \"). Service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards.balance": {
+      "post": {
+        "operationId": "cards_balance",
+        "summary": "Gets the statement and due dates and the debt per currency (TL, USD, EUR, GBP) for one card. Call it once the card is settled (single card, or the card the caller chose), to read the statement debt.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The chosen card's cardNumber exactly as cards.list returned it (masked form). Never rebuild it from digits the caller says."
+                  }
+                },
+                "required": [
+                  "cardNumber"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success (result.returnCode \"1\").",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "cardNumber": {
+                          "type": "string",
+                          "description": "Masked differently (first 4 + last 4, 5400********1234). Do not match against the card list; never read out."
+                        },
+                        "cardNumberLast4": {
+                          "type": "string",
+                          "description": "Last four digits, read digit by digit."
+                        },
+                        "productName": {
+                          "type": "string",
+                          "description": "Card name (may be empty)."
+                        },
+                        "statementDate": {
+                          "type": "string",
+                          "description": "Last issued statement (closing) date, dd.MM.yyyy. Can be empty for a new card with no statement yet: never invent a date."
+                        },
+                        "lastPayDate": {
+                          "type": "string",
+                          "description": "Due date of the last issued statement, dd.MM.yyyy (may be empty for a new card)."
+                        },
+                        "nextStatementDate": {
+                          "type": "string",
+                          "description": "Next statement date, dd.MM.yyyy."
+                        },
+                        "nextLastPayDate": {
+                          "type": "string",
+                          "description": "Next due date, dd.MM.yyyy."
+                        },
+                        "debtTL": {
+                          "type": "object",
+                          "description": "Turkish Lira debt block. A block can be missing.",
+                          "properties": {
+                            "statementPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "transferAmount": {
+                              "type": "number",
+                              "description": "Amount carried over / transferred."
+                            },
+                            "statementDebt": {
+                              "type": "number",
+                              "description": "Statement debt."
+                            },
+                            "minPayment": {
+                              "type": "number",
+                              "description": "Minimum payment on the statement."
+                            },
+                            "remainingDebt": {
+                              "type": "number",
+                              "description": "Remaining statement debt after payments; 0 or below = no debt in this currency."
+                            },
+                            "remainingMinPayment": {
+                              "type": "number",
+                              "description": "Remaining minimum payment."
+                            },
+                            "currentPeriodExpense": {
+                              "type": "number",
+                              "description": "Spending after the statement."
+                            },
+                            "totalDebt": {
+                              "type": "number",
+                              "description": "Total debt including spending after the statement; can be negative (credit)."
+                            },
+                            "totalDebtPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "remainAutomaticPaymentAmount": {
+                              "type": "number",
+                              "description": "Only meaningful when automaticPaymentFlag is Y."
+                            }
+                          }
+                        },
+                        "debtUSD": {
+                          "type": "object",
+                          "description": "US Dollar debt block, same fields. Can be missing.",
+                          "properties": {
+                            "statementPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "transferAmount": {
+                              "type": "number"
+                            },
+                            "statementDebt": {
+                              "type": "number"
+                            },
+                            "minPayment": {
+                              "type": "number"
+                            },
+                            "remainingDebt": {
+                              "type": "number"
+                            },
+                            "remainingMinPayment": {
+                              "type": "number"
+                            },
+                            "currentPeriodExpense": {
+                              "type": "number"
+                            },
+                            "totalDebt": {
+                              "type": "number"
+                            },
+                            "totalDebtPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "remainAutomaticPaymentAmount": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "debtEUR": {
+                          "type": "object",
+                          "description": "Euro debt block, same fields. Can be missing.",
+                          "properties": {
+                            "statementPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "transferAmount": {
+                              "type": "number"
+                            },
+                            "statementDebt": {
+                              "type": "number"
+                            },
+                            "minPayment": {
+                              "type": "number"
+                            },
+                            "remainingDebt": {
+                              "type": "number"
+                            },
+                            "remainingMinPayment": {
+                              "type": "number"
+                            },
+                            "currentPeriodExpense": {
+                              "type": "number"
+                            },
+                            "totalDebt": {
+                              "type": "number"
+                            },
+                            "totalDebtPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "remainAutomaticPaymentAmount": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "debtGBP": {
+                          "type": "object",
+                          "description": "British Pound debt block, same fields. Some cards have NO debtGBP block at all: missing is not the same as NO_DEBT; leave it out, never invent zeros.",
+                          "properties": {
+                            "statementPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "transferAmount": {
+                              "type": "number"
+                            },
+                            "statementDebt": {
+                              "type": "number"
+                            },
+                            "minPayment": {
+                              "type": "number"
+                            },
+                            "remainingDebt": {
+                              "type": "number"
+                            },
+                            "remainingMinPayment": {
+                              "type": "number"
+                            },
+                            "currentPeriodExpense": {
+                              "type": "number"
+                            },
+                            "totalDebt": {
+                              "type": "number"
+                            },
+                            "totalDebtPaymentStatus": {
+                              "type": "string",
+                              "enum": [
+                                "HAS_DEBT",
+                                "NO_DEBT"
+                              ]
+                            },
+                            "remainAutomaticPaymentAmount": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "statementPaymentStatus": {
+                          "type": "string",
+                          "enum": [
+                            "HAS_DEBT",
+                            "NO_DEBT"
+                          ],
+                          "description": "Card overall: NO_DEBT = no statement debt in any currency."
+                        },
+                        "totalDebtPaymentStatus": {
+                          "type": "string",
+                          "enum": [
+                            "HAS_DEBT",
+                            "NO_DEBT"
+                          ],
+                          "description": "Card overall, total debt."
+                        },
+                        "automaticPaymentFlag": {
+                          "type": "string",
+                          "enum": [
+                            "Y",
+                            "N"
+                          ],
+                          "description": "Y = card has an automatic payment instruction."
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): empty card number.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FB_IVR_CHANNEL_120 (type WARNING): card not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error. Service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statement.week.get": {
+      "post": {
+        "operationId": "statement_week_get",
+        "summary": "Gets the card's current statement week and day, the next statement and due dates, and joint statement info. Call it first when the caller wants to change the statement week (before offering the other weeks).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The card's cardNumber exactly as cards.list returned it."
+                  }
+                },
+                "required": [
+                  "cardNumber"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success (result.returnCode \"1\").",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "cardNumber": {
+                          "type": "string",
+                          "description": "Masked card number (as in cards.list). Never read out."
+                        },
+                        "cardNumberLast4": {
+                          "type": "string"
+                        },
+                        "productName": {
+                          "type": "string"
+                        },
+                        "statementWeek": {
+                          "type": "integer",
+                          "description": "Current statement week of the month, 1 to 4 (number). Offer only the other weeks."
+                        },
+                        "statementDay": {
+                          "type": "integer",
+                          "description": "Current statement day of the month (number). Send it as statementDay to statement.week.decide and statement.week.change."
+                        },
+                        "statementDate": {
+                          "type": "string",
+                          "description": "dd.MM.yyyy"
+                        },
+                        "lastPayDate": {
+                          "type": "string",
+                          "description": "dd.MM.yyyy"
+                        },
+                        "nextStatementDate": {
+                          "type": "string",
+                          "description": "Next statement date, dd.MM.yyyy, read to the caller."
+                        },
+                        "nextLastPayDate": {
+                          "type": "string",
+                          "description": "Next due date, dd.MM.yyyy, read to the caller."
+                        },
+                        "relationType": {
+                          "type": "string",
+                          "enum": [
+                            "",
+                            "M",
+                            "C"
+                          ],
+                          "description": "Empty = own statement. M = main card of a joint statement pair, C = the card linked to a main card. Changing the week on either moves both."
+                        },
+                        "relatedCardNumber": {
+                          "type": "string",
+                          "description": "The other card of the pair, empty otherwise. Never read out."
+                        },
+                        "relatedCardProductName": {
+                          "type": "string",
+                          "description": "Name of the other card of the pair (to tell the caller it is affected), empty otherwise."
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): a required field is missing or empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FB_IVR_CHANNEL_121 (type WARNING): card not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error. Service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statement.week.decide": {
+      "post": {
+        "operationId": "statement_week_decide",
+        "summary": "Preview only: returns the statement date, due date and day the card WOULD get with the requested week; changes nothing. Call it after the caller picks one of the offered weeks, before asking for confirmation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The card's cardNumber exactly as cards.list returned it."
+                  },
+                  "newStatementWeek": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "The week the caller chose (1-4), never the card's current week (that gives an error). Number or string both accepted."
+                  },
+                  "statementDay": {
+                    "type": "integer",
+                    "description": "The card's current statementDay from statement.week.get."
+                  }
+                },
+                "required": [
+                  "cardNumber",
+                  "newStatementWeek",
+                  "statementDay"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success (result.returnCode \"1\", responseCode 0).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "statementDate": {
+                          "type": "string",
+                          "description": "First statement date under the requested week, dd.MM.yyyy. Read in the confirmation and in the final result."
+                        },
+                        "statementDueDate": {
+                          "type": "string",
+                          "description": "First due date under the requested week, dd.MM.yyyy (named statementDueDate here, not lastPayDate). Read in the confirmation and in the final result."
+                        },
+                        "statementDay": {
+                          "type": "integer",
+                          "description": "New statement day (number)."
+                        },
+                        "responseCode": {
+                          "type": "integer",
+                          "description": "0 = fine."
+                        },
+                        "responseMessage": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): missing/empty field, or (in test) a card or week with no entry, e.g. the card's current week.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error. Service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statement.week.change": {
+      "post": {
+        "operationId": "statement_week_change",
+        "summary": "Changes the card's statement week (side effect, permanent). Call it only after statement.week.decide and the caller's clear explicit yes to the previewed dates, only once, never retried.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The card's cardNumber exactly as cards.list returned it."
+                  },
+                  "newStatementWeek": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "The week the caller chose and confirmed (same as in the preview). Number or string both accepted."
+                  },
+                  "statementDay": {
+                    "type": "integer",
+                    "description": "The card's current statementDay from statement.week.get (required by the request model even though the backend recalculates it)."
+                  }
+                },
+                "required": [
+                  "cardNumber",
+                  "newStatementWeek",
+                  "statementDay"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success = HTTP 200, result.returnCode \"1\", data.exitState \"OK\" and data.responseCode 0.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "responseCode": {
+                          "type": "integer",
+                          "description": "0 = success."
+                        },
+                        "responseMessage": {
+                          "type": "string"
+                        },
+                        "statementWeek": {
+                          "type": "string",
+                          "description": "New week, returned as a STRING here."
+                        },
+                        "statementDay": {
+                          "type": "string",
+                          "description": "STRING here. Ignore it; tell the caller the dates from statement.week.decide."
+                        },
+                        "exitState": {
+                          "type": "string",
+                          "description": "\"OK\" = changed."
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): missing/empty field, or (in test) a card or week with no entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error. Nothing was changed as far as the caller is told; service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contact.email.get": {
+      "post": {
+        "operationId": "contact_email_get",
+        "summary": "Gets the customer's registered e-mail (and phone). Call it after the debt reading and BEFORE the offer, so e-mail is offered only when an address is registered; its address is the only one the statement may be sent to.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerNo": {
+                    "type": "string",
+                    "description": "The customerNumber call variable. String or number both accepted."
+                  },
+                  "intAddressInfoType": {
+                    "type": "string",
+                    "enum": [
+                      "E",
+                      "P",
+                      "B"
+                    ],
+                    "description": "E = e-mail, P = phone, B = both. Send \"E\". Empty gives a 400. Test environment answers the same whatever is asked."
+                  }
+                },
+                "required": [
+                  "customerNo",
+                  "intAddressInfoType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success (result.returnCode \"1\").",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "communicationType": {
+                          "type": "string",
+                          "description": "e.g. \"Both\" or \"Phone\". \"Phone\" means no registered e-mail."
+                        },
+                        "ibanCountryCode": {
+                          "type": "string"
+                        },
+                        "ibanAreaCode": {
+                          "type": "string"
+                        },
+                        "ibanPhoneNum": {
+                          "type": "string"
+                        },
+                        "ibanEmail": {
+                          "type": "string",
+                          "description": "The registered e-mail address (iban prefix is historical, nothing to do with IBANs). Empty string = no registered e-mail. Send this to statement.pdf.send."
+                        },
+                        "ttsEmail": {
+                          "type": "string",
+                          "description": "Same address prepared for reading aloud."
+                        },
+                        "commGramType": {
+                          "type": "string"
+                        },
+                        "exitState": {
+                          "type": "string",
+                          "description": "\"Done\""
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): missing/empty field (e.g. \"intAddressInfoType cannot be empty\"), or a customer not in the test data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error (e.g. test customer 92335586). Service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statement.pdf.send": {
+      "post": {
+        "operationId": "statement_pdf_send",
+        "summary": "Sends the PDF of the card's latest issued statement by e-mail (side effect, cannot be called back). Call it only after reading the registered address to the caller and getting a clear yes; never retried automatically.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerNo": {
+                    "type": "string",
+                    "description": "The customerNumber call variable."
+                  },
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The card's cardNumber exactly as cards.list returned it."
+                  },
+                  "currencyType": {
+                    "type": "string",
+                    "enum": [
+                      "TL",
+                      "USD",
+                      "EUR",
+                      "GBP"
+                    ],
+                    "description": "Statement currency."
+                  },
+                  "statementDate": {
+                    "type": "string",
+                    "description": "The statementDate from cards.balance (the last issued statement), dd.MM.yyyy. Only the latest statement can be sent."
+                  },
+                  "emailAddress": {
+                    "type": "string",
+                    "description": "The registered address ibanEmail from contact.email.get. The backend sends to whatever is here and does not check it; never use an address the caller dictates."
+                  }
+                },
+                "required": [
+                  "customerNo",
+                  "cardNumber",
+                  "currencyType",
+                  "statementDate",
+                  "emailAddress"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success: result.returnCode \"1\" and data.exitState \"DONE\". Only then say it was sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "exitState": {
+                          "type": "string",
+                          "description": "\"DONE\" = sent."
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "description": "Outcome. Success = returnCode \"1\".",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ARGUMENTS_ERROR (type ERROR): a required field is missing or empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FB_IVR_CHANNEL_107 (type WARNING): no statement document to send (message \"Pdf dokümanı bulunamadı\"); also for a customer with no entry in the test data. Nothing was sent; treated as a failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FBE00099 (type ERROR): technical error. Nothing confirmed sent; service failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error body: no data object, only result.",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "guid": {
+                          "type": "string"
+                        },
+                        "returnCode": {
+                          "type": "string"
+                        },
+                        "messageText": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ERROR",
+                            "WARNING"
+                          ]
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "guid": {
+                              "type": "string"
+                            },
+                            "rootCause": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "errorOrigin": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-call-variables": {
+    "customerNumber": "The 8-digit customer number. The phone menu (IVR) has already identified and authenticated the caller. The agent never asks for it; send it as customerNo.",
+    "now": "The date and time of the call, Istanbul time, e.g. 2026-10-12T10:30:00+03:00. Every date decision (due date today, cut day, due date passed) uses now, never the system clock."
+  },
+  "x-notes": [
+    "Envelope: every request body is {\"data\": {...service fields...}, \"call\": {\"ani\": \"<caller's number>\", \"lang\": \"tr\"}}. The call object is metadata only; the test environment ignores it, and the token and headers are not checked in test.",
+    "Every response has a result object (guid, returnCode, messageText, code, message, type, details{guid, rootCause, errorOrigin}); successful responses also have data. Error responses have NO data object, only result.",
+    "Success = HTTP 200 and result.returnCode \"1\". Anything else is an error. returnCode and code always carry the same value; messageText and message too. type is \"ERROR\" or \"WARNING\" on errors (null on success). messageText is for logs, never read it out. Do not branch on rootCause/errorOrigin.",
+    "Status codes: 400 INVALID_ARGUMENTS_ERROR (all services, required field missing/empty); 401 from the gateway when the token is missing or expired (get a new token, retry once; not checked in test); 404 FB_IVR_CHANNEL_102 cards.list (customer has no valid card: a WARNING meaning the no-eligible-card case, not a broken service); 404 FB_IVR_CHANNEL_120 cards.balance (card not found); 404 FB_IVR_CHANNEL_121 statement.week.get (card not found); 404 FB_IVR_CHANNEL_107 statement.pdf.send (no PDF document); 500 FBE00099 all services (technical error).",
+    "Any service failure (500, error, or no answer) goes to an agent, never to the main menu. The cards.list 404 FB_IVR_CHANNEL_102 is not a failure.",
+    "All services are POST, JSON, UTF-8, under the base path /voice/v1/ (e.g. POST /voice/v1/cards.list).",
+    "Dates are strings dd.MM.yyyy (e.g. \"05.11.2026\"). Amounts are JSON numbers with a dot as decimal separator (5000.13), never formatted strings; never round them. The services return raw values only; turning numbers and dates into speech is the assistant's job.",
+    "Field types: customerNo may be sent as string or number; newStatementWeek as number or string (1-4). statementWeek and statementDay are numbers in statement.week.get and statement.week.decide but STRINGS in the statement.week.change response.",
+    "Card number: always send cardNumber exactly as cards.list returned it; do not rebuild it from digits the caller says. In test it is masked first 6 + last 4 (540000******1234); production cards.list gives the full number. cards.balance returns it masked first 4 + last 4 (5400********1234): do not use it to match the list; use cardNumberLast4 or keep the number you sent. Never read out more than the last four digits.",
+    "cardNumberLast4 is not unique: two cards can share the same product name and last four digits (they differ only in the first six). productName is free text and can be empty.",
+    "cards.balance: a currency block (debtTL, debtUSD, debtEUR, debtGBP) can be missing (some cards have no debtGBP): missing is not NO_DEBT, do not invent zeros. totalDebt can be negative (credit balance; status NO_DEBT). remainAutomaticPaymentAmount only meaningful when automaticPaymentFlag is \"Y\". A new card with no statement yet (test card ending 2020) has empty statementDate and lastPayDate: never invent a date.",
+    "statement.week.get has no field telling whether the customer can still change the week this year.",
+    "statement.week.decide is a preview only and changes nothing; do not call it for the week the card already has (error; the test data has no entry for the current week). Its due date field is statementDueDate. Send statementDay = the card's current statementDay from statement.week.get.",
+    "statement.week.change changes the card: \"Call it only after the caller has agreed to the dates from 5.4.\" Success = exitState \"OK\" and responseCode 0. Ignore its statementDay; the dates to tell the caller are the ones from statement.week.decide.",
+    "Side effects: statement.week.change and statement.pdf.send. The contract suggests no automatic retry on either (both have side effects). Call each at most once per confirmed request.",
+    "contact.email.get: the registered e-mail is ibanEmail (ttsEmail is the same, for reading aloud). No registered e-mail = communicationType \"Phone\" and/or empty ibanEmail: check the field, not only the type. Call it before the offer.",
+    "statement.pdf.send: statementDate = the statementDate from cards.balance (only the latest issued statement); emailAddress = the registered ibanEmail; the backend does not check the address. Success = exitState \"DONE\".",
+    "Calling order: cards.list first (\"Start from cards.list\"), then cards.balance for the chosen card, contact.email.get before the offer, and statement.week.get -> statement.week.decide -> (clear yes) -> statement.week.change for the week change.",
+    "Timeouts: no client timeout agreed. Most answers are well under a second, but an answer can take longer than ten seconds and still succeed (one test entry has a delay). While waiting the assistant says \"Bilgilerinizi kontrol ediyorum.\"",
+    "Mock lookups: cards.list by data.customerNo; cards.balance and statement.week.get by data.cardNumber (masked as in cards.list); statement.week.decide/change by data.cardNumber then data.newStatementWeek; contact.email.get and statement.pdf.send by data.customerNo (intAddressInfoType ignored). Unknown customer/card/week: the service's 404 from the contract, or 400 INVALID_ARGUMENTS_ERROR where the service has no 404. Token, headers, call and aiFlow are not checked."
+  ]
+}
