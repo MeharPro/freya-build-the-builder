@@ -1,9 +1,9 @@
 {
  "schema": "rules-v2/spec-1",
  "call_date_range": {
-  "earliest": "2026-10-14",
-  "latest": "2027-01-01",
-  "basis": "example `now` 2026-10-14T11:00; bank holiday list runs to 2027-01-01"
+  "earliest": "",
+  "latest": "",
+  "basis": ""
  },
  "spec": {
   "callback": {
@@ -11,7 +11,8 @@
    "close": "19:00",
    "same_day": true,
    "later_than_now": true,
-   "days_ahead_business": 1
+   "days_ahead_business": 1,
+   "text": "both included"
   },
   "max_wrong_answers": 3,
   "calendar": {
@@ -95,7 +96,8 @@
     "attempt": 1,
     "bands": [],
     "amount": "in_play",
-    "date_rule": "the last business day of this week; if today is that day, the last business day of next week"
+    "date_rule": "the last business day of this week. If today is that day, propose the last business day of next week",
+    "text": "the full past-due amount, or for the floor if the customer already said the full amount is too much"
    },
    {
     "attempt": 2,
@@ -103,7 +105,7 @@
      "late"
     ],
     "amount": "floor",
-    "date_rule": "the deadline"
+    "date_rule": "on the deadline"
    }
   ],
   "identity": [
@@ -113,7 +115,7 @@
     "hint_values": [
      "day_month_swapped"
     ],
-    "retry_rule": "ask month as a word; not a wrong answer"
+    "retry_rule": "Ask them to say the month as a word. That retry does not count as a wrong answer."
    },
    {
     "order": 2,
@@ -124,77 +126,77 @@
    {
     "outcome": "not_reached",
     "reason": "unclear",
-    "when": "still unclear after second ask; rule 3"
+    "when": "Still unclear after the second ask.; rule 3"
    },
    {
     "outcome": "not_reached",
     "reason": "callback",
-    "when": "callback scheduled; rule 6"
+    "when": "after scheduling a callback; rule 6"
    },
    {
     "outcome": "not_reached",
     "reason": "no_callback",
-    "when": "second proposal outside window; rule 7"
+    "when": "The alternative callback day or time is also outside the window.; rule 7"
    },
    {
     "outcome": "not_reached",
     "reason": "wrong_number",
-    "when": "number not the customer's; rule 8"
+    "when": "The person says the number does not belong to the customer.; rule 8"
    },
    {
     "outcome": "not_reached",
     "reason": "deceased",
-    "when": "customer has died; rule 9"
+    "when": "The person says the customer has died.; rule 9"
    },
    {
     "outcome": "not_verified",
     "reason": "failed",
-    "when": "three wrong answers; rule 14"
+    "when": "After three wrong answers.; rule 14"
    },
    {
     "outcome": "not_verified",
     "reason": "declined",
-    "when": "second refusal; twice no talk, before verification; rule 15"
+    "when": "Still declines after one explanation; a second refusal or a second question about what the call is about instead of answering.; Customer says twice that they do not want to talk before identity is verified; rule 15"
    },
    {
     "outcome": "no_promise",
     "reason": "refused",
-    "when": "attempts used up; twice no talk, verified; rules 31 and 45"
+    "when": "When the attempts are used up; Customer says twice that they do not want to talk after verification; rules 31 and 45"
    },
    {
     "outcome": "transferred",
     "reason": "support",
-    "when": "hardship, accepts transfer; rule 32"
+    "when": "If they accept, call `transfer_to_agent` with queue `support`; rule 32"
    },
    {
     "outcome": "no_promise",
     "reason": "hardship",
-    "when": "hardship, declines transfer; rule 32"
+    "when": "If they decline; rule 32"
    },
    {
     "outcome": "no_promise",
     "reason": "service_error",
-    "when": "create_promise fails twice; rule 37"
+    "when": "If `create_promise` fails again after one retry; rule 37"
    },
    {
     "outcome": "paid",
     "reason": "",
-    "when": "customer already paid; rule 39"
+    "when": "\"I already paid\"; rule 39"
    },
    {
     "outcome": "no_promise",
     "reason": "dispute",
-    "when": "debt disputed; rule 40"
+    "when": "\"This debt is not mine\", \"I never had this product\", or a claim that the product was closed or paid off in the past; rule 40"
    },
    {
     "outcome": "transferred",
     "reason": "restructuring",
-    "when": "plan request; rule 41"
+    "when": "A request for a new payment plan or lower instalments; rule 41"
    },
    {
     "outcome": "transferred",
     "reason": "human",
-    "when": "insists on human; rule 42"
+    "when": "Customer insists on a human after being asked once whether the agent can help first; rule 42"
    },
    {
     "outcome": "promise",
@@ -205,88 +207,92 @@
   "verbatim": [
    {
     "text": "Am I speaking with {title} {last_name}?",
-    "when": "R08: Ask \"Am I speaking with {title} {last_name}?\"."
+    "when": "R06: Ask \"Am I speaking with {title} {last_name}?\"."
    },
    {
     "text": "I am sorry for your loss.",
-    "when": "R15: If told the customer has died, say \"I am sorry for your loss.\", ask nothing else, close `not_reached` / `deceased`."
+    "when": "R13: If told the customer has died, say \"I am sorry for your loss.\", ask nothing else, and close as `not_reached` / `deceased`."
    },
    {
     "text": "Can you make this payment today?",
-    "when": "R36: First ask: \"Can you make this payment today?\"."
+    "when": "R33: First ask: \"Can you make this payment today?\"."
    },
    {
     "text": "Do you confirm?",
-    "when": "R42: Read product, amount and date back and ask \"Do you confirm?\". Call `create_promise` only after a clear yes."
+    "when": "R40: Read back product, amount and date, then ask \"Do you confirm?\". Call `create_promise` only after a clear yes."
    },
    {
     "text": "You will receive a text message confirming this promise.",
-    "when": "R46: After a recorded promise, say the confirmation text sentence."
+    "when": "R44: After recording a promise, say \"You will receive a text message confirming this promise.\"."
    }
   ],
   "forbidden_words_before_verification": [
    "collections",
    "debt",
-   "payment",
-   "the product"
+   "payment"
   ]
  },
  "sources": {
   "forbidden_words_before_verification": [
-   "R07"
+   "R05"
   ],
   "verbatim": [
-   "R08",
-   "R15",
-   "R36",
-   "R42",
-   "R46"
+   "R06",
+   "R13",
+   "R33",
+   "R40",
+   "R44"
   ],
   "outcomes": [
-   "R09",
+   "R07",
+   "R10",
+   "R11",
    "R12",
    "R13",
-   "R14",
-   "R15",
-   "R20",
-   "R21",
-   "R39",
-   "R40",
+   "R18",
+   "R19",
+   "R36",
+   "R37",
+   "R43",
    "R45",
+   "R46",
    "R47",
    "R48",
-   "R49",
-   "R50",
-   "R53",
-   "R54",
-   "R55"
+   "R51",
+   "R53"
   ],
   "callback": [
-   "R12"
+   "R10"
   ],
   "identity": [
-   "R17",
-   "R19"
+   "R15",
+   "R17"
   ],
   "max_wrong_answers": [
-   "R18"
+   "R16"
   ],
   "calendar": [
-   "R25"
+   "R22"
   ],
   "bands": [
-   "R26"
+   "R23"
   ],
   "floors": [
-   "R33"
+   "R30"
   ],
   "attempt_ladder": [
-   "R38"
+   "R35"
   ]
  },
  "notes": [
-  "R02: customer_id: pass to every tool; first_name,last_name: person to ask for; title: Mr or Ms; now: current date/time",
-  "R03: customer_id: pass to every tool call; first_name,last_name: person to ask for; title: Mr or Ms; now: e.g. 2026-10-14T11:00"
+  "R57: Required: customer_id: string; field: string, enum [\"date_of_birth\", \"phone_last4\"]; answer: string. phone_last4: four digits. Unreadable date: ok=false, no wrong-answer count.",
+  "R58: Required: customer_id: string; product_id: string; amount: number; date: string, format date.",
+  "R59: Required: customer_id: string; date: string, format date; time: string, HH:MM.",
+  "R01: Scope: one product; 1 to 45 days late.",
+  "R03: Variable | Example | Meaning\n`customer_id` | `c_4f2a...` | Pass it to every tool call.\n`first_name`, `last_name` | `Daniel`, `Reyes` | The person to ask for.\n`title` | `Mr` or `Ms` | Address the customer as title plus last name.\n`now` | `2026-10-14T11:00` | The current date and time. All date rules use this, never the real clock.",
+  "R05: Do not name the product before verification.",
+  "R07: Answer a customer question first (rules 4 and 43); the ask that follows is the second ask.",
+  "R15: The service rejects anything it cannot read as a date."
  ],
  "merge_conflicts": []
 }

@@ -99,7 +99,7 @@ DEFAULT_TEXTS = {
 # stays (event function_call_complete.validation_errors; seen on Brief A PUB-10: stale offer_date re-fired check_offer
 # every turn). So a clear writes a VALID neutral value: the enum's own neutral member, a sentinel date / amount.
 CLEAR_ENUMS = {"stance": "other", "offer_kind": "none", "offer_for": "none", "topic": "none", "confirm": "other",
-               "hs_answer": "none", "wrap": "other", "aside": "none"}
+               "hs_answer": "none", "wrap": "other", "aside": "none", "offer_amount_present": "none"}
 CLEAR_VALUES = {"offer_date": "1900-01-01", "offer_amount": "0", "offer_when": ""}
 SENTINEL_YEAR = 1900
 # the customer's own words for the day, resolved in code against the call's date (the platform's date extraction uses
@@ -251,8 +251,8 @@ def init_negotiation(V, statement):
     V['mode'] = 'negotiate'
     V['stage'] = 'all' if multi(V) else 'one'
     V['cur_pid'] = ids[0] if ids else ''
-    V['human_count'] = '0'
-    V['notalk_count'] = '0'
+    V['human_count'] = g(V, 'human_count') or '0'
+    V['notalk_count'] = g(V, 'notalk_count') or '0'
     V['wrap_count'] = '0'
     V['wrap_human'] = '0'
     V['vague_all'] = 'no'
@@ -373,7 +373,7 @@ def check_one(V, pid, a, d, kind):
         set_prop(V, pid, pa, dl)
         say(V, join([T('vague_deadline', deadline=txt_short(dl), words=pg(V, pid, 'words')), V['offer_question']]))
         return
-    amt = pa if a is None or a <= 0 else a
+    amt = pa if a is None else a
     day = pd if d is None else d
     issues = []
     na, nd = amt, day
@@ -549,11 +549,18 @@ def offer_date_of(V):
     if d is not None and d < today_of(V):
         return None, 'vague'
     return d, g(V, 'offer_kind')
+def offered_amount(V):
+    a = num(g(V, 'offer_amount'))
+    present = g(V, 'offer_amount_present')
+    if present == 'yes':
+        return a  # Explicit zero/negative amounts must pass through the floor guard.
+    if present == 'no':
+        return None
+    # Compatibility with generators predating the presence field: cleared float is zero.
+    return a if a is not None and a > 0 else None
 def ev_offer(V):
     kind = g(V, 'offer_kind')
-    a = num(g(V, 'offer_amount'))
-    if a is not None and a <= 0:
-        a = None
+    a = offered_amount(V)
     d, k2 = offer_date_of(V)
     if k2 in ('exact', 'vague'):
         kind = k2
@@ -669,6 +676,7 @@ def ev_hardship(V):
         V['hs_offer'] = 'yes'
         V['hs_date'] = hd.isoformat() if hd is not None else ''
         V['hs_amount'] = g(V, 'offer_amount')
+        V['hs_amount_present'] = g(V, 'offer_amount_present')
     say(V, T('hardship'), 'hardship')
 def ev_hs_decline(V):
     if g(V, 'hs_offer') == 'yes':
@@ -676,6 +684,7 @@ def ev_hs_decline(V):
         V['offer_kind'] = 'exact'
         V['offer_date'] = g(V, 'hs_date')
         V['offer_amount'] = g(V, 'hs_amount')
+        V['offer_amount_present'] = g(V, 'hs_amount_present')
         ev_offer(V)
         return
     for p in pids(V):
@@ -698,9 +707,7 @@ def ev_confirm_no(V):
     refuse(V, pid)
 def ev_change(V):
     agreed = [p for p in pids(V) if state(V, p) == 'agreed']
-    a = num(g(V, 'offer_amount'))
-    if a is not None and a <= 0:
-        a = None
+    a = offered_amount(V)
     d, k2 = offer_date_of(V)
     tp = offer_target(V)
     if tp and multi(V):
@@ -823,12 +830,20 @@ def finalize(V):
     V['final_route'] = key
     V['route'] = 'fin'
 def ev_wrap_human(V):
-    c = int(num(g(V, 'wrap_human'), 0) or 0) + 1
-    V['wrap_human'] = str(c)
+    c = int(num(g(V, 'human_count'), 0) or 0) + 1
+    V['human_count'] = str(c)
     if c >= int(P['human_limit']):
         V['route'] = 'xfer_general'
         return
     V['wrap_line'] = T('human_first')
+    V['route'] = 'wrapup'
+def ev_wrap_notalk(V):
+    c = int(num(g(V, 'notalk_count'), 0) or 0) + 1
+    V['notalk_count'] = str(c)
+    if c >= int(P['notalk_limit']):
+        finalize(V)  # Retain the configured outcome precedence for recorded products.
+        return
+    V['wrap_line'] = T('notalk_first')
     V['route'] = 'wrapup'
 def ev_wrap_change(V):
     c = int(num(g(V, 'wrap_count'), 0) or 0) + 1
@@ -920,6 +935,8 @@ def main(V, ev):
             ev_rec_after(V)
         elif ev == 'note_after':
             ev_note_after(V)
+        elif ev == 'wrap_notalk':
+            ev_wrap_notalk(V)
         elif ev == 'wrap_human':
             ev_wrap_human(V)
         elif ev == 'wrap_change':
@@ -944,7 +961,7 @@ WRITTEN = ("say_next", "state_line", "offer_question", "offer_text", "offer_verd
            "final_route", "readback_line", "wrap_line", "prop_pid", "prop_amount", "prop_date", "ok_pid", "ok_amount",
            "ok_date", "rec_pid", "rec_amount", "rec_date", "rec_ok", "note_pid", "note_reason", "note_ok",
            "recorded_pids", "pids_csv", "cur_pid", "stage", "mode", "human_count", "notalk_count", "wrap_count",
-           "wrap_human", "vague_all", "hs_offer", "hs_date", "hs_amount", "policy_state", "policy_event")
+           "wrap_human", "vague_all", "hs_offer", "hs_date", "hs_amount", "hs_amount_present", "policy_state", "policy_event")
 
 
 def _declare():
@@ -965,7 +982,7 @@ EVENT_NODES = {
     "pol_paid": "paid", "pol_dispute": "dispute", "pol_human": "human", "pol_notalk": "notalk",
     "pol_hardship": "hardship", "hs_decline": "hs_decline", "confirm_no": "confirm_no", "change_offer": "change",
     "rec_next": "confirm_yes", "rec_after": "rec_after", "note_after": "note_after",
-    "wrap_human": "wrap_human", "wrap_change": "wrap_change", "finalize": "finalize",
+    "wrap_human": "wrap_human", "wrap_notalk": "wrap_notalk", "wrap_change": "wrap_change", "finalize": "finalize",
 }
 
 
@@ -1100,12 +1117,20 @@ class Policy:
         return [fl.ext("aside", ["none"] + list(self.asides), desc, conf)]
 
     @staticmethod
+    def amount_presence(conf=0.5):
+        return fl.ext("offer_amount_present", ["none", "yes", "no"],
+                      "yes = the latest message explicitly names a payment amount, INCLUDING zero or a negative "
+                      "amount; no = no amount was named (a date or yes alone is not an amount); none = uncertain. "
+                      "Set offer_amount to the exact named number, never substitute the current offer.", conf)
+
+    @staticmethod
     def offer_extraction(date_desc, amount_desc, kind_desc, conf=0.5):
         """T1: offer_date (date), offer_amount (float), offer_kind (exact|vague|none)."""
         return [fl.ext("offer_kind", ["none", "exact", "vague"], kind_desc, conf),
                 {"name": "offer_date", "type": "date", "description": date_desc, "min_confidence": conf},
                 {"name": "offer_when", "type": "string", "description": WHEN_DESC, "min_confidence": conf},
-                {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf}]
+                {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf},
+                Policy.amount_presence(conf)]
 
     @staticmethod
     def offer_guard_transitions():
@@ -1170,7 +1195,8 @@ class Policy:
         ext = [fl.ext("confirm", ["other", "yes", "no", "change"], confirm_desc, conf),
                {"name": "offer_date", "type": "date", "description": date_desc, "min_confidence": conf},
                {"name": "offer_when", "type": "string", "description": WHEN_DESC, "min_confidence": conf},
-               {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf}]
+               {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf},
+                Policy.amount_presence(conf)]
         if self.multi:
             ext.append(fl.ext("offer_for", ["none", "all"] + self.P["ordinals"],
                               self.product_scope_description(), conf))
@@ -1267,9 +1293,11 @@ class Policy:
         change -> wrap_change (the brief's sentence, promise unchanged), question -> stay (the model answers);
         max_turns turns at most, then finalize."""
         name = name or self.targets["wrapup"]
-        ext = [fl.ext("wrap", ["other", "done", "human", "new_plan", "change", "question"], wrap_desc, conf)]
+        ext = [fl.ext("wrap", ["other", "done", "human", "no_talk", "new_plan", "change", "question"],
+                      wrap_desc + " no_talk = explicitly does not want to talk or asks to stop talking.", conf)]
         trs = [fl.eq("wrap", "done", "finalize", "nothing else"),
                fl.eq("wrap", "human", "wrap_human", "asks for a human"),
+               fl.eq("wrap", "no_talk", "wrap_notalk", "does not want to talk"),
                fl.eq("wrap", "new_plan", self.targets["xfer_restructuring"], "asks for a new plan"),
                fl.eq("wrap", "change", "wrap_change", "asks to change or cancel the promise")]
         n = fl.conv(name, self.state_first(task), on_enter={"type": "tts", "text": "{{wrap_line}}"},

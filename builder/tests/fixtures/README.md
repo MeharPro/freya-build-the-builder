@@ -1,0 +1,1 @@
+These two historical lint fixtures are copied byte-for-byte from commit 0870a8a. They preserve the original lint assertions while live builds replace out/brief-a.*. They are test data, not current submission artifacts.

@@ -32,7 +32,7 @@ How:
 title, script; NOT their expected ledgers or checks) and have the case-writer compute the expected ledger for each, so
 it can be compared with a hand-verified set by `--compare`.
 
-Needs a Claude login (or ANTHROPIC_API_KEY). CASES_MODEL overrides the model (default claude-opus-5-5).
+Needs OPENAI_API_KEY or Anthropic access. CASES_MODEL overrides the selected provider model.
 Progress and every model call go to stderr ("model call: <model> | purpose: ..."); the one-line summary goes to stdout.
 """
 import argparse, asyncio, datetime, json, math, os, pathlib, re, sys, time
@@ -41,6 +41,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "builder"))
 from rules import api_digest, ask_json_async, read_briefs   # noqa: E402
 from freyalib import CAL_HELPERS                            # noqa: E402
+
+from model_provider import provider, model_for, cost_sum, cost_round, cost_label
 
 DEFAULT_MODEL = "claude-opus-5-5"
 DEFAULT_NOW = "2026-10-14T11:00"
@@ -694,7 +696,7 @@ def compare(gen_path, ref_path):
 # ----------------------------------------------------------------------------------------------- main
 async def run(briefs, api_path, rules_path, out, model=None, scenarios_path=None):
     t0 = time.time()
-    model = model or os.environ.get("CASES_MODEL") or DEFAULT_MODEL
+    model = model or model_for("cases")
     slot = pathlib.Path(briefs[-1]).stem
     brief_text = "\n".join(pathlib.Path(b).read_text() for b in briefs)
     enums, _ = api_enums(api_path)
@@ -782,15 +784,15 @@ async def run(briefs, api_path, rules_path, out, model=None, scenarios_path=None
     else:
         trimmed = []
     good.sort(key=lambda c: c["id"])
-    meta = {"model": model, "seconds": round(time.time() - t0, 1), "cost_usd": round(sum(i["cost_usd"] for i in infos), 3),
+    meta = {"model": model, "seconds": round(time.time() - t0, 1), "cost_usd": cost_round(cost_sum(*(i["cost_usd"] for i in infos)), 3),
             "calls": len(infos), "briefs": briefs, "api": api_path, "rules": rules_path, "multi_product": multi,
             "outcome_rows": rows, "calendar_notes": cal_notes, "iso_dates_in_brief": iso_in_brief,
             "dropped": bad, "rejected_then_repaired": {k: v for k, v in first_findings.items() if k not in bad}, "trimmed_to_20": trimmed, "n_cases": len(good), "scenarios": scenarios_path}
     write_outputs(out, good, rats, cal, meta, rows, scenarios_mode=bool(scenarios_path))
     cov = coverage(good, rows) if rows else []
     conf = {k: sum(c["expected_confidence"] == k for c in good) for k in ("high", "medium", "low")}
-    print("cases: %d -> %s (+ .rationale.md, .meta.json) | %d model call(s), %.0f s, $%.2f | confidence %s | outcome rows covered %d/%d | dropped %d%s" % (
-        len(good), out, len(infos), meta["seconds"], meta["cost_usd"], conf, sum(ok for _, ok in cov), len(cov), len(bad),
+    print("cases: %d -> %s (+ .rationale.md, .meta.json) | %d model call(s), %.0f s, %s | confidence %s | outcome rows covered %d/%d | dropped %d%s" % (
+        len(good), out, len(infos), meta["seconds"], cost_label(meta["cost_usd"]), conf, sum(ok for _, ok in cov), len(cov), len(bad),
         (" | calendar notes: " + "; ".join(cal_notes)) if cal_notes else ""))
     if not scenarios_path and len(good) < 12:
         log("WARNING: only %d valid cases (target 12-20)" % len(good))

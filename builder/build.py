@@ -14,40 +14,42 @@ default 29), --no-rules / --no-audit to skip those steps.
 
 One run, with no manual step:
   1. rules:    builder/rules.py extracts, merges and verifies the inventory -> rules, spec and conflict files
-  2. build:    Claude (Claude Agent SDK) with the `build-phone-agent` skill writes out/gen_<slot>.py on builder/freyalib,
+  2. build:    Selected model (OpenAI Responses or Claude Agent SDK) with the `build-phone-agent` skill writes out/gen_<slot>.py on builder/freyalib,
                generates out/<slot>.workflow.json, lints, dry-runs, saves it on Freya (freya.save_workflow), smoke-tests it
                over the chat route, audits rule coverage, runs the practice cases when there are any, and fixes what fails
   3. verify:   builder/lint.py on the final workflow, builder/audit.py coverage summary (evidence for the trace)
   4. export:   freya.export_workflow -> submission/<slot>.workflow.json (what gets scored)
   5. trace:    traces/<slot>.log (plain text: start/end, every model call, tests, what was created) + traces/<slot>.jsonl
 
-Needs FREYA_API_KEY and FREYA_BANK_TEAM_KEY (env.sh), a Claude login or ANTHROPIC_API_KEY; OPENAI_API_KEY for the
-local simulator's customer/judge models (otherwise it falls back to the Claude CLI).
-BUILDER_MODEL sets the builder's own model (default claude-opus-5-5). The phone agent's model is fixed in freya.py.
+Needs FREYA_API_KEY and FREYA_BANK_TEAM_KEY, plus OPENAI_API_KEY or Anthropic access.
+BUILDER_PROVIDER=auto|openai|claude selects generation and helper models; auto uses OpenAI when only its key is set.
+BUILDER_MODEL overrides the selected provider default. The phone model stays fixed in freya.py.
 """
-import argparse, asyncio, dataclasses, datetime, json, os, pathlib, re, subprocess, sys, time, uuid
+import argparse, asyncio, dataclasses, datetime, json, os, pathlib, re, shutil, subprocess, sys, time, uuid
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from builder.reliability import (BuildFailure, Budget, archive_previous, run_process,
                                  sha256, validate_artifact, validate_audit, workspace_lock, write_manifest)
 
+from builder.model_provider import provider, model_for
+
 SKILL = "build-phone-agent"
 DEFAULT_BUILDER_MODEL = "claude-opus-5-5"
 PY = sys.executable
 
 
-def source_snapshot(root):
+def source_snapshot(root, slot=None):
     """Fingerprint the builder inputs that generation is not allowed to rewrite."""
-    patterns = ("builder/*.py", "builder/*.md", "builder/tests/*.py", "builder/smoke_scripts/*.json",
+    patterns = ("builder/**/*.py", "builder/**/*.md", "builder/**/*.json",
                 ".claude/skills/*/SKILL.md", "CLAUDE.md", "freya.py", "tools/*.py",
-                "public-test-set.json", "requirements.txt")
+                "public-test-set.json", "requirements.txt", "out/gen_*.py", ".claude/settings.json")
     return {str(p): sha256(p) for p in sorted({p for pattern in patterns for p in root.glob(pattern)
-                                             if p.is_file()})}
+                                             if p.is_file() and p != root / "out" / ("gen_" + str(slot) + ".py")})}
 
 
-def require_unchanged_source(root, expected):
-    if source_snapshot(root) != expected:
+def require_unchanged_source(root, expected, slot=None):
+    if source_snapshot(root, slot) != expected:
         raise BuildFailure("Builder source or instructions changed during generation")
 
 
@@ -118,15 +120,7 @@ def detect_cases(briefs):
     return None, None
 
 
-async def run_claude(briefs, tool_api, slot, trace, cases, brief_filter, runner, minutes_left):
-    from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ResultMessage, TextBlock, ToolResultBlock,
-                                  ToolUseBlock, UserMessage, query)
-    model = os.environ.get("BUILDER_MODEL", DEFAULT_BUILDER_MODEL)
-    options = ClaudeAgentOptions(
-        cwd=str(ROOT), model=model, skills=[SKILL], setting_sources=["project"],
-        allowed_tools=["Skill", "Read", "Write", "Edit", "Glob", "Grep", "Bash"], permission_mode="dontAsk", max_turns=200,
-        env={"BASH_DEFAULT_TIMEOUT_MS": "900000", "BASH_MAX_TIMEOUT_MS": "1200000", "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"},
-    )
+async def run_claude(briefs, tool_api, slot, trace, cases, brief_filter, runner, minutes_left, repair_feedback=None):
     test_line = ("No practice cases exist for this brief: test with lint, dry run, the smoke scripts and the audit only."
                  if not cases else
                  "Practice cases: %s%s. Test runner: %s (%s)." % (cases, (" --brief " + brief_filter) if brief_filter else "", runner,
@@ -136,6 +130,25 @@ async def run_claude(briefs, tool_api, slot, trace, cases, brief_filter, runner,
               "The rule inventory is at out/%s.rules.json (and .md). Read out/%s.spec.json and resolve "
               "out/%s.rules.conflicts.md against the brief. %s Time budget: %d minutes from now for everything, "
               "including your own tests; save a working agent early and improve it." % (SKILL, " ".join(briefs), tool_api, slot, slot, slot, slot, test_line, int(minutes_left)))
+    prompt += (" Audit coverage before long practice batches. Start with one practice repetition or a small "
+               "targeted subset; reserve time to repair and rerun failures. Three repetitions are useful only "
+               "when they fit after required checks. Run each smoke separately so completed output is retained. ")
+    if repair_feedback:
+        prompt += (" This is a repair pass for the CURRENT generator, not a new build. Read the preserved audit at "
+                   + str(repair_feedback) + ". Fix every unresolved active rule supported by the brief, including "
+                   "partial coverage, without modifying the inventory or builder. Regenerate the workflow and "
+                   "run targeted checks. Prioritize repairs over a full simulation batch.")
+    if provider() == "openai":
+        from builder.openai_agent import run_agent
+        return await run_agent(ROOT, prompt, slot, trace, briefs + [tool_api] + ([cases] if cases else []), minutes_left, scrub)
+    from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ResultMessage, TextBlock, ToolResultBlock,
+                                  ToolUseBlock, UserMessage, query)
+    model = model_for("builder")
+    options = ClaudeAgentOptions(
+        cwd=str(ROOT), model=model, skills=[SKILL], setting_sources=["project"],
+        allowed_tools=["Skill", "Read", "Write", "Edit", "Glob", "Grep", "Bash"], permission_mode="dontAsk", max_turns=200,
+        env={"BASH_DEFAULT_TIMEOUT_MS": "900000", "BASH_MAX_TIMEOUT_MS": "1200000", "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"},
+    )
     trace.line("model call: %s | purpose: build, test and fix the phone agent from the brief | prompt: %s" % (model, prompt))
     async for message in query(prompt=prompt, options=options):
         trace.raw({"type": type(message).__name__, **dataclasses.asdict(message)})
@@ -242,11 +255,20 @@ def preflight(a):
         value = os.environ.get(key, "")
         if not value or "your_key_here" in value or value.startswith("pick-any-secret"):
             raise BuildFailure(key + " is not set. source env.sh first.")
+    if provider() == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            raise BuildFailure("OPENAI_API_KEY is not set. source your local env file.")
+        return
     try:
         from claude_agent_sdk import ClaudeAgentOptions
         ClaudeAgentOptions(skills=[SKILL], setting_sources=["project"])
     except (ImportError, TypeError) as e:
         raise BuildFailure("Install the pinned requirements with this Python interpreter: " + str(e)) from e
+
+
+def require_unchanged_files(expected, description):
+    if any(not Path(path).is_file() or sha256(path) != digest for path, digest in expected.items()):
+        raise BuildFailure(description + " changed during generation")
 
 
 def required_step(trace, budget, name, cmd, maximum, reserve=0):
@@ -265,7 +287,7 @@ async def execute_build(a):
     trace = Trace(slot)
     paths = [Path(p) for p in a.briefs + [a.tool_api]]
     hashes = {str(p): sha256(p) for p in paths}
-    source_hashes = source_snapshot(ROOT)
+    source_hashes = source_snapshot(ROOT, slot)
     cases, brief_filter = (a.cases, None) if a.cases else detect_cases(a.briefs)
     case_hash = sha256(cases) if cases else None
     trace.line("build start %s | run_id=%s | slot=%s | budget=%.2f min" % (started_at, run_id, slot, a.minutes))
@@ -282,33 +304,58 @@ async def execute_build(a):
         if not a.no_rules:
             required_step(trace, budget, "rules", [PY, "builder/rules.py", *a.briefs, "--api", a.tool_api,
                                                    "--out", str(rules_path)], 420, reserve=180)
-        left = budget.timeout(1800, reserve=300)
-        await asyncio.wait_for(run_claude(a.briefs, a.tool_api, slot, trace, cases, brief_filter, a.runner, left / 60), timeout=left)
-        require_unchanged_source(ROOT, source_hashes)
-        if cases and sha256(cases) != case_hash:
-            raise BuildFailure("Practice case expectations changed during generation")
-        if not wf_path.is_file() or not gen.is_file():
-            raise BuildFailure("This run did not produce both a generator and a workflow")
-        validate_artifact(wf_path, a.tool_api)
-        required_step(trace, budget, "lint", [PY, "builder/lint.py", str(wf_path), "--api", a.tool_api], 60, reserve=60)
-        # Re-save this run's validated local artifact. Never export an old remote slot after a failed save.
-        required_step(trace, budget, "publish", [PY, "-c",
-            "from builder.build import publish; import sys; publish(sys.argv[1],sys.argv[2])",
-            slot, str(wf_path)], 120, reserve=30)
-        # Export and lint the actual platform representation, including any platform transformations.
-        required_step(trace, budget, "export", [PY, "-c",
-            "from builder.build import export; import sys; "
-            "t=type('Log',(),{'line':lambda self,x:print(x)})(); export(sys.argv[1],t,sys.argv[2])",
-            slot, a.tool_api], 120, reserve=10)
-        if not a.no_audit:
+        inventory_hashes = {str(p): sha256(p) for p in (ROOT / "out").glob(slot + ".rules*") if p.is_file()}
+        spec_path = ROOT / "out" / (slot + ".spec.json")
+        if spec_path.is_file():
+            inventory_hashes[str(spec_path)] = sha256(spec_path)
+        trace.raw({"inventory_hashes": inventory_hashes})
+        protected = {**hashes, **inventory_hashes, **({cases: case_hash} if cases else {})}
+        repair_feedback = None
+        for attempt in range(3):
+            # An initial generation cap leaves time for independent audit and repair.
+            left = budget.timeout(900 if attempt == 0 else 420, reserve=300)
+            try:
+                await asyncio.wait_for(run_claude(a.briefs, a.tool_api, slot, trace, cases, brief_filter,
+                    a.runner, left / 60, repair_feedback=repair_feedback), timeout=left)
+            except asyncio.TimeoutError:
+                # Only current-run files exist here: archive_previous removed older artifacts.
+                # Strict validation/audit still decides whether the saved candidate can be used.
+                trace.line("Generation time slice ended; checking the current saved candidate")
+            require_unchanged_source(ROOT, source_hashes, slot)
+            require_unchanged_files(protected, "Inputs, rule inventory or case expectations")
+            if not wf_path.is_file() or not gen.is_file():
+                raise BuildFailure("This run did not produce both a generator and a workflow")
+            validate_artifact(wf_path, a.tool_api)
+            required_step(trace, budget, "lint", [PY, "builder/lint.py", str(wf_path), "--api", a.tool_api], 60, reserve=60)
+            required_step(trace, budget, "publish", [PY, "-c",
+                "from builder.build import publish; import sys; publish(sys.argv[1],sys.argv[2])",
+                slot, str(wf_path)], 120, reserve=30)
+            required_step(trace, budget, "export", [PY, "-c",
+                "from builder.build import export; import sys; "
+                "t=type('Log',(),{'line':lambda self,x:print(x)})(); export(sys.argv[1],t,sys.argv[2])",
+                slot, a.tool_api], 120, reserve=10)
+            if a.no_audit:
+                break
             required_step(trace, budget, "audit", [PY, "builder/audit.py", "--rules", str(rules_path),
                 "--workflow", str(out), "--generator", str(gen), "--out", str(audit_path)], 360, reserve=5)
-            validate_audit(audit_path, rules_path)
-        if any(sha256(p) != hashes[str(p)] for p in paths):
-            raise BuildFailure("Input files changed during the build")
-        require_unchanged_source(ROOT, source_hashes)
-        if cases and sha256(cases) != case_hash:
-            raise BuildFailure("Practice case expectations changed during generation")
+            try:
+                validate_audit(audit_path, rules_path)
+                break
+            except BuildFailure as error:
+                if attempt == 2 or budget.remaining(reserve=300) < 120:
+                    raise
+                saved = ROOT / "build-history" / run_id / ("attempt-%d" % (attempt + 1))
+                saved.mkdir(parents=True, exist_ok=True)
+                for artifact in (gen, wf_path, out, audit_path, audit_path.with_suffix(".md")):
+                    if artifact.exists():
+                        # Local candidate and platform export have distinct names.
+                        name = "export.workflow.json" if artifact == out else artifact.name
+                        shutil.copy2(artifact, saved / name)
+                repair_feedback = saved / audit_path.name
+                trace.line("Audit repair pass %d: %s | %.0f seconds remain" % (attempt + 1, error, budget.remaining()))
+                out.unlink()  # The failed export cannot masquerade as a valid submission during repair.
+        require_unchanged_files(protected, "Inputs, rule inventory or case expectations")
+        require_unchanged_source(ROOT, source_hashes, slot)
         budget.timeout(1)
         success = True
         trace.line("SUCCESS: current-run export passed required checks" + (" (audit disabled)" if a.no_audit else ""))
@@ -321,7 +368,6 @@ async def execute_build(a):
         trace.line("build end %s | status=%s | total %.0f s" % (
             datetime.datetime.now(datetime.timezone.utc).isoformat(), "success" if success else "failed", time.time() - trace.t0))
         trace.close()
-        import shutil
         for ext in ("log", "jsonl"):
             src = ROOT / "traces" / (slot + "." + ext)
             shutil.copy(src, ROOT / "traces" / (slot + "-" + run_id + "." + ext))
@@ -341,7 +387,7 @@ async def main(argv):
     try:
         preflight(a)
         if a.preflight:
-            print("Preflight passed: files, tool API, Freya/team credential presence and SDK. Model credentials, authentication and credits not tested.")
+            print("Preflight passed: files, tool API, credential presence and selected provider dependencies. Authentication and credits not tested.")
             return 0
         with workspace_lock(ROOT):
             return await execute_build(a)

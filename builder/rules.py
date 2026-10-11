@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rule inventory v2: Claude reads the brief(s) and the tool API file and lists every rule as structured JSON,
+"""Rule inventory v2: The selected model reads the brief(s) and the tool API file and lists every rule as structured JSON,
 then the inventory is cross-checked (self-consistency, dated-decision resolution, chain-of-verification) and the
 structured values are compiled into a spec a generator can consume.
 
@@ -39,7 +39,7 @@ Output: <out> is a JSON list of rules
    "effective_until", "not_policy", "verification"}
 plus <out .md> (Markdown), <out .conflicts.md>, <out .meta.json> and <slot>.spec.json next to it.
 
-Needs a Claude login (or ANTHROPIC_API_KEY). RULES_MODEL overrides the model (default claude-opus-5-5).
+Needs OPENAI_API_KEY or Anthropic access. RULES_MODEL overrides the selected provider model.
 Progress and every model call go to stderr ("model call: <model> | purpose: ..."); the one-line summary goes to stdout.
 """
 import argparse, asyncio, copy, datetime, json, os, pathlib, re, sys, time
@@ -48,6 +48,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import spec_check  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+from model_provider import provider, model_for, cost_sum, cost_round, cost_label
+
 DEFAULT_MODEL = "claude-opus-5-5"
 # extraction, merge and verification write long structured answers: output tokens dominate the wall time, and low effort
 # halves the thinking without losing rules (measured on Brief D: 91-105 rules either way). The dated-decision call keeps
@@ -214,8 +216,12 @@ async def ask_json_async(prompt, system_prompt, schema, purpose, model=None, max
 
     info = {"model", "cost_usd", "seconds", "turns", "attempts", "usage"}
     """
+    if provider() == "openai":
+        from model_provider import ask_json_openai
+        return await ask_json_openai(prompt, system_prompt, schema, purpose, model or model_for("rules"),
+                                     log or (lambda s: print(s, file=sys.stderr, flush=True)), effort)
     from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ResultMessage, TextBlock, query
-    model = model or os.environ.get("RULES_MODEL") or DEFAULT_MODEL
+    model = model or model_for("rules")
     log = log or (lambda s: print(s, file=sys.stderr, flush=True))
     info = {"model": model, "cost_usd": 0.0, "seconds": 0.0, "turns": 0, "attempts": 0, "usage": {}}
     last_err = None
@@ -1329,8 +1335,8 @@ def render_md(rules, briefs, api_path, meta=None):
         pathlib.Path(api_path).name, len(rules), sum(r["in_force"] for r in rules), sum(not r["in_force"] for r in rules),
         sum(r.get("confidence") == "low" for r in rules)))
     if meta:
-        L.append("Model %s, %.0f s, $%.2f, %d call(s); samples %s; spec `%s`; conflicts `%s`." % (
-            meta.get("model"), meta.get("seconds", 0), meta.get("cost_usd", 0), meta.get("calls", 0), meta.get("samples"),
+        L.append("Model %s, %.0f s, %s, %d call(s); samples %s; spec `%s`; conflicts `%s`." % (
+            meta.get("model"), meta.get("seconds", 0), cost_label(meta.get("cost_usd", 0)), meta.get("calls", 0), meta.get("samples"),
             meta.get("spec", ""), meta.get("conflicts", "")))
         chk = meta.get("self_check") or {}
         if chk.get("missing_numbers") or chk.get("missing_tokens"):
@@ -1438,7 +1444,7 @@ def render_conflicts(rules, briefs, merge_info, decisions, verifs, verbatim_miss
 async def extract_rules_async(briefs, api_path, out_path, model=None, log=None, samples=3, verify=True, split=2):
     log = log or (lambda s: print(s, file=sys.stderr, flush=True))
     t0 = time.time()
-    model = model or os.environ.get("RULES_MODEL") or DEFAULT_MODEL
+    model = model or model_for("rules")
     docs = read_briefs(briefs)
     brief_norm = _norm_text(docs + "\n" + pathlib.Path(api_path).read_text())
     api = api_digest(api_path)
@@ -1446,9 +1452,9 @@ async def extract_rules_async(briefs, api_path, out_path, model=None, log=None, 
 
     def account(info, stage):
         nonlocal cost, calls
-        cost += info["cost_usd"]; calls += info["attempts"]
+        cost = cost_sum(cost, info["cost_usd"]); calls += info["attempts"]
         st = stages.setdefault(stage, {"seconds": 0.0, "cost_usd": 0.0, "calls": 0})
-        st["cost_usd"] += info["cost_usd"]; st["calls"] += info["attempts"]
+        st["cost_usd"] = cost_sum(st["cost_usd"], info["cost_usd"]); st["calls"] += info["attempts"]
 
     # 1. T13: extraction samples in parallel, different document orders
     parts = split_documents(briefs)
@@ -1499,7 +1505,7 @@ async def extract_rules_async(briefs, api_path, out_path, model=None, log=None, 
         rs = relabel_groups([got[label][gi][0] for gi in range(len(groups))], label)
         if rs:
             samp[label] = rs
-            log("sample %s: %d rules (%s)" % (label, len(rs), ", ".join("%.0f s $%.2f" % (got[label][gi][1]["seconds"], got[label][gi][1]["cost_usd"])
+            log("sample %s: %d rules (%s)" % (label, len(rs), ", ".join("%.0f s %s" % (got[label][gi][1]["seconds"], cost_label(got[label][gi][1]["cost_usd"]))
                                                                     for gi in range(len(groups)))))
     stages.setdefault("extract", {})["seconds"] = time.time() - t1
     if not samp:
@@ -1629,9 +1635,9 @@ async def extract_rules_async(briefs, api_path, out_path, model=None, log=None, 
     for r in rules:
         cats[r["category"]] = cats.get(r["category"], 0) + 1
     print("rules: %d (%d in force, %d low confidence) -> %s + %s + %s + %s | %d conflict item(s), spec %d error(s) %d warning(s) | "
-          "%d model call(s), %.0f s, $%.2f | samples %s | verification %s | self-check: %s" % (
+          "%d model call(s), %.0f s, %s | samples %s | verification %s | self-check: %s" % (
               len(rules), meta["n_in_force"], meta["n_low"], out, md.name, spec_path.name, conf_path.name, n_conf,
-              meta["spec_errors"], meta["spec_warnings"], calls, meta["seconds"], cost, merge_note["samples"],
+              meta["spec_errors"], meta["spec_warnings"], calls, meta["seconds"], cost_label(cost), merge_note["samples"],
               meta["verification"] or "skipped",
               "ok" if not (chk["missing_numbers"] or chk["missing_tokens"]) else "gaps %s %s" % (chk["missing_numbers"], chk["missing_tokens"])),
           flush=True)
@@ -1643,11 +1649,11 @@ def extract_rules(briefs, api_path, out_path, model=None, log=None, samples=3, v
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Extract the rule inventory of a brief with Claude (rules v2).")
+    ap = argparse.ArgumentParser(description="Extract the rule inventory of a brief with the selected model (rules v2).")
     ap.add_argument("briefs", nargs="+", help="brief Markdown file(s), earlier briefs first")
     ap.add_argument("--api", required=True, help="tool API file (OpenAPI JSON)")
     ap.add_argument("--out", required=True, help="output JSON path, e.g. out/<slot>.rules.json")
-    ap.add_argument("--model", default=None, help="builder model (default $RULES_MODEL or %s)" % DEFAULT_MODEL)
+    ap.add_argument("--model", default=None, help="builder model (default $RULES_MODEL or selected provider default)")
     ap.add_argument("--samples", type=int, default=3, help="extraction samples in parallel (1-3, default 3)")
     ap.add_argument("--split", type=int, default=2, help="parallel calls per sample, each listing the rules of one group of "
                     "parts (default 2; 1 = one call per sample)")

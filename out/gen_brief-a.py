@@ -1,97 +1,50 @@
-"""Generates out/brief-a.workflow.json from the rules of briefs/brief-a.md and tools/openapi.json."""
-import json, pathlib, sys
+"""Brief A generator, v3: policy as code (builder/policy.py). Writes out/brief-a.workflow.json.
+
+Opening, third party and identity are those of out/gen_brief-a_v2.py (conversation-first). The payment part is
+rebuilt on policy.Policy (docs/research/sota-techniques.md T1, T2, T3, T20, T22, T26; docs/ext-a-v2-failures.md):
+- every offer the customer names goes through the offer guard in code (check_offer: weekend/holiday, after the
+  deadline, below the floor, above the full amount, before today, vague) and every offer the agent makes comes
+  from code (the attempt ladder, the floor offered once, the deadline) as a finished sentence spoken by tts;
+- refusals, 'too much', 'does not want to talk' and human requests are counted in code; the ladder switches to
+  the floor once the customer said the full amount is too much (rule 30);
+- a hardship disclosure routes to the hardship node, where no offer is ever proposed (routing, not a prompt
+  note); a date or amount the customer still names goes through the guard and the read-back (rule 32);
+- the read-back is built in code from the approved values and a change at the read-back goes back through the
+  guard and is read back again, never to a transfer (rules 34, 35);
+- create_promise runs in an api_request node entered only from a confirmed read-back, with the read-back values
+  baked in and asserted by its pre hook; it is retried once (rule 37);
+- after a recorded promise the text-message sentence (rule 38) is spoken and a wrap-up node gives the customer
+  their next turn (rules 36, 42, 41).
+Every Brief A value (holidays, bands, floors, wording) is in this file only."""
+import pathlib, sys, json
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-API = json.load(open(sys.argv[1] if len(sys.argv) > 1 else ROOT / "tools/openapi.json"))
-BASE = API["servers"][0]["url"].rstrip("/")
-HOLIDAYS = ["2026-10-26", "2026-11-11", "2026-11-26", "2026-12-25", "2027-01-01"]  # from the brief, section 7
+sys.path.insert(0, str(ROOT / "builder"))
+import freyalib as fl  # noqa: E402
+import policy as pol  # noqa: E402
 
-HEADERS = {"type": "object", "properties": {"Content-Type": {"type": "string", "default": "application/json"}}}
-
-STRIP_HEADER = "try:\n    if isinstance(result, dict):\n        result.pop('header', None)\nexcept Exception:\n    pass\n"
-
-
-def api_tool(name, body_props, description="", required=None, retries=0, post=None, pre=None, mapping=None):
-    props = {"customer_id": {"type": "string", "default": "{{customer_id}}"}}
-    props.update(body_props)
-    t = {
-        "type": "function",
-        "config": {"timeoutMs": 12000, "maxRetries": retries},
-        "function": {
-            "name": name,
-            "handler": "__function__:api_call",
-            "description": description,
-            "parameters": {"type": "object", "properties": {
-                "url": {"type": "string", "default": f"{BASE}/{name}"},
-                "method": {"type": "string", "default": "POST"},
-                "headers": HEADERS,
-                "body": {"type": "object", "required": required or [], "properties": props},
-            }},
-        },
-        "post_process_code": post or STRIP_HEADER,
-    }
-    if pre:
-        t["pre_process_code"] = pre
-    if mapping:
-        t["response_mapping"] = mapping
-    return t
-
-
-def base_node(name, node_type, **kw):
-    n = {"name": name, "node_type": node_type, "transitions": [], "max_node_turns": 60,
-         "truncation_strategy": "keep_all", "disable_inactivity_monitor": False}
-    n.update(kw)
-    return n
-
-
-def conv(name, task, on_enter=None, tools=None, extraction=None, transitions=None, first_only=False):
-    return base_node(name, "conversation", task_message=task, on_enter=on_enter or {"type": "llm"},
-                     tools=tools or [], extraction_schema=extraction or [], transitions=transitions or [],
-                     on_enter_first_entry_only=first_only)
-
-
-def code_node(name, code, transitions):
-    return base_node(name, "code", passthrough=True, passthrough_default_transition=transitions[-1]["target_node"],
-                     on_enter={"type": "silent"}, disable_inactivity_monitor=True, pre_actions=[{
-                         "type": "function",
-                         "function": {"name": "code_exec", "handler": "__function__:code_exec", "parameters": {
-                             "type": "object", "properties": {
-                                 "code": {"type": "string", "default": code},
-                                 "timeout_ms": {"type": "number", "default": 10000}}}}}],
-                     transitions=transitions)
-
-
-def always(t):
-    return {"target_node": t, "description": "always", "condition": {"operator": "always"}}
-
-
-def eq(var, val, t, desc):
-    return {"target_node": t, "description": desc, "condition": {"logic": "or", "conditions": [
-        {"variable": var, "operator": "equals", "operand": val}]}}
-
-
-def is_true(var, t, desc):
-    return {"target_node": t, "description": desc, "condition": {"logic": "or", "conditions": [
-        {"variable": var, "operator": "equals", "operand": "true"},
-        {"variable": var, "operator": "equals", "operand": "True"}]}}
-
-
-def ext(name, values, desc, conf=0.6):
-    return {"name": name, "type": "string", "enum_values": values, "description": desc, "min_confidence": conf}
-
+API = fl.load_api(sys.argv[1] if len(sys.argv) > 1 else ROOT / "tools/openapi.json")
+# R38 / R60 conflict resolutions: brief rule 32 explicitly allows voluntary hardship offers;
+# API /transfer_to_agent requires queue enum restructuring/general/support. Both in force.
+SPEC = json.load(open(ROOT / "out/brief-a.spec.json"))["spec"]
+HOLIDAYS = [h["date"] for h in SPEC["calendar"]["holidays"]]
+BUSINESS_WEEKDAYS = [ ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].index(w) for w in SPEC["calendar"]["business_weekdays"] ]
+BANDS = SPEC["bands"]
+CALLBACK = SPEC["callback"]
 
 nodes = {}
 
-# ---------------------------------------------------------------- terminals
-# key: (outcome, reason, farewell)
+# ---------------------------------------------------------------- terminals (rule 46 table; rule 47 goodbye)
+# key: (outcome, reason, farewell). The promise farewell no longer repeats the recorded sentence: the wrap-up
+# node said it (rule 38) right after create_promise returned ok.
 FINS = {
-    "promise": ("promise", "", "Your payment promise is recorded. You will receive a text message confirming this promise. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
+    "promise": ("promise", "", "Thank you for your time, {{title}} {{last_name}}. Goodbye."),
     "paid": ("paid", "", "Thank you for letting me know. Payments can take one business day to appear, so I will not take a promise today. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
     "transferred_restructuring": ("transferred", "restructuring", "Thank you, {{title}} {{last_name}}. A colleague will take over now. Goodbye."),
     "transferred_human": ("transferred", "human", "Thank you, {{title}} {{last_name}}. A colleague will take over now. Goodbye."),
     "transferred_support": ("transferred", "support", "Thank you, {{title}} {{last_name}}. A colleague from customer support will take over now. Goodbye."),
-    "refused": ("no_promise", "refused", "I understand. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
-    "hardship": ("no_promise", "hardship", "I understand. Thank you for your time, {{title}} {{last_name}}, and take care. Goodbye."),
+    "refused": ("no_promise", "refused", "I understand. I have not recorded a promise today. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
+    "hardship": ("no_promise", "hardship", "I understand. I have not recorded a promise today. Thank you for your time, {{title}} {{last_name}}, and take care. Goodbye."),
     "dispute": ("no_promise", "dispute", "Thank you for telling me. I will not take a payment promise today. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
     "service_error": ("no_promise", "service_error", "I am sorry, I could not record your promise because of a technical problem. Thank you for your time, {{title}} {{last_name}}. Goodbye."),
     "failed": ("not_verified", "failed", "I am sorry, I could not verify your identity, so I cannot continue. Please use the Freya Bank mobile app or visit a branch. Thank you, goodbye."),
@@ -99,191 +52,33 @@ FINS = {
     "callback": ("not_reached", "callback", "Thank you, we will call back then. Goodbye."),
     "no_callback": ("not_reached", "no_callback", "Thank you for your help. Goodbye."),
     "wrong_number": ("not_reached", "wrong_number", "I apologise for the inconvenience. Thank you, goodbye."),
-    "deceased": ("not_reached", "deceased", "I am sorry for your loss. Goodbye."),
+    "deceased": ("not_reached", "deceased", "I am sorry for your loss. Thank you, goodbye."),
     "unclear": ("not_reached", "unclear", "I am sorry, I could not confirm who I am speaking with. Thank you, goodbye."),
 }
+# R52 R53 R56: outcomes loaded from spec, brief goodbye before lifecycle close.
 for key, (outcome, reason, farewell) in FINS.items():
-    code = f"try:\n    vars['outcome'] = '{outcome}'\n    vars['reason'] = '{reason}'\nexcept Exception:\n    pass\n"
-    nodes[f"fin_{key}"] = code_node(f"fin_{key}", code, [always(f"end_{key}")])
-    nodes[f"end_{key}"] = base_node(f"end_{key}", "end_call", on_enter={"type": "silent"}, disable_inactivity_monitor=True,
-                                    terminal={"type": "function", "function": {
-                                        "name": f"{outcome}_{reason}" if reason else outcome,
-                                        "handler": "__function__:end_call",
-                                        "parameters": {"type": "object", "properties": {
-                                            "message_mode": {"type": "string", "default": "custom"},
-                                            "spoken_message": {"type": "string", "default": farewell}}}}})
+    row = next(r for r in SPEC["outcomes"] if r["outcome"] == outcome and r["reason"] == reason)
+    fl.end_pair(key, row["outcome"], row["reason"], farewell, nodes)
 
 # ---------------------------------------------------------------- setup: dates
-SETUP = r'''
-import datetime
-try:
-    HOL = set(HOLIDAYS_LIST)
-    WD = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-    MO = ['January','February','March','April','May','June','July','August','September','October','November','December']
-    raw = str(vars.get('now') or '').strip()
-    try:
-        nowdt = datetime.datetime.fromisoformat(raw[:16])
-    except Exception:
-        nowdt = datetime.datetime.fromisoformat(raw[:10] + 'T09:00')
-    today = nowdt.date()
-    def isbd(d):
-        return d.weekday() < 5 and d.isoformat() not in HOL
-    def txt(d):
-        return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month-1] + ' ' + str(d.year)
-    def addbd(d, n):
-        c = 0
-        while c < n:
-            d = d + datetime.timedelta(days=1)
-            if isbd(d):
-                c += 1
-        return d
-    nbd = addbd(today, 1)
-    vars['today_iso'] = today.isoformat()
-    vars['today_text'] = txt(today)
-    vars['now_time'] = nowdt.strftime('%H:%M')
-    lines = []
-    cur = nowdt.strftime('%H:%M')
-    if cur < '19:00':
-        start = '10:00' if cur < '10:00' else 'after ' + cur
-        lines.append('Today, ' + txt(today) + ' (' + today.isoformat() + '), from ' + start + ' up to 19:00.')
-    lines.append(txt(nbd) + ' (' + nbd.isoformat() + '), from 10:00 up to 19:00 included.')
-    tom = today + datetime.timedelta(days=1)
-    extra = 'Tomorrow is ' + txt(tom) + '.'
-    if tom != nbd:
-        extra += ' Tomorrow is NOT allowed, it is not a business day.'
-    vars['callback_text'] = 'The ONLY allowed callback times are:\n- ' + '\n- '.join(lines) + '\n' + extra + ' Any other day or time is outside the window.'
-    # week tables
-    monday = today - datetime.timedelta(days=today.weekday())
-    tab = []
-    for i in range(7):
-        a = monday + datetime.timedelta(days=i)
-        b = a + datetime.timedelta(days=7)
-        t1 = '"this ' + WD[i] + '" = ' + txt(a) + (' (already past)' if a < today else '')
-        tab.append(t1 + '; "next ' + WD[i] + '" = ' + txt(b))
-    vars['weekday_table'] = '\n'.join(tab)
-    # last business day of this week, else of next week
-    def lastbd(mon):
-        for k in range(4, -1, -1):
-            d = mon + datetime.timedelta(days=k)
-            if isbd(d):
-                return d
-        return None
-    a1 = lastbd(monday)
-    if a1 is None or a1 <= today:
-        a1 = lastbd(monday + datetime.timedelta(days=7))
-    vars['attempt1_date'] = a1.isoformat()
-    vars['early_deadline'] = addbd(today, 12).isoformat()
-    vars['late_deadline'] = addbd(today, 7).isoformat()
-    vars['setup_state'] = 'ok'
-except Exception as e:
-    vars['setup_state'] = 'error ' + str(e)
-    vars.setdefault('callback_text', 'Callbacks: today later than now up to 19:00, or the next business day from 10:00 to 19:00.')
-    vars.setdefault('today_text', str(vars.get('now')))
-    vars.setdefault('weekday_table', '')
-'''.replace("HOLIDAYS_LIST", repr(HOLIDAYS))
+# Brief A: attempt 1 is the last business day of this week (else of next week); the early band may record up to
+# 12 business days ahead, the late band up to 7 (rules 18, 30). Callbacks: today up to 19:00 or the next business
+# day 10:00-19:00 (rule 6).
+ATTEMPT_DATES = r'''
+monday = today - datetime.timedelta(days=today.weekday())
+a1 = lastbd_of_week(monday)
+if a1 is None or a1 <= today:
+    a1 = lastbd_of_week(monday + datetime.timedelta(days=7))
+vars['attempt1_date'] = a1.isoformat()
+for band in BANK_BANDS:
+    vars[band['name'] + '_deadline'] = addbd(today, band['deadline_rule']['n']).isoformat()
+if str(vars.get('who1')) == 'refuses':
+    vars['decline_count'] = '1'
 
-PREPARE = r'''
-import datetime, json, re
-try:
-    HOL = set(HOLIDAYS_LIST)
-    WD = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-    MO = ['January','February','March','April','May','June','July','August','September','October','November','December']
-    def isbd(d):
-        return d.weekday() < 5 and d.isoformat() not in HOL
-    def txt(d):
-        return WD[d.weekday()] + ' ' + str(d.day) + ' ' + MO[d.month-1]
-    def fmt(x):
-        try:
-            x = float(x)
-        except Exception:
-            return str(x)
-        s = '%.2f' % x
-        return s[:-3] if s.endswith('.00') else s
-    prods = vars.get('products')
-    if isinstance(prods, str):
-        try:
-            prods = json.loads(prods)
-        except Exception:
-            prods = None
-    if not isinstance(prods, list) or not prods:
-        found = {}
-        for k, v in list(vars.items()):
-            m = re.search(r'products\.(\d+)\.(\w+)$', str(k))
-            if m:
-                found.setdefault(int(m.group(1)), {})[m.group(2)] = v
-        prods = [found[i] for i in sorted(found)]
-    p = prods[0] if prods else {}
-    if not isinstance(p, dict):
-        p = {}
-    ptype = str(p.get('type') or '')
-    vars['product_id'] = str(p.get('product_id') or 'p1')
-    if ptype == 'credit_card':
-        words = 'credit card ending ' + str(p.get('card_last4') or '')
-        floor = p.get('minimum_payment')
-        floor_name = 'minimum payment'
-    else:
-        words = ptype.replace('_', ' ') if ptype else 'loan'
-        floor = p.get('instalment_amount')
-        floor_name = 'monthly instalment'
-    past_due = float(p.get('past_due') or 0)
-    try:
-        floor = float(floor)
-    except Exception:
-        floor = past_due
-    days_late = int(float(p.get('days_late') or 0))
-    today = datetime.date.fromisoformat(str(vars.get('today_iso')))
-    if days_late <= 7:
-        band = 'early'; attempts = 1; deadline = datetime.date.fromisoformat(str(vars.get('early_deadline')))
-    else:
-        band = 'late'; attempts = 2; deadline = datetime.date.fromisoformat(str(vars.get('late_deadline')))
-    a1 = datetime.date.fromisoformat(str(vars.get('attempt1_date')))
-    if a1 > deadline:
-        a1 = deadline
-    vars['product_words'] = words
-    vars['past_due_fmt'] = fmt(past_due)
-    vars['floor_fmt'] = fmt(floor)
-    vars['floor_name'] = floor_name
-    vars['days_late_txt'] = str(days_late)
-    vars['band'] = band
-    vars['attempts_n'] = str(attempts)
-    vars['deadline_iso'] = deadline.isoformat()
-    vars['deadline_text'] = txt(deadline)
-    vars['attempt1_iso'] = a1.isoformat()
-    vars['attempt1_text'] = txt(a1)
-    if attempts >= 2:
-        vars['attempt2_line'] = 'Attempt 2: propose the floor amount ' + fmt(floor) + ' on the deadline, ' + txt(deadline) + ' (' + deadline.isoformat() + ').'
-    else:
-        vars['attempt2_line'] = 'There is NO attempt 2 for this customer. After attempt 1 is refused, stop.'
-    cal = []
-    d = today
-    while d <= deadline + datetime.timedelta(days=10):
-        if d > deadline:
-            tag = 'AFTER THE DEADLINE, not allowed'
-        elif isbd(d):
-            tag = 'allowed'
-        elif d.weekday() >= 5:
-            tag = 'weekend, not allowed'
-        else:
-            tag = 'bank holiday, not allowed'
-        nb = d
-        while not isbd(nb):
-            nb = nb + datetime.timedelta(days=1)
-        extra = ''
-        if tag.startswith('weekend') or tag.startswith('bank'):
-            extra = ' -> next business day ' + txt(nb) + ' (' + nb.isoformat() + ')' + ('' if nb <= deadline else ', which is after the deadline: offer the deadline instead')
-        cal.append(d.isoformat() + ' ' + txt(d) + ('  (today)' if d == today else '') + ': ' + tag + extra)
-        d = d + datetime.timedelta(days=1)
-    vars['calendar_text'] = '\n'.join(cal)
-    vars['prepare_state'] = 'ok'
-except Exception as e:
-    vars['prepare_state'] = 'error ' + str(e)
-    vars.setdefault('product_words', 'account')
-    vars.setdefault('past_due_fmt', 'the past-due amount')
-    for k in ['floor_fmt','floor_name','days_late_txt','band','attempts_n','deadline_iso','deadline_text','attempt1_iso','attempt1_text','attempt2_line','calendar_text']:
-        vars.setdefault(k, '')
-'''.replace("HOLIDAYS_LIST", repr(HOLIDAYS))
-
-nodes["setup"] = code_node("setup", SETUP, [always("opening")])
+'''
+SETUP = fl.SETUP_CODE(HOLIDAYS, BUSINESS_WEEKDAYS,
+    callback_rule={"open": CALLBACK["open"], "close": CALLBACK["close"], "same_day": CALLBACK["same_day"], "days_ahead": CALLBACK["days_ahead_business"]},
+    extra="BANK_BANDS = " + repr(BANDS).replace("}}", "} }") + "\n" + ATTEMPT_DATES + fl.relative_days_code('now', 'relative_days', next_means_week_after=True))
 
 # ---------------------------------------------------------------- opening
 WHO_VALUES = ["customer", "someone_else", "wrong_number", "deceased", "refuses", "unclear"]
@@ -295,20 +90,23 @@ WHO_DESC = ("Who answered, judged ONLY from the person's latest message. "
             "refuses = says they do not want to talk / not interested. "
             "unclear = anything else: 'hello', 'go ahead', 'who is this?', 'what is this about?', a question, silence.")
 
-opening_tr = [
-    eq("who1", "customer", "ask_dob", "the customer confirmed who they are"),
-    eq("who1", "deceased", "fin_deceased", "the customer has died"),
-    eq("who1", "wrong_number", "fin_wrong_number", "wrong number"),
-    eq("who1", "someone_else", "third_party", "someone else answered"),
-    always("opening_retry"),
+OPENING_ROUTES = [  # routed in `setup` on who1; anything else -> opening_retry
+    ("customer", "ask_dob", "the customer confirmed who they are"),
+    ("deceased", "fin_deceased", "the customer has died"),
+    ("wrong_number", "fin_wrong_number", "wrong number"),
+    ("someone_else", "third_party", "someone else answered"),
 ]
-nodes["opening"] = conv(
+# The prompt quotes the opening line too: the chat route (local sim, smoke) replaces the initial node's tts with a
+# model turn ("Suppressed: Missing prior assistant message"); simulations play the tts.
+nodes["opening"] = fl.conv(
     "opening",
-    "You have just introduced yourself and asked whether you are speaking with {{title}} {{last_name}}. Do not call any tool in this turn. Do not say why you are calling.",
-    on_enter={"type": "tts", "text": "Hello, this is Freya Bank's digital assistant. Please note that we record this call. Am I speaking with {{title}} {{last_name}}?"},
-    extraction=[ext("who1", WHO_VALUES, WHO_DESC)], transitions=opening_tr, first_only=True)
+    "If you have not spoken yet, say exactly: \"Hello, I am a digital assistant calling from Freya Bank and this call is recorded. Am I speaking with {{title}} {{last_name}}?\" "
+    "Do not call any tool in this turn. Do not say why you are calling.",
+    on_enter={"type": "tts", "text": "Hello, I am a digital assistant calling from Freya Bank and this call is recorded. Am I speaking with {{title}} {{last_name}}?"},
+    extraction=[fl.ext("who1", WHO_VALUES, WHO_DESC)], first_only=True)
+INITIAL = fl.conversation_first("opening", SETUP, "who1", OPENING_ROUTES, "opening_retry", nodes)
 
-nodes["opening_retry"] = conv(
+nodes["opening_retry"] = fl.conv(
     "opening_retry",
     "You called {{title}} {{last_name}} and asked whether you are speaking with them, but the answer did not confirm it. "
     "No tool call is allowed in this turn. Do not say why you are calling, and do not mention any account, product, debt, payment or collections.\n"
@@ -316,24 +114,25 @@ nodes["opening_retry"] = conv(
     "a scam -> they can verify this call by phoning Freya Bank's customer service number; what it is about -> you can only discuss that with {{title}} {{last_name}}. "
     "If they said they do not want to talk, say you only need a moment. "
     "Then ask exactly: \"Am I speaking with {{title}} {{last_name}}?\"",
-    extraction=[ext("who2", WHO_VALUES, WHO_DESC)],
+    extraction=[fl.ext("who2", WHO_VALUES, WHO_DESC)],
     transitions=[
-        eq("who2", "customer", "ask_dob", "the customer confirmed who they are"),
-        eq("who2", "deceased", "fin_deceased", "the customer has died"),
-        eq("who2", "wrong_number", "fin_wrong_number", "wrong number"),
-        eq("who2", "someone_else", "third_party", "someone else answered"),
-        eq("who2", "refuses", "fin_declined", "refuses again"),
-        always("fin_unclear"),
+        fl.eq("who2", "customer", "ask_dob", "the customer confirmed who they are"),
+        fl.eq("who2", "deceased", "fin_deceased", "the customer has died"),
+        fl.eq("who2", "wrong_number", "fin_wrong_number", "wrong number"),
+        fl.eq("who2", "someone_else", "third_party", "someone else answered"),
+        fl.eq("who2", "refuses", "fin_declined", "refuses again"),
+        fl.always("fin_unclear"),
     ])
 
 # ---------------------------------------------------------------- third party
-cb_tool = api_tool("schedule_callback", {
-    "date": {"type": "string", "default": "{{date}}", "description": "Callback date as YYYY-MM-DD. Must be one of the allowed days."},
-    "time": {"type": "string", "default": "{{time}}", "description": "Callback time as HH:MM, 24 hour, between 10:00 and 19:00."},
-}, "Book a callback for the customer. CALL it as soon as the person names a day and time inside the allowed window.", ["date", "time"],
-    post="try:\n    if isinstance(result, dict):\n        result.pop('header', None)\n        d = result.get('data')\n        if isinstance(d, dict):\n            d['what_to_do_next'] = 'Callback booked.' if d.get('ok') else 'The booking failed. Try schedule_callback once more with the same values.'\nexcept Exception:\n    pass\n")
+cb_tool = fl.api_tool(
+    API, "schedule_callback",
+    description="Book a callback for the customer. CALL it as soon as the person names a day and time inside the allowed window.",
+    field_descriptions={"date": "Callback date as YYYY-MM-DD. Must be one of the allowed days.",
+                        "time": "Callback time as HH:MM, 24 hour, between 10:00 and 19:00."},
+    post=fl.ok_post("Callback booked.", "The booking failed. Try schedule_callback once more with the same values."))
 
-nodes["third_party"] = conv(
+nodes["third_party"] = fl.conv(
     "third_party",
     "You called for {{title}} {{last_name}} ({{first_name}}) but someone else is on the line.\n"
     "STRICT: Never say why you are calling. Never mention the bank account, a product, a debt, an amount, a payment or collections, even if they ask or offer to pay or help. "
@@ -345,229 +144,257 @@ nodes["third_party"] = conv(
     "- If the second answer is also outside the window, or they cannot say when, do not book: call transition_to_fin_no_callback.\n"
     "After every tool result, speak or call the next tool.",
     tools=[cb_tool],
-    extraction=[ext("tp_status", ["none", "wrong_number", "deceased"],
-                    "From the person's latest message: wrong_number if they say this number does not belong to the customer or they do not know the customer; deceased if they say the customer has died; otherwise none.")],
+    extraction=[fl.ext("tp_status", ["none", "wrong_number", "deceased"],
+                       "From the person's latest message: wrong_number if they say this number does not belong to the customer or they do not know the customer; deceased if they say the customer has died; otherwise none.")],
     transitions=[
-        is_true("schedule_callback_response.data.ok", "fin_callback", "callback booked"),
-        eq("tp_status", "deceased", "fin_deceased", "customer died"),
-        eq("tp_status", "wrong_number", "fin_wrong_number", "wrong number"),
-        {"target_node": "fin_no_callback", "description": "No callback can be booked: the person gave a second time outside the allowed window, or cannot say when the customer is reachable.",
-         "is_tool_call": True, "condition": {"operator": "matches_intent", "description": "No callback can be booked inside the allowed window"}},
+        fl.ok_true("schedule_callback", "fin_callback", "callback booked"),
+        fl.eq("tp_status", "deceased", "fin_deceased", "customer died"),
+        fl.eq("tp_status", "wrong_number", "fin_wrong_number", "wrong number"),
+        fl.intent_tool("fin_no_callback",
+                       "No callback can be booked: the person gave a second time outside the allowed window, or cannot say when the customer is reachable.",
+                       "No callback can be booked inside the allowed window"),
     ])
 
 # ---------------------------------------------------------------- identity
-def verify_post(question):
-    return ("try:\n    if isinstance(result, dict):\n        result.pop('header', None)\n        d = result.get('data')\n        if isinstance(d, dict):\n"
-            "            left = d.get('wrong_answers_left')\n"
-            "            if d.get('hint') == 'day_month_swapped':\n"
-            "                d['what_to_do_next'] = 'Day and month look swapped. This is NOT a wrong answer. Ask the customer to say the date of birth again with the month as a word, for example 14 March 1988.'\n"
-            "            elif d.get('all_verified') is True or str(d.get('all_verified')).lower() == 'true':\n"
-            "                d['what_to_do_next'] = 'Both answers are correct. Identity verified.'\n"
-            "            elif d.get('verified') is True or str(d.get('verified')).lower() == 'true':\n"
-            "                d['what_to_do_next'] = 'Correct. Ask the next security question.'\n"
-            "            elif d.get('ok') is False or str(d.get('ok')).lower() == 'false':\n"
-            f"                d['what_to_do_next'] = 'The answer could not be read. It does not count as wrong. Ask again: {question}'\n"
-            "            elif str(left) == '0':\n"
-            "                d['what_to_do_next'] = 'Three wrong answers. The check has ended. Say nothing about the account.'\n"
-            "            else:\n"
-            f"                d['what_to_do_next'] = 'Wrong answer. Tell the customer it does not match our records and ask again: {question}'\n"
-            "except Exception:\n    pass\n")
+HINTS = {"day_month_swapped": "Day and month look swapped. This is NOT a wrong answer. Ask the customer to say the date of birth again with the month as a word, for example 14 March 1988."}
+MAX_WRONG = "Three wrong answers. The check has ended. Say nothing about the account."
+ALL_VERIFIED = "Both answers are correct. Identity verified."  # the brief's two questions (freyalib's default is generic)
 
-
-transfer_general = api_tool("transfer_to_agent", {"queue": {"type": "string", "default": "general"}},
-                            "Transfer the call to a human colleague. CALL it only when the customer insists on a human after you asked once whether you can help.")
+transfer_general = fl.api_tool(API, "transfer_to_agent", baked={"queue": "general"},
+                               description="Transfer the call to a human colleague. CALL it only when the customer insists on a human after you asked once whether you can help.")
 
 ID_COMMON = ("Rules for this step:\n"
              "- Do not mention the reason for the call, collections, a debt, a payment, a product or an amount. If asked what the call is about or how much they owe, say you can explain right after the security questions.\n"
-             "- If the customer refuses to answer, or asks what the call is about instead of answering: explain that these questions protect their account, and ask the question again.\n"
+             "- If the customer asks a question back (why you need it, what this is about, who is calling): answer in one short sentence without naming the reason for the call, then ask the same question again. If they refuse to answer: explain that these questions protect their account, and ask the question again.\n"
              "- If the customer asks for a human: the first time, ask whether you can help them yourself. If they insist, call transfer_to_agent.\n"
              "- After every tool result, speak to the customer or call the next tool. Follow what_to_do_next.")
 
 REFUSAL_DESC = ("From the customer's LATEST message only: refused if they refuse to answer the security question, say they do not want to talk, "
-                "or ask what the call is about instead of answering it. none if they give an answer or say anything else.")
+                "or ask the same thing back again instead of answering. none if they give an answer or say anything else." + fl.QUESTION_ENUM_CLAUSE + fl.REFUSAL_NONE_CLAUSE)
 
-nodes["ask_dob"] = conv(
+nodes["ask_dob"] = fl.conv(
     "ask_dob",
     "The person confirmed they are {{title}} {{last_name}}. You must check identity with two security questions, one at a time. Now ask the first: their date of birth.\n"
     "When they give it, call verify_identity with answer = the date as YYYY-MM-DD, whatever way they said it. A date said only as numbers is day, then month, then year (05/03/1990 = 1990-03-05). "
     "If they give only part of the date, ask for the rest before calling the tool.\n" + ID_COMMON,
-    tools=[api_tool("verify_identity", {
-        "field": {"type": "string", "default": "date_of_birth"},
-        "answer": {"type": "string", "default": "{{answer}}", "description": "The date of birth as YYYY-MM-DD."}},
-        "Check the date of birth. CALL it every time the customer gives a full date of birth.", ["answer"],
-        post=verify_post("What is your date of birth?")), transfer_general],
-    extraction=[ext("refusal_dob", ["none", "refused"], REFUSAL_DESC)],
+    tools=[fl.api_tool(API, "verify_identity", baked={"field": "date_of_birth"}, pre=fl.normalise_pre({"answer": "dob"}, date_order="dmy") + "\n" + fl.reset_pre(["question_count_dob"]),
+                       description="Check the date of birth. CALL it every time the customer gives a full date of birth.",
+                       field_descriptions={"answer": "The date of birth as YYYY-MM-DD."},
+                       post=fl.verify_post("What is your date of birth?", HINTS, MAX_WRONG, all_verified_text=ALL_VERIFIED)), transfer_general],
+    extraction=[fl.ext("refusal_dob", ["none", "refused", "question"], REFUSAL_DESC)],
     transitions=[
-        eq("verify_identity_response.data.wrong_answers_left", "0", "fin_failed", "three wrong answers"),
-        is_true("verify_identity_response.data.verified", "ask_phone", "date of birth correct"),
-        {"target_node": "fin_transferred_human", "description": "transferred", "condition": {"logic": "or", "conditions": [
-            {"variable": "transfer_to_agent_success_count", "operator": "greater_than", "operand": 0}]}},
-        eq("refusal_dob", "refused", "count_decline_dob", "customer refused"),
+        fl.eq("verify_identity_response.data.wrong_answers_left", "0", "fin_failed", "three wrong answers"),
+        fl.is_true("verify_identity_response.data.verified", "ask_phone", "date of birth correct"),
+        fl.transferred("fin_transferred_human", "transferred"),
+        fl.eq("refusal_dob", "refused", "count_decline_dob", "customer refused"),
+        fl.eq("refusal_dob", "question", "qb_dob", "asks a question back"),
     ])
 
-nodes["ask_phone"] = conv(
+nodes["ask_phone"] = fl.conv(
     "ask_phone",
     "The date of birth was correct. Now ask the second security question: the last four digits of the phone number on file.\n"
-    "When they give four digits, call verify_identity with answer = the four digits only.\n" + ID_COMMON,
-    tools=[api_tool("verify_identity", {
-        "field": {"type": "string", "default": "phone_last4"},
-        "answer": {"type": "string", "default": "{{answer}}", "description": "Exactly four digits."}},
-        "Check the last four digits of the phone number. CALL it every time the customer gives four digits.", ["answer"],
-        post=verify_post("What are the last four digits of the phone number on file?")), transfer_general],
-    extraction=[ext("refusal_phone", ["none", "refused"], REFUSAL_DESC)],
+    "When they give four digits, call verify_identity with answer = the four digits only.\n" + fl.latest_value_note(4) + ID_COMMON,
+    tools=[fl.api_tool(API, "verify_identity", baked={"field": "phone_last4"}, pre=fl.normalise_pre({"answer": "digits"}, date_order="dmy") + "\n" + fl.reset_pre(["question_count_phone"]),
+                       description="Check the last four digits of the phone number. CALL it every time the customer gives four digits.",
+                       field_descriptions={"answer": "Exactly four digits."},
+                       post=fl.verify_post("What are the last four digits of the phone number on file?", HINTS, MAX_WRONG, all_verified_text=ALL_VERIFIED)), transfer_general],
+    extraction=[fl.ext("refusal_phone", ["none", "refused", "question"], REFUSAL_DESC)],
     transitions=[
-        is_true("verify_identity_response.data.all_verified", "load_account", "identity verified"),
-        eq("verify_identity_response.data.wrong_answers_left", "0", "fin_failed", "three wrong answers"),
-        {"target_node": "fin_transferred_human", "description": "transferred", "condition": {"logic": "or", "conditions": [
-            {"variable": "transfer_to_agent_success_count", "operator": "greater_than", "operand": 0}]}},
-        eq("refusal_phone", "refused", "count_decline_phone", "customer refused"),
+        fl.is_true("verify_identity_response.data.all_verified", "load_account", "identity verified"),
+        fl.eq("verify_identity_response.data.wrong_answers_left", "0", "fin_failed", "three wrong answers"),
+        fl.transferred("fin_transferred_human", "transferred"),
+        fl.eq("refusal_phone", "refused", "count_decline_phone", "customer refused"),
+        fl.eq("refusal_phone", "question", "qb_phone", "asks a question back"),
     ])
 
 for stage in ["dob", "phone"]:
-    code = ("try:\n    n = int(float(vars.get('decline_count') or 0)) + 1\n    vars['decline_count'] = n\n"
-            "    vars['refusal_dob'] = 'none'\n    vars['refusal_phone'] = 'none'\n"
-            "    vars['decline_route'] = 'close' if n >= 2 else 'retry'\nexcept Exception:\n    vars['decline_route'] = 'retry'\n")
-    nodes[f"count_decline_{stage}"] = code_node(f"count_decline_{stage}", code, [
-        eq("decline_route", "close", "fin_declined", "second refusal"), always(f"ask_{stage}")])
-
-# ---------------------------------------------------------------- account
-nodes["load_account"] = base_node(
-    "load_account", "api_request", passthrough=True, passthrough_default_transition="prepare",
-    on_enter={"type": "silent"}, disable_inactivity_monitor=True,
-    pre_actions=[api_tool("get_account", {}, "Get the late products.", retries=2)],
-    response_mapping=[{"path": "data.products", "variable": "products"}],
-    transitions=[always("prepare")])
-nodes["prepare"] = code_node("prepare", PREPARE, [always("negotiate")])
-
-promise_post = ("try:\n    if isinstance(result, dict):\n        result.pop('header', None)\n        d = result.get('data')\n"
-                "        if isinstance(d, dict):\n"
-                "            if d.get('ok') is True or str(d.get('ok')).lower() == 'true':\n"
-                "                d['what_to_do_next'] = 'The promise is recorded.'\n"
-                "            else:\n"
-                "                d['what_to_do_next'] = 'NOT recorded. Do not say it is recorded. Call create_promise once more with exactly the same values.'\n"
-                "except Exception:\n    pass\n")
-promise_pre = ("try:\n    b = config.get('body')\n    if isinstance(b, dict):\n"
-               "        if 'amount' in b:\n            b['amount'] = float(str(b['amount']).replace(',', '').strip())\n"
-               "        if 'date' in b:\n            b['date'] = str(b['date']).strip()[:10]\nexcept Exception:\n    pass\n")
+    nodes[f"qb_{stage}"] = fl.question_back_node(stage, f"ask_{stage}", "fin_declined")   # a question back: answer, ask again; twice in a row = deflection
+    code = fl.counter_code("decline_count", 2, "decline_route", reset={"refusal_dob": "none", "refusal_phone": "none"})
+    nodes[f"count_decline_{stage}"] = fl.code_node(f"count_decline_{stage}", code, [
+        fl.eq("decline_route", "close", "fin_declined", "second refusal"), fl.always(f"ask_{stage}")])
 
 
-def promise_tool():
-    return api_tool("create_promise", {
-        "amount": {"type": "number", "default": "{{amount}}", "description": "The agreed amount, a number like 420.5."},
-        "date": {"type": "string", "default": "{{date}}", "description": "The agreed payment date as YYYY-MM-DD."},
-        "product_id": {"type": "string", "default": "{{product_id}}"},
-    }, "Record the payment promise. CALL it only after you read back product, amount and date and the customer clearly said yes.",
-        ["amount", "date"], post=promise_post, pre=promise_pre)
+# ---------------------------------------------------------------- payment: policy as code
+POLICY = pol.Policy(
+    HOLIDAYS,
+    texts={
+        # rule 28 (first ask) is in the statement; every later offer is one of these finished sentences
+        "question": "Can you pay [amount] [when]?",
+        "weekend_or_holiday": "[named] is not a business day, so I cannot record it. The next business day is [date].",   # R20
+        "after_deadline": "The latest date I can record is [deadline].",                                               # R23
+        "before_today": "[named] has already passed.",                                                                 # R19
+        "below_floor": "I cannot record [named]. The lowest amount I can record is [floor], your [floor_name].",       # R27
+        "above_full": "Your past-due amount is [full], so that is the most I can record.",                            # R27
+        "vague": "Which exact day would that be?",                                                                    # R21
+        "vague_deadline": "The latest date I can record is [deadline].",                                              # R21
+        "too_much_floor": "I understand. The lowest amount I can accept is [floor], your [floor_name]. The rest stays overdue.",  # R26
+        "exhausted": "I understand.",                                                                                 # R31
+        "hardship": "I am sorry to hear that. Would you like me to connect you with our customer support team?",      # R32
+        "paid": "Thank you for letting me know. Payments can take one business day to appear, so I will not take a promise.",   # R39
+        "dispute": "Thank you for telling me. I will not take a payment promise today.",   # R40
+        "human_first": "I can help you with most things myself. Is there anything I can help you with before I transfer you?",  # R42
+        "notalk_first": "I understand. This will only take a moment.",                                               # R45
+        "readback_head": "To confirm: your ",                                                                         # R34
+        "readback_item": "[words], [amount], [when]",
+        "readback_tail": ". Do you confirm?",
+        "recorded": "Your promise is recorded.",                                                                      # R37
+        "after_recorded": "You will receive a text message confirming this promise.",                                 # R38
+        "rec_failed": "I could not record the promise for your [words] because of a technical problem.",
+        "anything_else": "Is there anything else I can help you with?",
+        "wrap_change": "A recorded promise cannot be changed or cancelled on this call, but you can change it in the Freya Bank mobile app.",  # R36
+    },
+    business_weekdays=BUSINESS_WEEKDAYS, weekday_rule="this_week",
+    multi=False, notes=False,                                   # one product; Brief A never uses add_note
+    fin_keys={"promise": "promise", "paid": "paid", "default": "refused", "refused": "refused",
+              "hardship": "hardship", "dispute": "dispute", "service_error": "service_error"},
+    fail_max=2,                                                 # R37: try once more, then service_error
+    human_limit=2, notalk_limit=2,                              # R42 ask once, R45 twice
+    closed_day_move="after",                                    # R20 next business day
+    asides={   # R4 / R43: side questions answered before continuing, even on a turn that goes through code into a tts line
+        "robot": {"when": "asks whether they are talking to a robot, a machine or an AI", "say": "I am Freya Bank's digital assistant."},
+        "scam": {"when": "asks whether this call is a scam or genuine", "say": "You can verify this call by phoning Freya Bank's customer service number."},
+    })
 
+# Brief A: one product (R1); floor = minimum payment (card) or instalment (loans) (R25); early band (<= 7 days
+# late) = deadline 12 business days, 1 attempt; late = 7 business days, 2 attempts (R18); attempt 1 = the full
+# amount or the floor once 'too much' was said, on the attempt-1 date; attempt 2 = the floor on the deadline (R30).
+PREPARE_BODY = "BANK_BANDS = " + repr(BANDS).replace("}}", "} }") + "\nBANK_FLOORS = " + repr(SPEC["floors"]).replace("}}", "} }") + "\n" + fl.products_from_vars() + r'''
+today = datetime.date.fromisoformat(str(vars.get('today_iso')))
+p = prods[0] if prods else {}
+if not isinstance(p, dict):
+    p = {}
+ptype = str(p.get('type') or '')
+pid = str(p.get('product_id') or 'p1')
+if ptype == 'credit_card':
+    words = 'credit card ending ' + str(p.get('card_last4') or '')
+    floor = p.get('minimum_payment')
+    floor_name = 'minimum payment'
+else:
+    words = ptype.replace('_', ' ') if ptype else 'loan'
+    floor = p.get('instalment_amount')
+    floor_name = 'monthly instalment'
+past_due = float(p.get('past_due') or 0)
+try:
+    floor = float(floor)
+except Exception:
+    floor = past_due
+days_late = int(float(p.get('days_late') or 0))
+a1 = datetime.date.fromisoformat(str(vars.get('attempt1_date')))
+band = next(b for b in BANK_BANDS if b['min_days'] <= days_late <= b['max_days'])
+deadline = datetime.date.fromisoformat(str(vars.get(band['name'] + '_deadline')))
+floor_rule = next(f for f in BANK_FLOORS if ptype in f['product_types'])
+floor = float(p[floor_rule['rule']['field']])
+rungs = [('full_or_floor', a1)]
+if band['attempts'] == 2:
+    rungs.append(('floor', deadline))
+register_product(vars, pid, words, past_due, floor, floor_name, deadline, rungs)
+vars['product_id'] = pid
+vars['product_words'] = words
+vars['past_due_fmt'] = fmt(past_due)
+vars['days_late_txt'] = str(days_late)
+vars['deadline_text'] = txt_short(deadline)
+statement = ('Thank you, ' + str(vars.get('title') or '') + ' ' + str(vars.get('last_name') or '') + '. I am calling from the collections team about a late payment on your '
+             + words + '. The past-due amount is ' + fmt(past_due) + ', and it is ' + str(days_late) + ' days late. Can you make this payment today?')
+'''
+PREPARE = POLICY.prepare_code(PREPARE_BODY, "statement", fallbacks={
+    "say_next": "Thank you. I am calling from the collections team about a late payment. Can you make this payment today?",
+    "product_words": "account", "past_due_fmt": "the past-due amount", "days_late_txt": "", "deadline_text": ""})
 
-PROMISE_TR = [
-    is_true("create_promise_response.data.ok", "fin_promise", "promise recorded"),
-    {"target_node": "fin_service_error", "description": "create_promise failed twice", "condition": {"logic": "or", "conditions": [
-        {"variable": "create_promise_failure_count", "operator": "greater_than", "operand": 1},
-        {"logic": "and", "conditions": [
-            {"variable": "create_promise_success_count", "operator": "greater_than", "operand": 1},
-            {"variable": "create_promise_response.data.ok", "operator": "not_equals", "operand": "true"},
-            {"variable": "create_promise_response.data.ok", "operator": "not_equals", "operand": "True"}]},
-        {"logic": "and", "conditions": [
-            {"variable": "create_promise_success_count", "operator": "greater_than", "operand": 0},
-            {"variable": "create_promise_failure_count", "operator": "greater_than", "operand": 0},
-            {"variable": "create_promise_response.data.ok", "operator": "not_equals", "operand": "true"},
-            {"variable": "create_promise_response.data.ok", "operator": "not_equals", "operand": "True"}]}]}},
-]
+nodes["load_account"] = fl.api_node(
+    "load_account", fl.api_tool(API, "get_account", description="Get the late products.", retries=2),
+    [fl.always("prepare")], mapping=[{"path": "data.products", "variable": "products"}])
+nodes["prepare"] = fl.code_node("prepare", PREPARE, [fl.always("negotiate")])
 
-FACTS = ("ACCOUNT\n- Product: {{product_words}}.\n- Full past-due amount: {{past_due_fmt}}. Days late: {{days_late_txt}}.\n"
-         "- Floor, the lowest amount you may accept: {{floor_fmt}} (the {{floor_name}}).\n"
-         "DATES\n- Today: {{today_text}} ({{today_iso}}).\n- Deadline, the latest date you may record: {{deadline_text}} ({{deadline_iso}}).\n"
-         "- A promise date must be a business day (Monday to Friday, not a bank holiday) from today up to the deadline.\n"
-         "- Attempt 1 date: {{attempt1_text}} ({{attempt1_iso}}).\n- Persuasion attempts allowed: {{attempts_n}}. {{attempt2_line}}\n"
-         "WEEKDAY WORDS\n{{weekday_table}}\nCALENDAR (look every date up here)\n{{calendar_text}}\n")
-
-NEGOTIATE = (
-    "The customer is verified. You told them about the late payment and asked \"Can you make this payment today?\". Now get a payment promise.\n\n"
-    "HOW TO GET THE PROMISE\n"
-    "1. You propose every amount. NEVER ask how much they can pay. If they ask you to choose, propose an amount yourself. Start with the full past-due amount.\n"
-    "2. Yes to paying today = the full amount, today.\n"
-    "3. A date or an amount the customer proposes is never a refusal. Check it:\n"
-    "   - Date: look it up in the CALENDAR. 'allowed' -> accept it. Weekend or bank holiday not after the deadline -> say that day is not possible and offer the next business day shown. "
-    "After the deadline (for example a salary date later) -> say the latest date you can record is {{deadline_text}} and offer it; if they refuse that, it is a flat refusal.\n"
-    "   - A vague period ('next week', 'the week after next', 'end of the month', 'when my salary comes') -> ask once for the exact day. If they still give none, propose the deadline {{deadline_text}}.\n"
-    "   - 'next <weekday>' and 'this <weekday>': use WEEKDAY WORDS.\n"
-    "   - Amount from the floor up to the full amount, both included -> accept it. Below the floor -> say it cannot be recorded and offer the floor {{floor_fmt}} once; if they do not accept, it is a flat refusal.\n"
-    "4. If they say the full amount is too much: offer the floor {{floor_fmt}} once, and say the rest stays overdue. If they refuse the floor, it is a flat refusal.\n"
-    "5. A flat refusal (a no with no date and no amount, a non-answer, or refusing your offer) uses one persuasion attempt:\n"
-    "   - Attempt 1: propose paying on {{attempt1_text}} - the full amount, or the floor {{floor_fmt}} if they already said the full amount is too much.\n"
-    "   - {{attempt2_line}}\n"
-    "   - When the allowed attempts are used up and they refuse again, stop: call transition_to_fin_refused. Never repeat an offer they already refused.\n"
-    "6. When amount and date are agreed, read back: \"{{product_words}}, <amount>, on <weekday day month>. Do you confirm?\" Call create_promise only after a clear yes, with amount as a number and date as YYYY-MM-DD. "
-    "If they change the date or amount, check it again and read back again.\n"
-    "7. After create_promise: if it failed, call create_promise once more with the same values. Never say the promise is recorded unless the result has ok true.\n\n"
-    "OTHER\n"
-    "- Never offer a discount, waiver, payment plan or any other term.\n"
-    "- If they ask for a human: the first time, ask whether you can help them yourself. If they insist, call transfer_to_agent.\n"
-    "- If they say twice that they do not want to talk: call transition_to_fin_refused.\n"
-    "- If they ask to change or cancel a promise: they can do it in the mobile app.\n"
-    "- If they ask something these facts do not answer, say you do not have that information.\n"
-    "- After every tool result, speak to the customer or call the next tool.\n\n" + FACTS)
-
+# ---- extraction, in the brief's own terms
 TOPIC_DESC = ("What the customer's LATEST message says, if it is one of these. "
-              "hardship = mentions illness, a death in the family, or losing their job (this wins over all others). "
+              "hardship = mentions illness, a death in the family, or losing their job (this wins over every other value, even when they also name a date or an amount). "
               "already_paid = says they have ALREADY paid this past-due amount (not 'I will pay'). "
-              "dispute = says the debt or product is not theirs, they never had it, or it was closed or paid off in the past. "
-              "new_plan = explicitly asks for a new payment plan, lower or smaller instalments, or restructuring (just saying the amount is too much is NOT new_plan). "
-              "none = anything else.")
+              "dispute = says the debt or the product is not theirs, they never had it, or it was closed or paid off in the past. "
+              "new_plan = explicitly asks for a new payment plan, lower or smaller instalments, or restructuring. Saying the amount is too much is NOT new_plan; a different amount or date for this payment is NOT new_plan." + fl.PLAN_REQUEST_CLAUSE + " "
+              "human = asks to speak to a person, a human, an agent or a colleague. "
+              "no_talk = says they do not want to talk or do not want this call (not a refusal to pay). "
+              "none = anything else: offers, yes or no answers, refusals to pay, questions.")
+STANCE_DESC = ("The customer's answer to the agent's LATEST payment proposal, from the customer's latest message only. "
+               "accept = agrees to exactly what the agent proposed ('yes', 'okay', 'fine', 'that works', 'I can do that'). "
+               "refuse = a no with no date and no amount ('no', 'I can't', 'not today', 'I won't pay'), or a non-answer that avoids the question ('maybe', 'we will see'). After asking for an exact day, not knowing the exact day is a vague offer, never a refusal. "
+               "too_much = says the amount is too much, too high, or that they cannot pay that much or all of it, without naming an amount. "
+               "offer = names their own date, amount or period: a date or an amount the customer proposes is NEVER a refusal. "
+               "other = anything else: a question, small talk, a request." + fl.REFUSAL_NONE_CLAUSE)
+KIND_DESC = ("From the customer's LATEST message only. exact = they name a specific payment day (a date, a weekday, 'tomorrow', 'the 22nd', 'on the 6th of November when my salary comes') or a specific amount of money, or both. "
+             "vague = only a vague period without a day ('next week', 'the week after next', 'end of the month', 'when my salary comes', 'in a few days'), or says they do not know the exact day after being asked for it. "
+             "none = no date, amount or period in the latest message (also 'yes', 'no', questions).")
+DATE_DESC = ("The payment date the customer names in their LATEST message. 'this <weekday>' is that weekday in the current Monday-to-Sunday week; "
+             "'next <weekday>' is that weekday in the FOLLOWING calendar week, so 'next Friday' said on a Wednesday is the Friday of the next week. "
+             "Leave it empty when the latest message names no specific day.")
+AMOUNT_DESC = ("The amount of money the customer offers to pay in their LATEST message, as a number ('seven hundred' = 700, 'two fifty' = 250). "
+               "Leave it empty when the latest message names no amount. A day of the month is not an amount.")
+CONFIRM_DESC = ("The customer's answer to the read-back question 'Do you confirm?', from their latest message only. "
+                "yes = a clear yes ('yes', 'correct', 'I confirm', 'that's right'). "
+                "change = they give a different amount or a different date for this promise ('make it 250 instead', 'actually Monday'). "
+                "no = a plain no without a new amount or date. "
+                "other = anything else, for example a question.")
 
-neg_tr = PROMISE_TR + [
-    {"target_node": "fin_transferred_human", "description": "transferred to a human", "condition": {"logic": "or", "conditions": [
-        {"variable": "transfer_to_agent_success_count", "operator": "greater_than", "operand": 0}]}},
-    eq("topic", "hardship", "hardship", "hardship"),
-    eq("topic", "already_paid", "fin_paid", "already paid"),
-    eq("topic", "dispute", "fin_dispute", "dispute"),
-    eq("topic", "new_plan", "xfer_restructuring", "wants a new plan"),
-    {"target_node": "fin_refused", "description": "The customer finally refused: all persuasion attempts are used up, or they said twice they do not want to talk.",
-     "is_tool_call": True, "condition": {"operator": "matches_intent", "description": "The customer finally refused to make any promise"}},
-]
-nodes["negotiate"] = conv(
-    "negotiate", NEGOTIATE,
-    on_enter={"type": "tts", "text": "Thank you, {{title}} {{last_name}}. I am calling from the collections team about a late payment on your {{product_words}}. The past-due amount is {{past_due_fmt}}, and it is {{days_late_txt}} days late. Can you make this payment today?"},
-    first_only=True,
-    tools=[promise_tool(), transfer_general],
-    extraction=[ext("topic", ["none", "hardship", "already_paid", "dispute", "new_plan"], TOPIC_DESC)],
-    transitions=neg_tr)
+topic = fl.ext("topic", ["none", "hardship", "already_paid", "dispute", "new_plan", "human", "no_talk"], TOPIC_DESC)
+TOPIC_TRS = POLICY.topic_transitions()
 
-nodes["hardship"] = conv(
-    "hardship",
-    "The customer mentioned a hardship (illness, a death in the family, or job loss). Do NOT try to persuade them and do not propose any payment.\n"
-    "On your first turn here: say one short sentence of sympathy, then offer to connect them with the customer support team. Offer it only once.\n"
-    "Never offer a discount, waiver, payment plan or any other term. If they ask for one, say you cannot offer that.\n"
-    "If the customer themselves names a date or an amount to pay, handle it with the rules below and record it with create_promise after a clear yes to the read-back.\n"
-    "After every tool result, speak to the customer or call the next tool.\n\n" + FACTS,
-    tools=[promise_tool()],
-    extraction=[ext("support_choice", ["none", "accept", "decline"],
-                    "Answer to the offer to connect with the customer support team, from the customer's LATEST message: accept if they want to be connected, decline if they do not want it or say no, none otherwise or if the offer has not been made yet.")],
-    transitions=PROMISE_TR + [
-        eq("support_choice", "accept", "xfer_support", "accepts support"),
-        eq("support_choice", "decline", "fin_hardship", "declines support"),
-    ])
+FACTS = ("FACTS\n- Product: {{product_words}}. Past-due amount: {{past_due_fmt}}. Days late: {{days_late_txt}}.\n"
+         "- Today: {{today_text}}. The latest date that can be recorded: {{deadline_text}}.\n")
+COMMON = ("- If asked whether you are a robot or an AI: you are Freya Bank's digital assistant. If asked whether this is a scam: they can verify this call by phoning Freya Bank's customer service number.\n"
+          "- Never offer a discount, a waiver, a payment plan or any term that is not in STATE. If asked, say you cannot offer that.\n"
+          "- A question these facts do not answer: say you do not have that information.\n"
+          "- No tool call is allowed here. Never say that a promise is recorded.\n")
+
+NEGOTIATE = ("You are talking with {{title}} {{last_name}}, who is verified, about the late payment. The line you just said and the offer in STATE were decided by the system from the bank's rules.\n"
+             "- Never propose, compute or change an amount or a date yourself, and never ask how much they can pay. The only offer you may make is the current offer in STATE, word for word.\n"
+             "- If the customer asks a question or says something else, answer it in one short sentence, then ask the current offer again.\n"
+             + COMMON + FACTS)
+neg_ext = [topic, POLICY.stance_extraction(STANCE_DESC)] + POLICY.offer_extraction(DATE_DESC, AMOUNT_DESC, KIND_DESC)
+neg_trs = TOPIC_TRS + POLICY.offer_guard_transitions() + POLICY.stance_transitions()
+nodes["negotiate"] = POLICY.negotiate_node(NEGOTIATE, neg_ext, neg_trs)
+
+CONFIRM = ("You read back the promise and asked \"Do you confirm?\". The promise is recorded only after a clear yes.\n"
+           "- If the customer asks something, answer it in one short sentence, then ask again: \"Do you confirm?\".\n"
+           + COMMON + FACTS)
+nodes["confirm"] = POLICY.confirm_node(CONFIRM, CONFIRM_DESC, DATE_DESC, AMOUNT_DESC, topic_entry=topic, topic_trs=TOPIC_TRS)
+
+HS_ANSWER_DESC = ("From the customer's LATEST message. support_yes = they want to be connected with the customer support team. "
+                  "support_no = they do not want to be connected, say no to that offer, or say they cannot pay and want nothing more. "
+                  "accept_offer = they agree to the date and amount the agent just proposed. "
+                  "none = anything else, for example a question or a request for a discount.")
+HARDSHIP = ("The customer mentioned a hardship (illness, a death in the family or job loss). You said one short sentence of sympathy and offered to connect them with the customer support team.\n"
+            "- Make NO persuasion attempt. Never propose an amount or a date yourself.\n"
+            "- If they ask a question or for a discount, answer in one short sentence, then ask whether they want to be connected with the customer support team.\n"
+            + COMMON + FACTS)
+nodes["hardship"] = POLICY.hardship_node(HARDSHIP, HS_ANSWER_DESC, KIND_DESC, DATE_DESC, AMOUNT_DESC)
+
+WRAP_DESC = ("From the customer's LATEST message, after the agent said the promise is recorded and asked whether there is anything else. "
+             "done = nothing else ('no', 'that's all', 'thanks', 'goodbye'). "
+             "human = asks to speak to a person, a human or an agent, or insists on one. "
+             "new_plan = asks for a new payment plan or lower instalments. "
+             "change = asks to change, move or cancel the promise just recorded (another date or amount). "
+             "question = asks a question. other = anything else.")
+WRAPUP = ("The promise is recorded (STATE). You said so and asked whether there is anything else.\n"
+          "- If the customer asks a question, answer it in one or two sentences from these facts or say you do not have that information, then ask whether there is anything else you can help with.\n"
+          "- A recorded promise cannot be changed or cancelled on this call; they can change it in the Freya Bank mobile app.\n"
+          + COMMON + FACTS)
+nodes["wrapup"] = POLICY.wrapup_node(WRAPUP, WRAP_DESC)
+
+POLICY.add_event_nodes(nodes)
+POLICY.record_nodes(nodes, API)
 
 for q, fin, line in [("restructuring", "fin_transferred_restructuring", "I cannot set up a new plan myself, but I will transfer you to the team that can help with that."),
-                     ("support", "fin_transferred_support", "I will connect you with our customer support team now.")]:
-    nodes[f"xfer_{q}"] = base_node(
-        f"xfer_{q}", "api_request", passthrough=True, passthrough_default_transition=fin,
-        on_enter={"type": "tts", "text": line}, disable_inactivity_monitor=True,
-        pre_actions=[api_tool("transfer_to_agent", {"queue": {"type": "string", "default": q}}, "Transfer.", retries=1)],
-        transitions=[always(fin)])
+                     ("support", "fin_transferred_support", "I will connect you with our customer support team now."),
+                     ("general", "fin_transferred_human", "I will transfer you to a colleague now.")]:
+    nodes[f"xfer_{q}"] = fl.api_node(
+        f"xfer_{q}", fl.api_tool(API, "transfer_to_agent", baked={"queue": q}, description="Transfer.", retries=1),
+        [fl.always(fin)], on_enter={"type": "tts", "text": line})
 
 # ---------------------------------------------------------------- close_call lifecycle
-close_call = api_tool("close_call", {
-    "outcome": {"type": "string", "default": "{{outcome}}",
-                "enum": ["promise", "paid", "transferred", "no_promise", "not_verified", "not_reached"],
-                "description": "promise: a promise was recorded. paid: says already paid. transferred: handed to a person. no_promise: verified, no promise. not_verified: identity not passed. not_reached: the customer was not reached."},
-    "reason": {"type": "string", "default": "{{reason}}",
-               "description": "transferred: restructuring|human|support. no_promise: refused|hardship|dispute|service_error. not_verified: failed|declined. not_reached: callback|no_callback|wrong_number|deceased|unclear. Empty for promise and paid."},
-}, "Record how the call ended, from the conversation.", ["outcome"],
-    pre="try:\n    b = config.get('body')\n    if isinstance(b, dict):\n        if b.get('outcome') in ('promise', 'paid') or not b.get('reason'):\n            b.pop('reason', None)\nexcept Exception:\n    pass\n")
-close_call["config"]["alwaysRunsAt"] = ["end_of_call"]
-del close_call["post_process_code"]
+close_call = fl.close_call_tool(
+    API,
+    outcome_desc="promise: a promise was recorded. paid: says already paid. transferred: handed to a person. no_promise: verified, no promise. not_verified: identity not passed. not_reached: the customer was not reached.",
+    reason_desc="transferred: restructuring|human|support. no_promise: refused|hardship|dispute|service_error. not_verified: failed|declined. not_reached: callback|no_callback|wrong_number|deceased|unclear. Empty for promise and paid.",
+    no_reason_outcomes=("promise", "paid"))
 
 SYSTEM = ("You are Freya Bank's digital assistant on an outbound phone call to {{title}} {{last_name}}. Speak English. Keep every turn to one or two short sentences. Address the customer as {{title}} {{last_name}}.\n"
           "Always:\n"
@@ -580,34 +407,123 @@ SYSTEM = ("You are Freya Bank's digital assistant on an outbound phone call to {
           "- After every tool result, speak to the customer or call the next tool. Never end a turn with nothing. Follow what_to_do_next in a tool result.\n"
           "- Say amounts as plain numbers, for example 420.50, and dates as weekday, day and month, for example Friday 16 October.")
 
-wf = {
-    "initial_node": "setup",
-    "system_prompt": SYSTEM,
-    "nodes": nodes,
-    "global_nodes": {},
-    "tools": [close_call],
-    "test_variables": {"customer_id": "c_test", "first_name": "Daniel", "last_name": "Reyes", "title": "Mr", "now": "2026-10-14T11:00"},
-}
+# R09-R11 R14 R59: callback date and window guard in code, exactly one invalid retry.
+# Conversation extraction keeps customer's date words; resolve against now, never platform clock.
+CB_BODY = POLICY.core() + "\nCB_RULE = " + repr(CALLBACK) + r'''
+vars['cb_route'] = 'ask'
+nowdt = datetime.datetime.fromisoformat(str(vars.get('now') or '2000-01-01T00:00'))
+today = nowdt.date()
+status = str(vars.get('tp_status') or 'none')
+if status in ('wrong_number', 'deceased', 'unavailable'):
+    vars['cb_route'] = status
+else:
+    words = str(vars.get('cb_when') or '')
+    tm = str(vars.get('cb_time') or '')
+    if words:
+        d, vague = resolve_when(vars, words)
+        vars['cb_pending_date'] = d.isoformat() if d else words
+    if tm:
+        vars['cb_pending_time'] = tm
+    dw = str(vars.get('cb_pending_date') or '')
+    tw = str(vars.get('cb_pending_time') or '')
+    if dw and tw:
+        try:
+            d = datetime.date.fromisoformat(dw)
+            h, m = map(int, tw.split(':'))
+            at = datetime.datetime.combine(d, datetime.time(h, m))
+            allowed_days = [addbd(today, CB_RULE['days_ahead_business'])]
+            if CB_RULE['same_day']:
+                allowed_days.append(today)
+            valid = d in allowed_days and CB_RULE['open'] <= tw <= CB_RULE['close'] and at > nowdt
+        except Exception:
+            valid = False
+        if valid:
+            vars['cb_date_value'], vars['cb_time_value'] = dw, tw
+            vars['cb_route'] = 'book'
+        else:
+            n = int(float(vars.get('cb_invalid') or 0)) + 1
+            vars['cb_invalid'] = str(n)
+            vars['cb_pending_date'] = ''
+            vars['cb_pending_time'] = ''
+            vars['cb_route'] = 'unavailable' if n >= 2 else 'retry'
+    vars['cb_when'], vars['cb_time'], vars['tp_status'] = '', '', 'none'
+'''
+nodes['callback_guard'] = fl.code_node('callback_guard', fl.guarded(CB_BODY, 'cb_state', {'cb_route':'unavailable'}), [
+    fl.eq('cb_route','book','book_callback','valid callback'),
+    fl.eq('cb_route','wrong_number','fin_wrong_number','wrong number'),
+    fl.eq('cb_route','deceased','fin_deceased','deceased'),
+    fl.eq('cb_route','unavailable','fin_no_callback','no valid callback'),
+    fl.eq('cb_route','retry','callback_retry','one alternate slot'),
+    fl.always('third_party')])
+cb_task = ("Someone else answered. Never disclose why you called or ask security questions, even if they offer to pay. "
+           "Ask when {{title}} {{last_name}} can be reached. If asked who you are, say Freya Bank's digital assistant. "
+           "If asked what this is about, say you can only discuss it with the customer personally. "
+           "If a day is already provided, ask only for the time; if a time is provided, ask only for the day. "
+           "Date provided: {{cb_pending_date}}; time provided: {{cb_pending_time}}. "
+           "Now {{today_text}} {{now_time}}. {{callback_text}}. "
+           "Use these facts to turn time words into HH:MM. Never call a bank tool here.")
+cb_ext = [fl.ext('tp_status',['none','wrong_number','deceased','unavailable'],
+                'wrong_number = number does not belong to customer; deceased = customer died; unavailable = cannot say when customer can be reached; none = otherwise.'),
+          {'name':'cb_when','type':'string','description':"Customer's exact words naming callback day, e.g. tomorrow, next Monday, today. Empty if no day."},
+          {'name':'cb_time','type':'string','description':'Callback time as HH:MM in 24-hour time; eleven in the morning = 11:00. Empty if no time.'}]
+for name in ['third_party','callback_retry']:
+    nodes[name] = fl.conv(name, cb_task, extraction=cb_ext, transitions=[
+        fl.eq('tp_status','deceased','fin_deceased','customer deceased'),
+        fl.eq('tp_status','wrong_number','fin_wrong_number','wrong number'),
+        fl.always('callback_guard')],
+        on_enter={'type':'tts','text': 'I can only call back today or the next business day between ' + CALLBACK['open'] + ' and ' + CALLBACK['close'] + '. When else can the customer be reached?'} if name == 'callback_retry' else None)
+nodes['book_callback'] = fl.api_node('book_callback', fl.api_tool(API,'schedule_callback',
+    baked={'date':'{{cb_date_value}}','time':'{{cb_time_value}}'},
+    pre=fl.normalise_pre({'date':'date','time':'time'},date_order='dmy',relative_var='relative_days'),
+    post=fl.ok_post('Callback booked.','The callback could not be booked.'), retries=1),
+    [fl.eq('cb_ok','true','fin_callback','booked'),fl.eq('cb_ok','True','fin_callback','booked'),fl.always('callback_fault')],
+    mapping=[{'path':'data.ok','variable':'cb_ok'}])
+nodes['callback_fault'] = fl.conv('callback_fault','Say the callback could not be booked.',
+    on_enter={'type':'tts','text':'I could not book the callback.'}, transitions=[fl.always('fin_no_callback')],first_only=True)
 
+# R15 R16 R17 R19 R48 R51: deterministic identity refusal and human counters.
+# API and brief limit coincide; stop_left derived from spec/service allowance.
+for stage in ['dob','phone']:
+    node = nodes['ask_' + stage]
+    node['tools'] = [t for t in node['tools'] if t['function']['name'] != 'transfer_to_agent']
+    entry = node['extraction_schema'][0]
+    entry['enum_values'].append('human')
+    entry['description'] += ' human = asks for a person or human agent; this is never a security refusal.'
+    node['transitions'].append(fl.eq('refusal_' + stage,'human','id_human_' + stage,'request human'))
+    node['task_message'] += " Explain once that security questions protect their account on a refusal, then repeat the question. "
+    nodes['id_human_' + stage] = fl.code_node('id_human_' + stage,
+        fl.counter_code('human_count', 2, 'id_human_route', reset={'refusal_' + stage:'none'}),[
+            fl.eq('id_human_route','close','xfer_general','insists on human'),fl.always('id_help_' + stage)])
+    nodes['id_help_' + stage] = fl.conv('id_help_' + stage,
+        'Ask once whether you can help first, then continue with the security question. Do not treat the request as refusal.',
+        on_enter={'type':'tts','text':'Is there anything I can help you with myself first?'},
+        extraction=[fl.ext('help_reply',['continue','human'], 'human = insists on a human; continue = anything else.')],
+        transitions=[fl.eq('help_reply','human','xfer_general','insists'),fl.always('ask_' + stage)])
+# R37 R58: normalise already-approved code values; never cap amount or date.
+record_tool = nodes['record_promise']['pre_actions'][0]
+record_tool['pre_process_code'] = fl.normalise_pre({'amount':'amount','date':'date'},date_order='dmy') + "\n" + record_tool.get('pre_process_code','')
 
-def check(o):
-    if o is None:
-        raise SystemExit("null in workflow")
-    if isinstance(o, dict):
-        for v in o.values():
-            check(v)
-    if isinstance(o, list):
-        for v in o:
-            check(v)
-
-
-check(wf)
+# R27: this weekday stays in current calendar week; explicit zero stays below floor (R32).
 for n in nodes.values():
-    for t in n.get("transitions", []):
-        assert t["target_node"] in nodes, t["target_node"]
-    if n["node_type"] == "code":
-        c = n["pre_actions"][0]["function"]["parameters"]["properties"]["code"]["default"]
-        assert "{{" not in c and "}}" not in c, n["name"]
-        compile(c, n["name"], "exec")
-json.dump(wf, open(ROOT / "out/brief-a.workflow.json", "w"), indent=1)
-print("nodes:", len(nodes))
+    for action in n.get('pre_actions', []):
+        if action.get('function', {}).get('name') == 'code_exec':
+            leaf = action['function']['parameters']['properties']['code']
+            code = leaf.get('default', '')
+            code = code.replace("delta = (wd - today.weekday()) % 7", "delta = (wd - today.weekday()) if ' this ' in t else (wd - today.weekday()) % 7")
+            code = code.replace('amt = pa if a is None or a <= 0 else a', 'amt = pa if a is None else a')
+            leaf['default'] = code
+# R37 R45 R46: policy special topics win over confirmation yes/no/change.
+ct = nodes['confirm']['transitions']
+nodes['confirm']['transitions'] = TOPIC_TRS + [t for t in ct if t not in TOPIC_TRS]
+for e in nodes['confirm']['extraction_schema']:
+    if e['name'] == 'confirm':
+        e['min_confidence'] = 0.4
+nodes['confirm']['task_message'] += ' Never say payment has been scheduled or promise recorded: a clear yes must route to the write node, not be answered as dialogue.'
+nodes['hardship']['extraction_schema'].append(topic)
+nodes['hardship']['transitions'] = [t for t in TOPIC_TRS if t['target_node'] != 'pol_hardship'] + nodes['hardship']['transitions']
+wf = fl.assemble(INITIAL, nodes, SYSTEM, [close_call], conduct=True)   # no test_variables (CLAUDE.md); conduct = how customers talk
+
+if __name__ == "__main__":
+    out = sys.argv[2] if len(sys.argv) > 2 else ROOT / "out/brief-a.workflow.json"
+    fl.write_workflow(wf, out)
+    print("nodes:", len(nodes), "->", out)

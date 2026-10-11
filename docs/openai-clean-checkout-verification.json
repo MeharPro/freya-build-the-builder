@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-11T04:13:22.337552+00:00",
+  "command": [
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "builder/tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "tests": 90,
+  "source": "HEAD plus current nonignored worktree overlay",
+  "absent": [
+    "env.sh",
+    ".freya-agents.json",
+    ".personas.json",
+    ".venv",
+    "results",
+    "build-history"
+  ],
+  "note": "No credential file or local platform state was copied. Test interpreter was the existing venv."
+}

@@ -1,0 +1,35 @@
+WARN nodes.setup.pre_actions[code_exec].code: code has statements outside try/except (Assign, If); wrap the whole body
+WARN nodes.third_party.extraction_schema[cb_when]: no min_confidence: the default 0.95 is strict and a discarded value leaves no trace
+WARN nodes.third_party.extraction_schema[cb_time]: no min_confidence: the default 0.95 is strict and a discarded value leaves no trace
+WARN nodes.third_party.task_message: node has no tools but task_message does not say that no tool call is allowed in this turn
+WARN nodes.callback_retry.extraction_schema[cb_when]: no min_confidence: the default 0.95 is strict and a discarded value leaves no trace
+WARN nodes.callback_retry.extraction_schema[cb_time]: no min_confidence: the default 0.95 is strict and a discarded value leaves no trace
+WARN nodes.callback_retry.task_message: node has no tools but task_message does not say that no tool call is allowed in this turn
+WARN nodes.book_callback.transitions[0].condition: equals on 'cb_ok' tests only 'true': booleans arrive as 'true' or 'True' depending on the writer, test both spellings or route on a string flag
+WARN nodes.book_callback.transitions[1].condition: equals on 'cb_ok' tests only 'True': booleans arrive as 'true' or 'True' depending on the writer, test both spellings or route on a string flag
+WARN nodes.book_callback.pre_actions[schedule_callback].parameters.body.date: engine-run call: {{cb_date_value}} is never set, so the field is dropped from the request
+WARN nodes.book_callback.pre_actions[schedule_callback].parameters.body.time: engine-run call: {{cb_time_value}} is never set, so the field is dropped from the request
+WARN nodes.callback_fault.task_message: node has no tools but task_message does not say that no tool call is allowed in this turn
+WARN nodes.id_help_dob.task_message: node has no tools but task_message does not say that no tool call is allowed in this turn
+WARN nodes.id_help_phone.task_message: node has no tools but task_message does not say that no tool call is allowed in this turn
+WARN $.system_prompt: system prompt (in force before verification) mentions forbidden word 'payment' outside a 'never say' clause: 'at a security question repeat the question, at a payment proposal do not repeat the am'
+WARN nodes.xfer_general.pre_actions[transfer_to_agent]: write tool transfer_to_agent is available before identity is verified; check the brief whether that is allowed there (R37, R47, R48, R60 name it without saying when)
+WARN nodes.negotiate.extraction_schema: 7 extraction variables (> 4): one extraction call per turn fills them all, slow and less accurate
+WARN nodes.confirm.extraction_schema: 6 extraction variables (> 4): one extraction call per turn fills them all, slow and less accurate
+WARN nodes.hardship.extraction_schema: 7 extraction variables (> 4): one extraction call per turn fills them all, slow and less accurate
+INFO nodes.opening.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.opening_retry.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.third_party.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_dob.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_dob.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.ask_phone.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.ask_phone.tools[verify_identity].parameters.body.customer_id: field customer_id is baked by test_variables (call variable) ({{customer_id}}): the model never fills it
+INFO nodes.negotiate.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.confirm.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.hardship.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.callback_retry.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.book_callback.transitions[1]: second transition to 'fin_callback': the engine merges them with OR at load time
+INFO nodes.callback_fault.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.id_help_dob.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+INFO nodes.id_help_phone.max_node_turns: max_node_turns=60 without max_turn_transition: the cap changes nothing (engine records the overrun and keeps routing)
+-- 0 error(s), 19 warning(s), 15 info

@@ -1761,26 +1761,57 @@
   "backup": "/Users/meharkhanna/Documents/ChatGPT/freya-challenge/build-history/before-newest-import-20261010",
   "archive_sha256": "2cb082b3630cbaa813a617a1bd264b99ba9254c5fdae8aefb74eaaab5a1f3e70",
   "active_overlay_hashes": {
-    "README.md": "3b9fe213d0869dc18b7b4ebdd617f2f9039df278f4d18cc6d81684772cc70943",
+    "README.md": "71cc3f726cecfb0a339a55dd9f9a1f0d6409b91cfc3ec6577c6013e1d56678d2",
     ".gitignore": "af16fd3c7077aefe37b11b8d0d098e14fb906f86067b6b366f7ee67dd255875e",
     "CLAUDE.md": "85c06cc88179ad4164a3e05ae4da691b9514f701d26ea5e90f5fa967fb6e8f0c",
     "tools/check_secrets.sh": "d998085595bed13b12ea766053992985965e3a9f13bbc5c5b57b262122b5593c",
-    "builder/build.py": "fb06946931b661824751d894738ff1ceaec71c54704daf2d4b5ea5f57cdbacfd",
-    "builder/audit.py": "aebfdb2518691790b185bf05542114426d85829504a043a90cd37ff18725bc3f",
+    "builder/build.py": "e337715c049ffff4b363369132f4b734f37e7e6ad42aa14612ec830c9d953bf8",
+    "builder/audit.py": "b2ca79b67a65f127cbeece876b175d4280dc9d5ff0f7c00d9b135010c0d7dbd0",
     "builder/freyalib.py": "f752f9694191f7be6b08cfb1d34ab48b534e20804e3a22e97eb1ffc99148b134",
-    "builder/rules.py": "827ae82a5ddcc2d2574368a4186141ba6597542242b9a94f9c34900e4f4a58f8",
+    "builder/rules.py": "a6330aa0fe0eb7e76cda0b26672d890e87b37cfdfc3f10ada8f697c56bb27eb4",
     "builder/multiproduct.py": "9c9913b4015cf54b9b27220dd81269c1d808faffd5a998b4bc8d1a2cf17c41b9",
     "builder/lint.py": "e4e9085bae02562d0028655d602c1db5f51c138b60391bbd1c7663702d748dd1",
-    "builder/tests/test_lint.py": "7dce9e0892ee357f7fb2cec0d0667bb7b988e60d079f980d438bbb192f5e8acd",
+    "builder/tests/test_lint.py": "5f5c05f969db6f430b5bdc93c3dbf878eb16ffba73ebfae88f91c531632189ab",
     "builder/smoke_scripts/wrong_number.json": "7e8d503333615235f3bbfba0d7fff68565a5515681465f396f77be9d1395871a",
     "builder/smoke_scripts/third_party.json": "dd4378b22496dc569ffc0109d94f1fc967a507b5714673f9995975bbf2a90fa7",
     "builder/smoke_scripts/opening.json": "4f1690bfce5994cf40c433571def566cd790812aa625368fad95534f2eda3583",
-    ".claude/skills/build-phone-agent/SKILL.md": "f6e2c7acece14248bbb73cdbd6772449839c35c65d98520821b103b08ad8a21a",
+    ".claude/skills/build-phone-agent/SKILL.md": "c3634f4d70d59024152acccd63e30253fa66d082147d95616631b3d66a456a08",
     "freya.py": "ece7daaf369fc7abfda6a199066c6d3099fff6a4c6fe625739c3daae31bdc399",
     "builder/reliability.py": "da4f7d33edaa3c797c2b62cea0dd8a65c49705771ad6b0d6cda3eac73e6c98df",
-    "builder/tests/test_reliability.py": "b6e45afaad5346e5dfdbded1897120c4f022fd22670434a2a5e98753e5358995",
+    "builder/tests/test_reliability.py": "2e105189c95d81cc43ba4322035a21220ef929994a7cc0cf4223e6e88a0319a0",
     "builder/tests/test_freya_polling.py": "db105419e22d80b25a0108ae94e4ef8167ecace791dd55b461c55f90d035cff8",
-    "builder/policy.py": "287c088ffb90b6c5a6fc853cc073a5e524fc0cf7fc3d501ce2fdd9da05bd4771",
-    "builder/tests/test_policy_consent.py": "849ef7e0dc5486b5dd039301dac2fb8d025064be844cbafa1877d5379e33b600"
-  }
+    "builder/policy.py": "faaac255e2d8e2d2a8db853e4eff4b0a9643db17c977469feec136ccff39b8fe",
+    "builder/tests/test_policy_consent.py": "00343c1744d15a8b3ffe24ec447824e870b00dddd7a6978a5646d23dc2fe26ec"
+  },
+  "archived_after_import": [
+    {
+      "path": "out/brief-a.cases.json",
+      "preserved_at": [
+        "build-history/20261011T025232Z-795a5fbf/out/brief-a.cases.json",
+        "build-history/github-7d1597c/out/brief-a.cases.json"
+      ]
+    },
+    {
+      "path": "out/brief-a.cases.meta.json",
+      "preserved_at": [
+        "build-history/20261011T025232Z-795a5fbf/out/brief-a.cases.meta.json",
+        "build-history/github-7d1597c/out/brief-a.cases.meta.json"
+      ]
+    },
+    {
+      "path": "out/brief-a.cases.rationale.md",
+      "preserved_at": [
+        "build-history/20261011T025232Z-795a5fbf/out/brief-a.cases.rationale.md",
+        "build-history/github-7d1597c/out/brief-a.cases.rationale.md"
+      ]
+    },
+    {
+      "path": "submission/brief-a.workflow.json",
+      "preserved_at": [
+        "build-history/before-newest-import-20261010/submission/brief-a.workflow.json",
+        "build-history/20261011T025232Z-795a5fbf/submission/brief-a.workflow.json",
+        "build-history/github-7d1597c/submission/brief-a.workflow.json"
+      ]
+    }
+  ]
 }

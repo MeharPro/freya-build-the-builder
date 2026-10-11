@@ -183,15 +183,24 @@ class ReliabilityTests(unittest.TestCase):
         self.assertIn('status=failed', (self.root / 'traces/x.log').read_text())
         self.assertTrue(list((self.root / 'build-history').glob('*/submission/x.workflow.json')))
 
-    def run_pipeline(self, fail_stage=None):
+    def run_pipeline(self, fail_stage=None, audit_statuses=None, tamper_rules=False, time_slice=False):
         brief = self.write('x.md', 'input')
         api = self.write('api.json', json.loads((ROOT / 'tools/openapi.json').read_text()))
         args = build.parse_args([str(brief), str(api)])
         fixture = json.loads((ROOT / 'out/brief-a_v2.notv.workflow.json').read_text())
         calls = []
+        audit_statuses = list(audit_statuses or ['implemented'])
         async def generate(*args, **kwargs):
             self.write('out/x.workflow.json', fixture)
             (self.root / 'out/gen_x.py').write_text('# Generated during this run\n')
+            if kwargs.get('repair_feedback'):
+                self.assertTrue(Path(kwargs['repair_feedback']).exists())
+                self.assertFalse((self.root / 'submission/x.workflow.json').exists())
+            if tamper_rules:
+                self.write('out/x.rules.json', [{'id': 'R1', 'in_force': False}])
+            if time_slice:
+                raise asyncio.TimeoutError()
+
         def step(trace, budget, name, cmd, maximum, reserve=0):
             calls.append(name)
             if fail_stage == name:
@@ -201,12 +210,38 @@ class ReliabilityTests(unittest.TestCase):
             if name == 'export':
                 self.write('submission/x.workflow.json', {'workflow': fixture})
             if name == 'audit':
-                self.write('out/x.audit.json', {'rules': [{'id': 'R1', 'status': 'implemented', 'evidence_found': True}]})
+                self.write('out/x.audit.json', {'rules': [{'id': 'R1', 'status': audit_statuses[min(calls.count('audit')-1, len(audit_statuses)-1)], 'evidence_found': True}]})
             return ''
         with patch.object(build, 'ROOT', self.root), patch.object(build, 'run_claude', generate), \
              patch.object(build, 'required_step', step), contextlib.redirect_stdout(io.StringIO()):
             code = asyncio.run(build.execute_build(args))
         return code, calls
+
+    def test_audit_repair_republishes_and_preserves_failed_attempt(self):
+        code, calls = self.run_pipeline(audit_statuses=['partial', 'implemented'])
+        self.assertEqual(code, 0)
+        self.assertEqual(calls.count('publish'), 2)
+        self.assertEqual(calls.count('audit'), 2)
+        saved = list((self.root / 'build-history').glob('*/attempt-1/x.audit.json'))
+        self.assertEqual(len(saved), 1)
+        self.assertEqual(json.loads(saved[0].read_text())['rules'][0]['status'], 'partial')
+
+    def test_unresolved_audit_stops_after_two_repairs(self):
+        code, calls = self.run_pipeline(audit_statuses=['partial'])
+        self.assertEqual(code, 1)
+        self.assertEqual(calls.count('audit'), 3)
+        self.assertFalse((self.root / 'submission/x.workflow.json').exists())
+
+    def test_inventory_tampering_rejected_before_publication(self):
+        code, calls = self.run_pipeline(tamper_rules=True)
+        self.assertEqual(code, 1)
+        self.assertNotIn('publish', calls)
+        self.assertIn('rule inventory', (self.root / 'traces/x.log').read_text())
+
+    def test_saved_candidate_after_time_slice_still_requires_audit(self):
+        code, calls = self.run_pipeline(time_slice=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(calls[-1], 'audit')
 
     def test_full_success_writes_manifest_after_final_trace(self):
         code, calls = self.run_pipeline()

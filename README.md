@@ -27,30 +27,33 @@ Everything the organisers published is in this repo:
 
 ## Setup
 
-1. `cp env.example env.sh` (gitignored) and fill in the three variables the builder needs: `FREYA_API_KEY` (sign in at https://staging-app.freyavoice.ai, open **API keys**, create one, `fak_...`), `FREYA_API_URL` (`https://staging-app.freyavoice.ai`) and `FREYA_BANK_TEAM_KEY` (your team key for the mock bank). Claude access for the builder's model calls: either `ANTHROPIC_API_KEY` in the environment or `claude auth login` on the machine (the SDK bundles the Claude Code binary). No OpenAI key is needed: the local simulator plays the customer and judge with Claude.
-2. `source env.sh`
-3. Python 3.10+. The kit itself is standard library only. The builder uses the Claude Agent SDK, installed in `.venv`:
-   ```bash
-   uv venv && uv pip install -r requirements.txt && source .venv/bin/activate
-   # or: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   (Debian images: add --ignore-installed PyJWT)
-   ```
-   It also needs a Claude login (Claude Code) or `ANTHROPIC_API_KEY`.
+1. Copy `env.example` to the gitignored `env.sh`, preserve your Freya workspace settings, and supply your own model credentials. Never commit this file.
+2. Set `FREYA_API_KEY`, `FREYA_API_URL=https://staging-app.freyavoice.ai`, and a stable `FREYA_BANK_TEAM_KEY` of at least 16 characters.
+3. Choose a builder provider:
+   - **OpenAI:** set `BUILDER_PROVIDER=openai` and `OPENAI_API_KEY`. Python 3.10+ and the standard library are sufficient for generation, rule extraction, auditing and case writing.
+   - **Claude:** set `BUILDER_PROVIDER=claude` and `ANTHROPIC_API_KEY`, then install `requirements.txt`. An existing Claude Code login is also supported for local development; interactive login is optional.
+4. `source env.sh`, then run the builder below.
 
 ## Rebuilding with your own model credentials
 
-A reviewer does not need Karan’s account or a personal Claude login. Set `ANTHROPIC_API_KEY` in the process environment (from your own secret store), alongside your own `FREYA_API_KEY` and a new `FREYA_BANK_TEAM_KEY` of at least 16 characters. Install the pinned requirements and run the command below. The SDK supplies its CLI; an interactive login is optional for local development. A clone contains no credentials, workspace state or team key.
+Reviewers supply their own provider and Freya credentials. They do not need Karan’s or Mehar’s account. Claude remains available; OpenAI supports generation, rule extraction, audit, case writing and optional driven smoke customers. The phone-agent model remains the event’s fixed model, independent of the builder provider.
 
 ```bash
 python3 -m venv .venv
+# For Claude only:
 .venv/bin/pip install -r requirements.txt
-# Set ANTHROPIC_API_KEY, FREYA_API_KEY and FREYA_BANK_TEAM_KEY through your secret store.
+source env.sh
 .venv/bin/python builder/build.py briefs/brief-a.md tools/openapi.json --preflight
 .venv/bin/python builder/build.py briefs/brief-a.md tools/openapi.json
 ```
 
-`BUILDER_MODEL`, `RULES_MODEL`, `AUDIT_MODEL` and `CASES_MODEL` select the builder’s models. The credential must have access to the selected models. `OPENAI_API_KEY` is optional for the local simulator; otherwise it uses the same Anthropic access. The phone-agent model is unchanged. Preflight checks configuration presence, not whether a supplied key has credits or model access.
+`BUILDER_PROVIDER=auto` (the default) selects OpenAI when `OPENAI_API_KEY` is present and `ANTHROPIC_API_KEY` is absent; otherwise it selects Claude. Set the provider explicitly when both keys or a Claude login are available. `BUILDER_MODEL`, `RULES_MODEL`, `AUDIT_MODEL` and `CASES_MODEL` override each stage’s model; `SMOKE_MODEL` controls the OpenAI driven-smoke customer. OpenAI defaults to `gpt-6.1-sol` (overridable for all stages with `OPENAI_MODEL`); Claude defaults to `claude-opus-5-5`. Each key must have access to the selected model. Preflight checks local configuration, not credits or live model access.
 
-The runner rejects failed stages, stale exports, invalid tool definitions and unresolved audits. It archives prior attempts and writes a manifest tying each successful export to its input and trace hashes. Generated case tooling is imported for experiments; the submission runner does not automatically treat fabricated cases as official practice cases for unseen schemas. Historical practice exports and reports in this archive are reference material, not validated outputs of the current runner.
+The OpenAI route uses the Responses API with strict structured outputs and local function tools. It preserves reasoning items across tool calls, records response IDs and token usage, and rejects incomplete/refused outputs. Generation is bounded by the run deadline and 100 model turns; each response is capped at 24,000 output tokens. OpenAI does not expose an invoice amount in the response: logs report cost as unavailable, not $0. Claude’s per-helper dollar cap does not apply to OpenAI; use your provider’s spending controls.
+
+The local simulator uses `OPENAI_API_KEY` when available; otherwise it uses Claude access. Freya’s official simulation runner does not require a separate customer-model key.
+
+The runner rejects failed stages, stale exports, invalid tool definitions and unresolved audits. An initial generation slice leaves time for independent audit and up to two automatic repair passes within the same overall budget. Rules, specs, test expectations, source and reference generators are frozen during each run. Failed audits and exports are preserved before repair. It archives prior attempts and writes a manifest tying each successful export to its input and trace hashes. Generated case tooling is imported for experiments; the submission runner does not automatically treat fabricated cases as official practice cases for unseen schemas. Historical practice exports and reports in this archive are reference material, not validated outputs of the current runner.
 
 ## The loop
 
@@ -76,7 +79,7 @@ python3 tools/run_cases.py <agent_id> --brief B --only PUB-11,PUB-12,PUB-13
 
 ```
 builder/build.py        OUR builder: the submission entry point (brief(s) + tool API in, phone agent + trace out)
-.claude/skills/         the skill(s) the builder runs Claude with. This is where the builder's knowledge lives
+.claude/skills/         the shared skill both builder providers follow. This is where the builder's knowledge lives
 freya.py                API client. save_workflow() creates once then updates in place and publishes. export_workflow() writes the submission file
 tools/run_cases.py      practice scorer (ledger + judge). tools/score.py: the ledger check
 tools/check_secrets.sh  staged-file credential check: run before committing

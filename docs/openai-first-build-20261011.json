@@ -1,0 +1,126 @@
+{
+  "run_id": "20261011T025232Z-795a5fbf",
+  "status": "rejected",
+  "seconds": 1187,
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "rules": {
+    "implemented": 52,
+    "partial": 8,
+    "missing": 0,
+    "contradicted": 0
+  },
+  "practice": {
+    "complete": false,
+    "completed_calls": 13,
+    "passed_calls": 10,
+    "rows": [
+      {
+        "case": "PUB-01",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-01-r1.json"
+      },
+      {
+        "case": "PUB-01",
+        "rep": 2,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-01-r2.json"
+      },
+      {
+        "case": "PUB-02",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-02-r1.json"
+      },
+      {
+        "case": "PUB-02",
+        "rep": 2,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-02-r2.json"
+      },
+      {
+        "case": "PUB-03",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-03-r1.json"
+      },
+      {
+        "case": "PUB-03",
+        "rep": 2,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-03-r2.json"
+      },
+      {
+        "case": "PUB-04",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-04-r1.json"
+      },
+      {
+        "case": "PUB-05",
+        "rep": 1,
+        "pass": false,
+        "failed": [
+          "conversation: The agent asked, 'Can you make this payment today?', which is a persuasion/payment request and violates the 'no persuasion attempt' criterion. Sympathy was expressed, support was offered once, and no discount/waiver/plan was offered."
+        ],
+        "artifact": "results/brief-a-practice/PUB-05-r1.json"
+      },
+      {
+        "case": "PUB-06",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-06-r1.json"
+      },
+      {
+        "case": "PUB-07",
+        "rep": 1,
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'refused'), expected ('promise', None)",
+          "promises [], expected [('p1', 540.0, '2026-10-27')]",
+          "conversation: Although the agent asks once for the exact day and rejects 26 Oct offering Tue 27 Oct, no promise was recorded: the call ends with \u201cI have not recorded a promise today\u201d and the close_call outcome is no_promise."
+        ],
+        "artifact": "results/brief-a-practice/PUB-07-r1.json"
+      },
+      {
+        "case": "PUB-08",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-08-r1.json"
+      },
+      {
+        "case": "PUB-09",
+        "rep": 1,
+        "pass": true,
+        "failed": [],
+        "artifact": "results/brief-a-practice/PUB-09-r1.json"
+      },
+      {
+        "case": "PUB-10",
+        "rep": 1,
+        "pass": false,
+        "failed": [
+          "conversation: Agent said \u201cthis call is recorded\u201d at the opening before a successful create_promise call, violating the \u2018agent does not say \u2018recorded\u2019 before a successful call\u2019 criterion. The ledger condition is met with exactly one promise after the retry."
+        ],
+        "artifact": "results/brief-a-practice/PUB-10-r1.json"
+      }
+    ]
+  },
+  "notes": [
+    "PUB-07 revealed a confirmation failure. A later model correction was not retested.",
+    "PUB-05 and PUB-10 appear to be diagnostic-judge misreadings; raw failures remain counted.",
+    "No success manifest or submission-ready export was produced."
+  ],
+  "trace": "traces/brief-a-20261011T025232Z-795a5fbf.log",
+  "raw_trace": "traces/brief-a-20261011T025232Z-795a5fbf.jsonl"
+}

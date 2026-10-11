@@ -4,7 +4,7 @@
     source env.sh
     # scripted: fixed customer lines + expectations, exit 1 on a failed expectation
     python3 builder/smoke.py <workflow_id|slot> --script builder/smoke_scripts/opening.json
-    # driven: a Claude-played customer follows a persona (optional mode, needs the Claude Agent SDK or the `claude` CLI)
+    # driven: a model-played customer follows a persona (OpenAI key or Anthropic access)
     python3 builder/smoke.py <workflow_id|slot> --customer "You are Daniel Reyes, born 14 March 1988, ..." --max-turns 12
 
 `POST /api/v2/chat/message` runs one turn against the PUBLISHED workflow and answers in seconds (docs/api.md,
@@ -536,7 +536,15 @@ async def _ask_sdk(system, prompt, model):
 
 
 def ask_customer(system, prompt, model):
-    """The customer's next line, from the Claude Agent SDK, or from `claude -p` when the SDK is not installed."""
+    """The customer's next line using the selected provider and its own credentials."""
+    from builder.model_provider import provider, request_options, request_response, response_text
+    if provider() == "openai":
+        payload = request_options(model)
+        payload.update(instructions=system, input=prompt)
+        response = request_response(payload)
+        print("model call: %s | purpose: smoke customer | response_id=%s | usage=%s" %
+              (model, response.get("id"), json.dumps(response.get("usage", {}))), file=sys.stderr)
+        return response_text(response).strip()
     try:
         import claude_agent_sdk  # noqa: F401
         return asyncio.run(_ask_sdk(system, prompt, model))
@@ -644,7 +652,9 @@ def main(argv=None):
     ap.add_argument("--script", help="scripted mode: JSON with variables, turns and expectations")
     ap.add_argument("--customer", help="driven mode: persona text for the Claude-played customer")
     ap.add_argument("--max-turns", type=int, default=12, help="driven mode: customer lines at most (default 12)")
-    ap.add_argument("--model", default=DEFAULT_CUSTOMER_MODEL, help="driven mode: the customer's model (default %s)" % DEFAULT_CUSTOMER_MODEL)
+    from builder.model_provider import provider, model_for
+    customer_default = model_for("smoke") if provider() == "openai" else DEFAULT_CUSTOMER_MODEL
+    ap.add_argument("--model", default=customer_default, help="driven mode: the customer's model (default %s)" % customer_default)
     ap.add_argument("--opening", default="Hello?", help="driven mode: the customer's first line (default 'Hello?')")
     ap.add_argument("--case", help="take the call variables (and, in driven mode without --customer, the persona) from this practice case id")
     ap.add_argument("--cases", help="the case file --case is looked up in (default public-test-set.json; a generated cases file works, its mock_case opens the practice customer)")

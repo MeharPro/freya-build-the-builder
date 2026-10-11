@@ -316,7 +316,7 @@ def test_openapi_checks():
 
 
 def test_reference_workflows():
-    brief_a = json.loads((ROOT / "out" / "brief-a.workflow.json").read_text())
+    brief_a = json.loads((ROOT / "builder/tests/fixtures" / "brief-a.workflow.json").read_text())
     f = lint(brief_a, API)
     assert [x for x in f if x["level"] in (ERROR, WARN)] == [], f
     base = json.loads((ROOT / "examples" / "base-agent.json").read_text())
@@ -345,7 +345,7 @@ def test_baked_field_info():
 
 
 def test_cli_exit_codes():
-    r = subprocess.run([sys.executable, str(ROOT / "builder" / "lint.py"), str(ROOT / "out" / "brief-a.workflow.json"),
+    r = subprocess.run([sys.executable, str(ROOT / "builder" / "lint.py"), str(ROOT / "builder/tests/fixtures" / "brief-a.workflow.json"),
                         "--api", str(ROOT / "tools" / "openapi.json")], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
     r = subprocess.run([sys.executable, str(ROOT / "builder" / "lint.py"), str(ROOT / "examples" / "base-agent.json")],
@@ -575,7 +575,8 @@ def test_rules_reference_workflows():
     for wf_path, rules_path, n_err in (("brief-a-cloud.workflow.json", "brief-a-cloud.rules.json", 0),
                                        ("brief-a_v2.workflow.json", "brief-a.rules.json", 0)):
         wf = json.loads((ROOT / "out" / wf_path).read_text())
-        f = lint(wf, API, rules=json.loads((ROOT / "out" / rules_path).read_text()))
+        inventory_dir = "builder/tests/fixtures" if rules_path == "brief-a.rules.json" else "out"
+        f = lint(wf, API, rules=json.loads((ROOT / inventory_dir / rules_path).read_text()))
         errs = [x for x in f if x["level"] == ERROR]
         assert len(errs) == n_err, errs
         if "v2" in wf_path:

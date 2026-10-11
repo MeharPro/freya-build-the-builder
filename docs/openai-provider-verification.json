@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-11T04:13:22.337552+00:00",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "key_source": "gitignored env.sh (value never included)",
+  "authentication": "GET /v1/models succeeded",
+  "structured_output": "live Responses API call returned ready=true; nullable optional detail restored to absent",
+  "response_id": "resp_066d1e66045e0eea016acaf99b331087d2a77e3a101bdfbb70",
+  "usage": {
+    "input_tokens": 63,
+    "output_tokens": 17,
+    "total_tokens": 80
+  },
+  "offline_tests": 90,
+  "claude_login_required": false,
+  "full_build": "First fresh build rejected: 52/60 implemented, 8 partial. Repair-loop improvements validated offline; second build pending.",
+  "first_build_receipt": "docs/openai-first-build-20261011.json"
+}

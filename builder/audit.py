@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Coverage audit: for every rule of a rule inventory, Claude reads the generator source and the workflow and says whether
+"""Coverage audit: for every rule of a rule inventory, The selected model reads the generator source and the workflow and says whether
 the phone agent implements it.
 
     .venv/bin/python builder/audit.py --rules out/brief-a.rules.json --workflow out/brief-a.workflow.json \\
@@ -17,13 +17,13 @@ Output JSON:
    "meta": {"model", "seconds", "cost_usd", "calls", "batches", ...}}
 and a Markdown rendering next to it (<out with .md>).
 
-What is sent to Claude: not the raw workflow JSON (90 KB of repeated tool definitions) but the generator source plus a digest
+What is sent to the model: not the raw workflow JSON (90 KB of repeated tool definitions) but the generator source plus a digest
 of the generated workflow: system prompt, every node with its prompts, tools (deduplicated), extraction enums, transitions,
 code and terminals. The rules are audited in batches (--batch, default 12 rules) run in parallel (--parallel, default 3);
 each batch is one model call with the same context. One more small call ranks the gaps into top_fixes.
 --workflow may be the export format ({"workflow": {...}}) or the plain workflow. --generator is optional (--generator "").
 
-Needs a Claude login (or ANTHROPIC_API_KEY). AUDIT_MODEL overrides the model (default claude-opus-5-5).
+Needs OPENAI_API_KEY or Anthropic access. AUDIT_MODEL overrides the selected provider model.
 Progress and every model call go to stderr ("model call: <model> | purpose: ..."); the one-line summary goes to stdout.
 """
 import argparse, asyncio, json, os, pathlib, re, sys, time
@@ -31,6 +31,8 @@ import argparse, asyncio, json, os, pathlib, re, sys, time
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from rules import ask_json_async  # noqa: E402  (same folder; the Claude call helper)
+
+from model_provider import provider, model_for, cost_sum, cost_round, cost_label
 
 DEFAULT_MODEL = "claude-opus-5-5"
 STATUSES = ["implemented", "partial", "missing", "contradicted"]
@@ -344,7 +346,7 @@ async def _audit_batch(batch, system_prompt, model, log, sem, idx, nb):
 async def audit_async(rules_path, workflow_path, generator_path, out_path, model=None, batch_size=12, parallel=3, log=None):
     log = log or (lambda s: print(s, file=sys.stderr, flush=True))
     t0 = time.time()
-    model = model or os.environ.get("AUDIT_MODEL") or DEFAULT_MODEL
+    model = model or model_for("audit")
     rules = json.load(open(rules_path))
     if isinstance(rules, dict):
         rules = rules.get("rules", [])
@@ -363,7 +365,7 @@ async def audit_async(rules_path, workflow_path, generator_path, out_path, model
     results = await asyncio.gather(*[_audit_batch(b, system_prompt, model, log, sem, i + 1, len(batches)) for i, b in enumerate(batches)])
     judged, cost, calls = [], 0.0, 0
     for out, info in results:
-        judged.extend(out); cost += info["cost_usd"]; calls += info["attempts"]
+        judged.extend(out); cost = cost_sum(cost, info["cost_usd"]); calls += info["attempts"]
     for r in superseded:
         judged.append({"id": r["id"], "status": "superseded", "where": "superseded by %s" % r.get("superseded_by", ""), "evidence": "", "fix_hint": ""})
     order = {r["id"]: i for i, r in enumerate(rules)}
@@ -388,14 +390,14 @@ async def audit_async(rules_path, workflow_path, generator_path, out_path, model
                   "%s [%s]\n   rule: %s\n   where: %s\n   evidence: %s\n   fix_hint: %s" % (
                       j["id"], j["status"], _rule_block(by_id[j["id"]]), j["where"], j["evidence"], j["fix_hint"]) for j in gaps))
         obj, info = await ask_json_async(gp, PRIMER, FIXES_SCHEMA, "rank the %d gaps into the top 5 fixes" % len(gaps), model=model, log=log)
-        cost += info["cost_usd"]; calls += info["attempts"]
+        cost = cost_sum(cost, info["cost_usd"]); calls += info["attempts"]
         for x in (obj.get("top_fixes") if isinstance(obj, dict) else obj) or []:
             if isinstance(x, dict) and str(x.get("id")) in by_id:
                 j = next((j for j in judged if j["id"] == str(x["id"])), {})
                 top_fixes.append({"id": str(x["id"]), "status": j.get("status", ""), "rule": by_id[str(x["id"])]["text"],
                                   "why": str(x.get("why", "")), "fix": str(x.get("fix", ""))})
         top_fixes = top_fixes[:5]
-    meta = {"model": model, "seconds": round(time.time() - t0, 1), "cost_usd": round(cost, 4), "calls": calls, "batches": len(batches),
+    meta = {"model": model, "seconds": round(time.time() - t0, 1), "cost_usd": cost_round(cost, 4), "calls": calls, "batches": len(batches),
             "rules": str(rules_path), "workflow": str(workflow_path), "generator": str(generator_path),
             "digest_chars": len(digest), "generator_chars": len(gen)}
     report = {"rules": judged, "summary": summary, "top_fixes": top_fixes, "meta": meta}
@@ -403,8 +405,8 @@ async def audit_async(rules_path, workflow_path, generator_path, out_path, model
     out.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n")
     md = out.with_suffix(".md") if out.suffix == ".json" else pathlib.Path(str(out) + ".md")
     md.write_text(render_md(report, rules))
-    print("audit: %s -> %s + %s | %d model call(s), %.0f s, $%.2f | evidence not found verbatim: %d | top fixes: %s" % (
-        ", ".join("%s %d" % (k, summary[k]) for k in STATUSES + ["superseded", "total"]), out, md.name, calls, meta["seconds"], cost,
+    print("audit: %s -> %s + %s | %d model call(s), %.0f s, %s | evidence not found verbatim: %d | top fixes: %s" % (
+        ", ".join("%s %d" % (k, summary[k]) for k in STATUSES + ["superseded", "total"]), out, md.name, calls, meta["seconds"], cost_label(cost),
         unverified, ", ".join(f["id"] for f in top_fixes) or "none"), flush=True)
     return report
 
@@ -419,8 +421,8 @@ def render_md(report, rules):
     by_id = {r["id"]: r for r in rules}
     s, m = report["summary"], report.get("meta", {})
     L = ["# Coverage audit: %s" % pathlib.Path(m.get("workflow", "")).name, ""]
-    L.append("Rules: `%s`. Generator: `%s`. Model %s, %.0f s, $%.2f, %d call(s)." % (
-        pathlib.Path(m.get("rules", "")).name, pathlib.Path(m.get("generator", "")).name, m.get("model"), m.get("seconds", 0), m.get("cost_usd", 0), m.get("calls", 0)))
+    L.append("Rules: `%s`. Generator: `%s`. Model %s, %.0f s, %s, %d call(s)." % (
+        pathlib.Path(m.get("rules", "")).name, pathlib.Path(m.get("generator", "")).name, m.get("model"), m.get("seconds", 0), cost_label(m.get("cost_usd", 0)), m.get("calls", 0)))
     L.append("")
     L.append("| implemented | partial | missing | contradicted | superseded | total |")
     L.append("|---|---|---|---|---|---|")
@@ -465,12 +467,12 @@ def render_md(report, rules):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Audit a workflow against a rule inventory with Claude.")
+    ap = argparse.ArgumentParser(description="Audit a workflow against a rule inventory with the selected model.")
     ap.add_argument("--rules", required=True)
     ap.add_argument("--workflow", required=True)
     ap.add_argument("--generator", default="", help="generator source (optional)")
     ap.add_argument("--out", required=True, help="output JSON path, e.g. out/<slot>.audit.json")
-    ap.add_argument("--model", default=None, help="builder model (default $AUDIT_MODEL or %s)" % DEFAULT_MODEL)
+    ap.add_argument("--model", default=None, help="builder model (default $AUDIT_MODEL or selected provider default)")
     ap.add_argument("--batch", type=int, default=12, help="rules per model call")
     ap.add_argument("--parallel", type=int, default=3, help="model calls in flight at once")
     ap.add_argument("--digest-only", action="store_true", help="print the workflow digest and exit (no model call)")

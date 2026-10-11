@@ -4,11 +4,6 @@ Resolve these FIRST, before writing the generator: re-read the quoted source sen
 
 ## Rules found by only one extraction sample (confidence low)
 
-- **R22** (_openapi.json /verify_identity_, samples C): An unreadable `answer` is rejected with ok=false and not counted as a wrong answer; `phone_last4` must be four digits.
-
-## Dated decisions (which statement is in force)
-
-- **T1** topic `call_variables`: Both candidates come from the same section 2 table in the single undated brief and say the same thing. Nothing conflicts with them and nothing replaces them, so both apply together.
-  - R02: in_force -- "Every call starts with these. Nothing else is known before the tools are called."
-  - R03: in_force -- "| `customer_id` | `c_4f2a...` | Pass it to every tool call. |"
+- **R38** (_brief-a.md rule 32_, samples B): If the hardship customer still names a date or amount themselves, record the promise under sections 7 and 8.
+- **R60** (_openapi.json /transfer_to_agent_, samples A): `transfer_to_agent` requires string `queue`, restricted to `restructuring`, `general`, or `support`.
 
