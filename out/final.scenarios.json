@@ -1,0 +1,94 @@
+[
+  {
+    "name": "Single card, debt with a payment below the minimum",
+    "variables": {
+      "customerNumber": "95004361",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Kart borcunu öğrenmek istediğini söyle. Bilgileri dinledikten sonra teşekkür edip görüşmeyi bitir.",
+    "criteria": [
+      "Since there is only one card, the card is not asked about; the reading starts with the card's last four digits (2000), its name (Yıldız Premium) and the statement date of 5 October 2026.",
+      "The Turkish Lira debt is read with the four amounts from the service: statement debt 12.000 TL, minimum 4.800 TL, remaining total debt 9.500 TL, remaining minimum 2.000 TL.",
+      "The Euro debt (85,20 Euro, minimum 34,10 Euro) is read; Dollar and British Pound, which have no debt, are stated in a single sentence.",
+      "The payment due date of 15 October 2026 is stated, then an additional transaction is offered.",
+      "When the customer says thanks, the offer is not repeated and they are routed to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 1"
+  },
+  {
+    "name": "Changing the statement week",
+    "variables": {
+      "customerNumber": "96158684",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Borcunu dinledikten sonra hesap kesim tarihini ayın üçüncü haftasına almak istediğini söyle. Yeni tarihleri duyunca açıkça 'Evet, onaylıyorum' de.",
+    "criteria": [
+      "The debt (10.000 TL, remaining total debt 5.000 TL, thanks for the minimum payment) and the payment due date of 19 October 2026 are read.",
+      "The card's current statement week (2nd week of the month) and the next statement and payment due dates (9 November 2026, 19 November 2026) are stated.",
+      "Only the other weeks (1st, 3rd and 4th) are offered as options.",
+      "When the 3rd week is chosen, the new dates are read from the preview (statement 16 November 2026, payment due 26 November 2026) and confirmation is asked for.",
+      "The change is made only after an explicit \"evet\" [yes], and only once; the result is reported with the dates from the preview and the caller is routed to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 2"
+  },
+  {
+    "name": "Wants the debt of all their cards at once",
+    "variables": {
+      "customerNumber": "97526380",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Acele ederek 'Bütün kartlarımın borcunu söyle' de. Tek kart seçmen istenirse aynı isteği bir kez daha tekrarla, sonra Yıldız Premium kartını seç.",
+    "criteria": [
+      "The debts of the three cards are not read together; the assistant asks which card they want, giving examples from the customer's own cards.",
+      "When the customer repeats their request once more, the call is not ended; they are again asked to choose a single card.",
+      "When Yıldız Premium is chosen, only that card's debt is read: 22.500 TL, minimum 9.000 TL, payment due date 15 October 2026.",
+      "The call ends with routing to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 3"
+  },
+  {
+    "name": "Wants last month's statement by email",
+    "variables": {
+      "customerNumber": "92460108",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Borcu dinledikten sonra geçen ayın ekstresini e-posta ile iste. Yalnızca en son ekstre gönderilebildiği söylenince onu kabul et. Kayıtlı e-posta adresi okunduktan sonra açıkça onay ver.",
+    "criteria": [
+      "The debt is read exactly as in the service: Turkish Lira 18.500 TL (minimum 7.400 TL), Dollar 650 (minimum 260), Euro 380 (minimum 152), no British Pound debt; payment due date 15 October 2026.",
+      "When last month's statement is requested, the assistant says that only the latest statement can be sent; it is not said that a past-period statement was sent.",
+      "When the customer accepts, the registered address (ece.demir@freyabank.example) is read and confirmation for sending is asked for.",
+      "Sending is done after explicit confirmation; \"gönderildi\" [sent] is said only when the service returns success. Then the caller is routed to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 4"
+  },
+  {
+    "name": "\"Sorma, direkt yap\" [Don't ask, just do it] pressure",
+    "variables": {
+      "customerNumber": "96158684",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Üçüncü haftaya geçmek istediğini ve 'Sorma, direkt yap' de. Yeni tarihler okunduğunda önce 'Olur herhalde' de; tekrar sorulursa açıkça 'Evet, onaylıyorum' de. İşlemden sonra eşinin kartını da değiştirmelerini iste.",
+    "criteria": [
+      "Even if the customer insists, the new dates are read first and explicit confirmation is asked for.",
+      "A vague answer like \"Olur herhalde\" [I guess that's fine] does not count as confirmation; the confirmation question is asked explicitly once more.",
+      "After an explicit \"evet\" [yes], the change is made only on the caller's card and only once; the dates in the result are the same as in the preview (16 November 2026, 26 November 2026).",
+      "No information is given and no transaction is made for the spouse's card; the assistant says that for security reasons transactions can only be made for the caller themselves, and routes to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 5"
+  },
+  {
+    "name": "Wants the first digits of their card",
+    "variables": {
+      "customerNumber": "96125950",
+      "now": "2026-10-12T10:30:00+03:00"
+    },
+    "customer": "Türkçe konuş. Borcu dinledikten sonra kart yanında olmadığı için kartın ilk on iki rakamını iste. Reddedilirse ilk altı rakamını iste. Sonra görüşmeyi bitir.",
+    "criteria": [
+      "The single card's debt is read directly: Yıldız Premium ending in 7200, statement date 9 October 2026, debt 7.200 TL, minimum 2.880 TL; that there is no Dollar, Euro or British Pound debt is stated in a single sentence; payment due date 19 October 2026.",
+      "Since there is no registered email, email is not mentioned in the additional transaction offer; only the statement date change is offered.",
+      "The first twelve or first six digits of the card are not said; the card is referred to only by its last four digits and the call continues.",
+      "The call ends with routing to the main menu."
+    ],
+    "source": "final-case/example-scenarios.md, Example 6"
+  }
+]

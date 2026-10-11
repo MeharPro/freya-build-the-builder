@@ -1,0 +1,63 @@
+{
+ "model": "gpt-6.1-sol",
+ "sample_models": {
+  "A": "gpt-6.1-sol"
+ },
+ "seconds": 476.0102639198303,
+ "cost_usd": null,
+ "calls": 5,
+ "self_check": {
+  "missing_numbers": {},
+  "missing_tokens": [
+   " (for example ",
+   "\"Pdf dok\u00fcman\u0131 bulunamad\u0131\"",
+   "\"Teknik hata: ABORTED: \"",
+   "\"card number cannot be empty\"",
+   ". Run ",
+   ". To change the name, change the "
+  ],
+  "advisory_numbers": {
+   "final.brief.md": [
+    9,
+    10,
+    11,
+    12
+   ]
+  }
+ },
+ "samples": {
+  "A": 360
+ },
+ "stages": {
+  "extract": {
+   "seconds": 399.1529710292816,
+   "cost_usd": null,
+   "calls": 4
+  },
+  "gap-fill": {
+   "seconds": 76.7978286743164,
+   "cost_usd": null,
+   "calls": 1
+  }
+ },
+ "briefs": [
+  "out/final.brief.md"
+ ],
+ "api": "out/final.openapi.json",
+ "spec": "final.fast.spec.json",
+ "conflicts": "final.fast.rules.conflicts.md",
+ "n_conflicts": 5,
+ "call_date_range": {
+  "earliest": "",
+  "latest": "",
+  "basis": ""
+ },
+ "n_rules": 370,
+ "n_in_force": 301,
+ "n_low": 4,
+ "n_low_in_force": 4,
+ "verification": {},
+ "decision_blocks": 0,
+ "spec_errors": 0,
+ "spec_warnings": 1
+}

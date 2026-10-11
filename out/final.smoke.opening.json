@@ -1,0 +1,1 @@
+{"name": "opening adapted to inbound Turkish brief", "variables": {"customerNumber": "90000001", "now": "2026-10-12T10:30:00+03:00"}, "turns": ["Merhaba", "Ekstre borcumu öğrenmek istiyorum"], "expect": [{"after_turn": 1, "contains_any": ["Freya", "kart"]}, {"after_turn": 2, "contains_any": ["Türk Lirası", "borcunuz"]}]}

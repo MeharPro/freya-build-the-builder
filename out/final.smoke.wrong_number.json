@@ -1,0 +1,1 @@
+{"name": "wrong_number adapted to inbound Turkish brief", "variables": {"customerNumber": "90000001", "now": "2026-10-12T10:30:00+03:00"}, "turns": ["Merhaba", "İngilizce konuşmak istiyorum"], "expect": [{"after_turn": 2, "contains_any": ["ana menü"]}]}

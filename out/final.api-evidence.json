@@ -1,0 +1,1192 @@
+{
+  "api": "out/final.openapi.json",
+  "sources": [
+    "final-case/sources/documents/2026-10-01-service-contract.md"
+  ],
+  "checked": 75,
+  "missing": [],
+  "findings": [
+    {
+      "kind": "enum",
+      "value": "",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 1
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 2
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "1_CARD",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 176
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 200
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "A",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 20
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 25
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "B",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 423
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "C",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "CardOps",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 154
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 159
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "DONE",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 437
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 455
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 494
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "E",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 52
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 143
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 144
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "EUR",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "GBP",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 268
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "HAS_DEBT",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 232
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 240
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 257
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "M",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 130
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 318
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "MULTI_CARD",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 194
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 200
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "N",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 259
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "NO_DEBT",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 244
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 252
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 268
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "OK",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 402
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 408
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "P",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 423
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "TL",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 478
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "USD",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "value": "Y",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "aiFlow",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 154
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 159
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "automaticPaymentFlag",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 259
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "cardNumber",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 146
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 168
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 188
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "cardNumberLast4",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 169
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 188
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "cards",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 138
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 166
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 182
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "commGramType",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 436
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 454
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "communicationType",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 430
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 448
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 462
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "currencyType",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 478
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "customerNo",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 154
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 159
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 418
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "data",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 62
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 67
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "debtEUR",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 255
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 268
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "debtGBP",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 256
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 268
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "debtTL",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 231
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 268
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "debtUSD",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 243
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 255
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 256
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "emailAddress",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 480
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 488
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "exitState",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 176
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 194
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 200
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "ibanAreaCode",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 432
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 450
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "ibanCountryCode",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 431
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 449
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "ibanEmail",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 434
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 452
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 461
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "ibanPhoneNum",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 433
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 451
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "intAddressInfoType",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 418
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 423
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "isMainCard",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 172
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 188
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "lastPayDate",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 228
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 267
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 315
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "newStatementWeek",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 344
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 351
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 384
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "nextLastPayDate",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 230
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 267
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 317
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "nextStatementDate",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 229
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 267
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 316
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "productName",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 170
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 188
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "relatedCardNumber",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 319
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "relatedCardProductName",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 320
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "relationType",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 318
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "responseCode",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 363
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 370
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 398
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "responseMessage",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 364
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 399
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "result",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 71
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 76
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 96
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "statementDate",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 227
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 267
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 314
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "statementDay",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 313
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 328
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "statementDueDate",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 361
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 370
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "statementPaymentStatus",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 232
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 244
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 257
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "statementWeek",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 312
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 328
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 400
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "status",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 171
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 188
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "totalDebtPaymentStatus",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 240
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 252
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 258
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "ttsEmail",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 435
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 453
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 461
+        }
+      ]
+    },
+    {
+      "kind": "field",
+      "value": "validCardsCount",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 175
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "kind": "method",
+      "value": "POST",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 12
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 19
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "cards.balance",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 125
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 139
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 208
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "cards.list",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 11
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 19
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 124
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "contact.email.get",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 143
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 412
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "statement.pdf.send",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 127
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 144
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 467
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "statement.week.change",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 142
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 374
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 527
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "statement.week.decide",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 141
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 334
+        }
+      ]
+    },
+    {
+      "kind": "path",
+      "value": "statement.week.get",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 126
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 140
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 293
+        }
+      ]
+    },
+    {
+      "kind": "status",
+      "value": "200",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "status",
+      "value": "400",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 122
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 275
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 372
+        }
+      ]
+    },
+    {
+      "kind": "status",
+      "value": "401",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 123
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 410
+        }
+      ]
+    },
+    {
+      "kind": "status",
+      "value": "404",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 124
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 125
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 126
+        }
+      ]
+    },
+    {
+      "kind": "status",
+      "value": "500",
+      "source": [
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 128
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 130
+        },
+        {
+          "file": "final-case/sources/documents/2026-10-01-service-contract.md",
+          "line": 206
+        }
+      ]
+    }
+  ]
+}
