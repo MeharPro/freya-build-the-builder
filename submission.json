@@ -2,7 +2,7 @@
   "team": "Mehar Khanna",
   "members": [{ "name": "Mehar Khanna", "email": "mehar.khanna@uwaterloo.ca" }],
   "repo": "https://github.com/MeharPro/freya-build-the-builder",
-  "commit": "7164920bbd906a6ae977d976a3e3190699917132",
+  "commit": "8dccc28d2bd013ec777454dbf1104a286c8d27ad",
   "run_command": "source env.sh && python3 -u builder/build.py {case_folder} --mock-url https://freya-bank-mock.mehar-144.workers.dev --minutes 29",
   "workflow": "submission/final.workflow.json",
   "trace": "traces/final.log",
