@@ -147,9 +147,12 @@ def validate_audit(path, rules_path):
     if len(ids) != len(set(ids)):
         raise BuildFailure("Audit has duplicate rule ids")
     by_id = {r["id"]: r for r in rows}
+    def verified_implementation(row):
+        evidence = row.get("evidence")
+        return (row.get("status") == "implemented" and row.get("evidence_found") is True and
+                isinstance(evidence, str) and bool(evidence.strip()) and evidence.strip().lower() != "none")
     unresolved = [rid for rid in sorted(active) if rid not in by_id or
-                  by_id[rid].get("status") != "implemented" or
-                  by_id[rid].get("evidence_found") is False]
+                  not verified_implementation(by_id[rid])]
     if unresolved:
         raise BuildFailure("Audit has unresolved or unverified active rules: " + ", ".join(unresolved))
     return report

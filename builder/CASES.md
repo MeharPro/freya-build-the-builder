@@ -1,10 +1,11 @@
 # Generated rule-branch cases: `builder/cases.py`
 
-Hidden briefs come with no practice cases. If the building agent wrote its own tests, they would share its blind spots
-(CLAUDE.md, ττ-bench: "tests that cannot fail"). `cases.py` is an **independent case writer**: separate model calls
-that read the brief and write 12-20 practice cases in `public-test-set.json` shape. The building agent never writes
-them, and it never reads their rationale. These cases are research technique T16. The repair round that uses them is
-T12, and running them alongside `rules.py` is T31 (`docs/research/sota-techniques.md`).
+Hidden briefs come with no practice cases. `cases.py` is an **optional local diagnostic case writer**: separate model
+calls read a brief and write up to 20 scenarios in `public-test-set.json` shape. A separate call helps expose the
+builder's blind spots, but may use the same underlying model and may share its mistakes. The building agent should
+not write the cases or read their rationale. These cases correspond to research technique T16; the proposed repair
+round and parallel case writing are T12 and T31 (`docs/research/sota-techniques.md`). They are not current behavior of
+the submission runner and do not establish a score on the organisers' unseen customers.
 
 ```bash
 source .venv/bin/activate
@@ -26,8 +27,8 @@ Outputs:
 
 ## How it works
 
-1. **Two model calls in parallel** (`CASES_MODEL`, default `claude-opus-5-5`, no tools, JSON schema output; this
-   reuses `rules.py`'s `ask_json_async`). One call writes the conversation-control branches: opening, third party,
+1. **Two model calls in parallel** (`CASES_MODEL`, default selected by the configured builder provider, no tools,
+   JSON schema output; this reuses `rules.py`'s `ask_json_async`). One call writes the conversation-control branches: opening, third party,
    identity failures, special topics, and **one case per non-promise outcome/reason row**. The other writes the
    promise branches: date classes, amount classes, persuasion per band, read-back changes, the promise-service fault,
    multi-product mixes, and 3-4 pairwise combinations.
@@ -67,28 +68,24 @@ Outputs:
 - `medium`: one value depends on an ambiguous sentence or on a delicate persona instruction.
 - `low`: the brief can be read two ways.
 
-The skill uses it in step 9: the generator is changed only for deterministic agent errors, and never because a
-`low` or `medium` expectation disagrees.
+When a case file is explicitly supplied to the building agent, the skill's step 9 says to change the generator only
+for deterministic agent errors, never merely because a `low` or `medium` expectation disagrees.
 
-## In the build (`builder/build.py`)
+## Current relationship to the build (`builder/build.py`)
 
-`rules.py` and `cases.py` run at the same time, in threads. `cases.py` reads the brief itself (an independent reader)
-and cites the brief's own rule numbers. Once both have finished, `--map-rules` turns references such as "rule 13"
-into the inventory ids whose `source` cites them, and `--check` runs. When the brief has no practice cases (a hidden
-brief), the generated file becomes the practice set in the builder prompt. The prompt also says:
-- the cases were generated and carry `expected_confidence`;
-- the runner is `sim.py` at concurrency 2 (only `sim.py` knows `mock_case` and the `now` override);
-- step 9's repair-round rules apply;
-- how many minutes are left, and the local clock time to stop by.
+The current runner runs `rules.py` and then the builder model. It **does not invoke `cases.py`**, and it has no
+`--gen-cases` or `--no-gen-cases` options. For a brief without a supplied cases file, its prompt calls for lint, dry
+run, smoke and audit only. The skill contains a generated-case procedure, but the runner does not create or name the
+file that would activate it. `--map-rules` and `--check` are manual `cases.py` commands; they do not run as submission
+gates. The historical parallel-build design described in earlier notes was removed from the active path.
 
-Options:
-- `--no-gen-cases` skips the generation.
-- `--gen-cases` generates the cases even when a cases file exists. They are then offered as an extra set.
+Use the script before hidden release to diagnose public or synthetic briefs. Do not manually splice its outputs into
+a hidden agent after release: the phone agent must still come from the submitted builder's automatic run. If the
+runner gains an optional generated-case step, first prove that the hidden API fields can be exercised by the fixed
+practice mock, keep generation and tests inside the 30-minute budget, preserve expectations and failures in the trace,
+and do not treat a generated score as official.
 
-Wall time: about 2-2.5 minutes, in parallel with the 1.5-2 minutes of `rules.py`, so about 1 minute is added to the
-critical path. Cost: about $0.65-1.05 per brief.
-
-## Measured (10 Oct, Brief A and synthetic Brief C)
+## Historical case-writer measurements (10 Oct, Brief A and synthetic Brief C)
 
 | Run | Calls | Time | Cost | Result |
 |---|---|---|---|---|
@@ -97,7 +94,8 @@ critical path. Cost: about $0.65-1.05 per brief.
 | Replay of the 52 hand-verified Brief A cases (PUB A + EXT-A) | 5 | 97 s | $1.40 | **52/52** expected ledgers equal |
 | Replay of the 40 hand-verified Brief C cases (C practice + EXT-C) | 4 | 85 s | $1.28 | **40/40** expected ledgers equal |
 
-The comparison and a hand check of every generated case are in `out/cases-gen.REPORT.md`.
+The comparison and a hand check of every generated case are in `out/cases-gen.REPORT.md`. These are case-writer
+experiments with their then-current model and prices, not timings or costs of the current OpenAI build path.
 
 ## Limits
 
@@ -107,7 +105,8 @@ The comparison and a hand check of every generated case are in `out/cases-gen.RE
     `system_fault`);
   - a band that no mock customer's `days_late` falls into;
   - a product type or floor field the mock does not have.
-  The rationale lists such rows as NOT COVERED.
+  The rationale lists such rows as NOT COVERED. The hidden tool API may also change field names and allowed values;
+  this script cannot assume the public mock can exercise them.
 - **Expectations are a model's reading of the brief.** Dates are exact (they are computed in code), but the branch
   the model picks can be wrong where the brief is ambiguous. That is why the confidence field exists, and why
   step 9 fixes only failures that the engine events prove.

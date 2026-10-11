@@ -20,49 +20,56 @@
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-01-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-01-r1.json",
+        "sha256": "057f7291a5bba03ea109859e021f86547071fc996196583f779fb74955938671"
       },
       {
         "case": "PUB-01",
         "rep": 2,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-01-r2.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-01-r2.json",
+        "sha256": "24e660abc70be866893502cc4943f1708552350ed93374a417d1d14bbec9661f"
       },
       {
         "case": "PUB-02",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-02-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-02-r1.json",
+        "sha256": "1eeef8b83a71bcdafd0066de444585a5b48991f796f1d8fa7d3d782d7dbbbde6"
       },
       {
         "case": "PUB-02",
         "rep": 2,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-02-r2.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-02-r2.json",
+        "sha256": "28e1d956ff4067521db96c54eedc659b4d7a7ba4fdb809248179e3e327f5b87f"
       },
       {
         "case": "PUB-03",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-03-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-03-r1.json",
+        "sha256": "40b3177322d2749d03d797106d8c971d2f06d413a32fee099b5589382d4fbf5a"
       },
       {
         "case": "PUB-03",
         "rep": 2,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-03-r2.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-03-r2.json",
+        "sha256": "45f1a0c1000734c1cc8b4772df4b4c86257cb761f329cec5d7c0f6d3a84fa477"
       },
       {
         "case": "PUB-04",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-04-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-04-r1.json",
+        "sha256": "910ebac93ea65c486bee5ffba63786662d79f0d9d9861c9cd5884574fd3b762e"
       },
       {
         "case": "PUB-05",
@@ -71,14 +78,16 @@
         "failed": [
           "conversation: The agent asked, 'Can you make this payment today?', which is a persuasion/payment request and violates the 'no persuasion attempt' criterion. Sympathy was expressed, support was offered once, and no discount/waiver/plan was offered."
         ],
-        "artifact": "results/brief-a-practice/PUB-05-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-05-r1.json",
+        "sha256": "1059d4d69e906554ec77c302e01bad49d6eb588ddc229300ac8454370684dc4f"
       },
       {
         "case": "PUB-06",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-06-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-06-r1.json",
+        "sha256": "ab1f3f73fc31f6b24ef934d2a9777fbe239e5249a71016c2cbb6e54542691e7b"
       },
       {
         "case": "PUB-07",
@@ -89,21 +98,24 @@
           "promises [], expected [('p1', 540.0, '2026-10-27')]",
           "conversation: Although the agent asks once for the exact day and rejects 26 Oct offering Tue 27 Oct, no promise was recorded: the call ends with \u201cI have not recorded a promise today\u201d and the close_call outcome is no_promise."
         ],
-        "artifact": "results/brief-a-practice/PUB-07-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-07-r1.json",
+        "sha256": "bf628f53b6222dd9f95cf4a4ae2b5994e6579757be5b6c39cb8ae8f3dcf116ca"
       },
       {
         "case": "PUB-08",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-08-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-08-r1.json",
+        "sha256": "5ac18b030d1b1ea4930ed6598b629fcd258e8db97776586315b8eaedab6f0613"
       },
       {
         "case": "PUB-09",
         "rep": 1,
         "pass": true,
         "failed": [],
-        "artifact": "results/brief-a-practice/PUB-09-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-09-r1.json",
+        "sha256": "dc5a8384ac9ed4daae28594919edd8e7a1e37a4333404fa87141b735d1289080"
       },
       {
         "case": "PUB-10",
@@ -112,7 +124,8 @@
         "failed": [
           "conversation: Agent said \u201cthis call is recorded\u201d at the opening before a successful create_promise call, violating the \u2018agent does not say \u2018recorded\u2019 before a successful call\u2019 criterion. The ledger condition is met with exactly one promise after the retry."
         ],
-        "artifact": "results/brief-a-practice/PUB-10-r1.json"
+        "artifact": "results/builds/20261011T025232Z-795a5fbf/practice/PUB-10-r1.json",
+        "sha256": "24026ce2fbe816b7dd333fc38c3a0a1d4018359c8fb3c2808a8bf4f7e390f2b8"
       }
     ]
   },

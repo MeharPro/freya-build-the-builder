@@ -67,9 +67,12 @@ DEFAULT_TEXTS = {
     "after_deadline": "The latest date I can record is [deadline].",
     "before_today": "[named] has already passed.",
     "below_floor": "I cannot record [named]. The lowest amount I can record is [floor].",
+    "below_floor_again": "I cannot record [named].",
     "above_full": "The past-due amount is [full], so I can record at most [full].",
     "vague": "Which exact day would that be?",
     "vague_deadline": "The latest date I can record is [deadline].",
+    "cutoff_day": "Sorry, I did not catch the day. Which day would that be?",
+    "cutoff_amount": "Sorry, I did not catch the amount or day. Could you repeat it?",
     "too_much_floor": "The lowest amount I can accept is [floor], the [floor_name].",
     "exhausted": "I understand.",
     "one_by_one": "Let us go through them one by one.",
@@ -92,6 +95,9 @@ DEFAULT_TEXTS = {
     "wrap_change": "A recorded promise cannot be changed on this call.",
     "and": " and ",
 }
+ONCE_RULE = ("\nIf state says an offer, sympathy line, or support offer was already spoken once, "
+             "do not repeat it in dialogue. Answer side questions briefly, then wait for the customer's answer. "
+             "A later code-built entry line may make a new permitted attempt.")
 
 # Extraction variables every policy node clears at its end (enum ones to 'none', value ones to '').
 # The platform validates every variable a code node writes against the extraction schema: a value outside an enum
@@ -99,7 +105,8 @@ DEFAULT_TEXTS = {
 # stays (event function_call_complete.validation_errors; seen on Brief A PUB-10: stale offer_date re-fired check_offer
 # every turn). So a clear writes a VALID neutral value: the enum's own neutral member, a sentinel date / amount.
 CLEAR_ENUMS = {"stance": "other", "offer_kind": "none", "offer_for": "none", "topic": "none", "confirm": "other",
-               "hs_answer": "none", "wrap": "other", "aside": "none", "offer_amount_present": "none"}
+               "confirm_affirmative": "none",
+               "hs_answer": "none", "wrap": "other", "aside": "none", "offer_amount_present": "none", "offer_ref": "none"}
 CLEAR_VALUES = {"offer_date": "1900-01-01", "offer_amount": "0", "offer_when": ""}
 SENTINEL_YEAR = 1900
 # the customer's own words for the day, resolved in code against the call's date (the platform's date extraction uses
@@ -397,8 +404,12 @@ def check_one(V, pid, a, d, kind):
     full = full_of(V, pid)
     if na < fl_ - 0.005:
         if pg(V, pid, 'offered_floor') == 'yes' and g(V, 'mode') != 'hardship':
+            # A newly named amount below the floor is not a refusal of the floor. Explain why that
+            # amount cannot be recorded without offering the floor a second time; an explicit no
+            # to the existing offer reaches the separate refusal event.
             V['offer_verdict'] = 'below_floor'
-            refuse(V, pid)
+            say(V, T('below_floor_again', named=fmt(na), floor=fmt(fl_),
+                     floor_name=pg(V, pid, 'floor_name'), words=pg(V, pid, 'words')))
             return
         issues.append(('below_floor', T('below_floor', named=fmt(na), floor=fmt(fl_), floor_name=pg(V, pid, 'floor_name'), words=pg(V, pid, 'words'))))
         pset(V, pid, 'offered_floor', 'yes')
@@ -460,11 +471,30 @@ def _ordinal_words(t):
     for w in sorted(ORDW, key=len, reverse=True):
         t = t.replace(' %s ' % w, ' %dth ' % ORDW[w])
     return t
+CARDW = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+         'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
+         'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20, 'thirty': 30}
+CARD_RX = r'((?:twenty|thirty)(?: (?:one|two|three|four|five|six|seven|eight|nine))?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)'
+MON_RX = r'(jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)'
+def _cardinal_days(t):
+    # A cardinal is a day only when joined to a month or to a tens word after a weekday/the.
+    # A bare payment amount such as "twenty" must never be interpreted as the 20th.
+    def val(s):
+        return sum(CARDW.get(word, 0) for word in s.split())
+    t = re.sub(r' (?:the )?' + CARD_RX + r' (?:of )?' + MON_RX + r' ',
+               lambda m: ' %d %s ' % (val(m.group(1)), m.group(2)), t)
+    t = re.sub(r' ' + MON_RX + r' (?:the )?' + CARD_RX + r' ',
+               lambda m: ' %s %d ' % (m.group(1), val(m.group(2))), t)
+    return re.sub(r' (monday|tuesday|wednesday|thursday|friday|saturday|sunday|the) (twenty|thirty) (one|two|three|four|five|six|seven|eight|nine) ',
+                  lambda m: ' %s %dth ' % (m.group(1), CARDW[m.group(2)] + CARDW[m.group(3)]), t)
+def cut_off(text):
+    t = ' ' + re.sub(r'\s+', ' ', re.sub(r'[^a-z0-9 ]', ' ', str(text or '').lower())).strip() + ' '
+    return bool(re.search(r' (twenty|thirty) $', t))
 def resolve_when(V, text):
     # (date, kind) from the customer's OWN WORDS, relative to the call's today (never the real clock: the platform's
     # date extraction resolved 'tomorrow' with the real clock). kind: 'exact' (with a date), 'vague', or 'none'.
     t = ' ' + re.sub(r'[^a-z0-9 ]', ' ', str(text or '').lower()) + ' '
-    t = _ordinal_words(re.sub(r'\s+', ' ', t))
+    t = _cardinal_days(_ordinal_words(re.sub(r'\s+', ' ', t)))
     if not t.strip():
         return None, 'none'
     today = today_of(V)
@@ -477,7 +507,13 @@ def resolve_when(V, text):
         return today + D(2), 'exact'
     if ' tomorrow ' in t:
         return today + D(1), 'exact'
-    if re.search(r' (today|tonight|right now|now|this morning|this afternoon|this evening) ', t):
+    if re.search(r' (today|tonight|this morning|this afternoon|this evening) ', t):
+        return today, 'exact'
+    # "Too much for me right now" is not a promise to pay now. Require an affirmative
+    # payment verb near the time phrase, and exclude a nearby negation.
+    immediate = re.search(r' (pay|paying|settle|clear|transfer|send|do)( it| that| this| them| everything| all of it| the money)? (right )?(now|straight away|immediately) ', t)
+    before = t[max(0, immediate.start() - 40):immediate.start()] if immediate else ''
+    if immediate and not re.search(r'\b(?:can t|cannot|can not|won t|not able|unable to|not)\b(?: [a-z]+){0,4}$', before):
         return today, 'exact'
     m = re.search(r' in (\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten|fourteen) (day|week|fortnight)s? ', t)
     if m:
@@ -524,11 +560,16 @@ def resolve_when(V, text):
     m = re.search(r' (?:(this|next|coming|on|by) )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday) ', t)
     if m:
         wd = WDN.index(m.group(2))
-        if m.group(1) == 'next':
-            if P.get('weekday_rule') == 'first_after':
-                delta = (wd - today.weekday()) % 7 or 7
-            else:   # that weekday in the following calendar week
-                delta = (7 - today.weekday()) + wd
+        qualifier = m.group(1)
+        if P.get('weekday_rule') == 'first_after' and qualifier in ('this', 'next', 'coming'):
+            # In this brief mode both phrases mean the first named day strictly after today.
+            delta = (wd - today.weekday()) % 7 or 7
+        elif qualifier == 'next':
+            delta = (7 - today.weekday()) + wd  # following calendar week
+        elif qualifier == 'this':
+            # A current-week day may already be past. Let the ordinary before-today guard
+            # explain it rather than silently turning "this Monday" into next Monday.
+            delta = wd - today.weekday()
         else:
             delta = (wd - today.weekday()) % 7
         return today + D(delta), 'exact'
@@ -540,7 +581,23 @@ def resolve_when(V, text):
 def offer_date_of(V):
     # the customer's words first (offer_when, resolved in code); the extraction's offer_date only as a fallback and
     # never a date before the call's today
-    d, kind = resolve_when(V, g(V, 'offer_when'))
+    words = g(V, 'offer_when')
+    d, kind = resolve_when(V, words)
+    prev = g(V, 'when_prev')
+    if prev and words.strip() and (kind != 'exact' or cut_off(prev)):
+        # Keep one unresolved piece, then join it exactly once with the next customer's words.
+        # "thirty" + "October" and "Monday the twenty" + "sixth" must not
+        # consume the vague-date retry or become a different date.
+        joined, joined_kind = resolve_when(V, prev + ' ' + words)
+        if joined_kind == 'exact' and joined is not None:
+            d, kind = joined, joined_kind
+            prior_scope = g(V, 'when_for_prev')
+            if not g(V, 'offer_for') and prior_scope in ['all'] + list(P['ordinals']):
+                V['offer_for'] = prior_scope
+    if kind != 'exact' and words.strip():
+        V['pending_when'] = words
+        V['pending_offer_for'] = g(V, 'offer_for')
+        V['when_cutoff'] = 'yes' if cut_off(words) else ''
     if kind == 'exact' and d is not None:
         return d, 'exact'
     if kind == 'vague':
@@ -558,14 +615,67 @@ def offered_amount(V):
         return None
     # Compatibility with generators predating the presence field: cleared float is zero.
     return a if a is not None and a > 0 else None
+def ref_amount(V, pid, a):
+    # The customer may name an amount by its role rather than a number. Resolve against the
+    # currently selected product, never a copied value or a different product's floor.
+    if a is not None or not pid or pid not in pids(V):
+        return a
+    ref = g(V, 'offer_ref')
+    if ref == 'floor':
+        return floor_of(V, pid)
+    if ref == 'full':
+        return full_of(V, pid)
+    return None
+def cutoff_turn(V, a, d):
+    # One or two neutral clarifications per call. A cut-off day is not a vague
+    # period, and a day-sized amount without a day might be the first half of a date.
+    used = int(num(g(V, 'cutoff_count'), 0) or 0)
+    if used >= 2:
+        return False
+    if g(V, 'when_cutoff') == 'yes' and (a is None or abs(a - 20) < 0.005 or abs(a - 30) < 0.005):
+        V['cutoff_count'] = str(used + 1)
+        V['offer_verdict'] = 'cutoff'
+        say(V, T('cutoff_day'))
+        return True
+    if a is not None and d is None and abs(a - round(a)) < 0.005 and 1 <= a <= 31:
+        open_ids = [p for p in pids(V) if state(V, p) == 'open']
+        cur = g(V, 'cur_pid')
+        floor = floor_of(V, cur) if cur in open_ids and not (multi(V) and g(V, 'stage') == 'all') else min([floor_of(V, p) for p in open_ids] or [0.0])
+        if a < floor - 0.005 and g(V, 'small_amount_asked') != 'yes':
+            V['small_amount_asked'] = 'yes'
+            V['cutoff_count'] = str(used + 1)
+            V['offer_verdict'] = 'cutoff_amount'
+            say(V, T('cutoff_amount'))
+            return True
+    return False
 def ev_offer(V):
     kind = g(V, 'offer_kind')
     a = offered_amount(V)
     d, k2 = offer_date_of(V)
+    if d is not None and k2 == 'exact' and cut_off(g(V, 'when_prev')) and a is not None and \
+            abs(a - round(a)) < 0.005 and 1 <= a <= 9:
+        a = None  # unit completing the prior cut-off day, not a payment amount
+    if cutoff_turn(V, a, d):
+        return
     if k2 in ('exact', 'vague'):
         kind = k2
     if kind == 'vague':
         d = None
+    if not (multi(V) and g(V, 'stage') == 'all'):
+        pid = g(V, 'cur_pid')
+        a = ref_amount(V, pid, a)
+        if g(V, 'stance') == 'too_much' and pid in pids(V):
+            pset(V, pid, 'too_much', 'yes')
+            fl_ = floor_of(V, pid)
+            if a is None or abs(a - fl_) < 0.005:
+                if g(V, 'mode') != 'hardship' and pg(V, pid, 'offered_floor') != 'yes' and fl_ < full_of(V, pid) - 0.005:
+                    pset(V, pid, 'offered_floor', 'yes')
+                    check_one(V, pid, fl_, d, kind)
+                    line = T('too_much_floor', floor=fmt(fl_), floor_name=pg(V, pid, 'floor_name'),
+                             words=pg(V, pid, 'words'))
+                    spoken = 'readback_line' if g(V, 'route') == 'confirm' else 'say_next'
+                    V[spoken] = join([line, g(V, spoken)])
+                    return
     if multi(V) and g(V, 'stage') != 'all' and g(V, 'offer_for') == 'all' and d is not None and a is None and kind == 'exact':
         all_offer(V, d)
         return
@@ -574,7 +684,18 @@ def ev_offer(V):
         if tp:
             V['stage'] = 'one'
             V['cur_pid'] = tp
+            a = ref_amount(V, tp, a)
             check_one(V, tp, a, d, kind)
+            return
+        if g(V, 'offer_ref') in ('floor', 'full'):
+            open_ids = [p for p in pids(V) if state(V, p) == 'open']
+            if len(open_ids) == 1:
+                V['stage'] = 'one'
+                V['cur_pid'] = open_ids[0]
+                check_one(V, open_ids[0], ref_amount(V, open_ids[0], a), d, kind)
+            elif open_ids:
+                # A reference has a different value per product; never apply one floor to all.
+                start_product(V, open_ids[0], T('one_by_one'))
             return
         if kind == 'vague' or (d is None and a is None):
             V['offer_verdict'] = 'vague'
@@ -672,11 +793,12 @@ def ev_notalk(V):
 def ev_hardship(V):
     V['mode'] = 'hardship'
     hd, hk = offer_date_of(V)
-    if g(V, 'offer_kind') == 'exact' or hk == 'exact':
+    if g(V, 'offer_kind') == 'exact' or hk == 'exact' or g(V, 'offer_ref') in ('floor', 'full'):
         V['hs_offer'] = 'yes'
         V['hs_date'] = hd.isoformat() if hd is not None else ''
         V['hs_amount'] = g(V, 'offer_amount')
         V['hs_amount_present'] = g(V, 'offer_amount_present')
+        V['hs_ref'] = g(V, 'offer_ref')
     say(V, T('hardship'), 'hardship')
 def ev_hs_decline(V):
     if g(V, 'hs_offer') == 'yes':
@@ -685,6 +807,7 @@ def ev_hs_decline(V):
         V['offer_date'] = g(V, 'hs_date')
         V['offer_amount'] = g(V, 'hs_amount')
         V['offer_amount_present'] = g(V, 'hs_amount_present')
+        V['offer_ref'] = g(V, 'hs_ref')
         ev_offer(V)
         return
     for p in pids(V):
@@ -723,6 +846,7 @@ def ev_change(V):
         all_offer(V, d)
         return
     pid = tp or (g(V, 'cur_pid') if g(V, 'cur_pid') in agreed else (agreed[-1] if agreed else g(V, 'cur_pid')))
+    a = ref_amount(V, pid, a)
     parts = pg(V, pid, 'agreed').split('|')
     pa = num(parts[0]) if parts else None
     pd = pdate(parts[1]) if len(parts) > 1 else None
@@ -877,9 +1001,17 @@ def state_line(V):
             s += ' Settled: ' + st + '.'
         out.append(s)
     if g(V, 'mode') == 'hardship':
-        out.append('The customer mentioned a hardship: make no persuasion attempt and propose nothing yourself.')
+        out.append('The customer mentioned a hardship: make no persuasion attempt and propose nothing yourself. '
+                   'The sympathy and support offer were already spoken once; do not repeat either.')
     elif g(V, 'offer_question'):
-        out.append('Current offer, ask exactly this: "' + g(V, 'offer_question') + '"')
+        cp = g(V, 'cur_pid')
+        a = num(g(V, 'prop_amount'))
+        if cp in ids and state(V, cp) == 'open' and pg(V, cp, 'offered_floor') == 'yes' and \
+                a is not None and abs(a - floor_of(V, cp)) < 0.005:
+            out.append('The current offer has already been spoken once. Do not repeat its amount or question; '
+                       'answer a side question briefly and ask only whether they can do that.')
+        else:
+            out.append('Current offer, ask exactly this: "' + g(V, 'offer_question') + '"')
     rec = [p for p in ids if state(V, p) == 'recorded']
     out.append('Recorded: ' + (', '.join(rec) if rec else 'nothing yet') + '.')
     V['state_line'] = ' '.join(out)
@@ -907,6 +1039,11 @@ def main(V, ev):
     try:
         V['policy_event'] = ev
         V['offer_verdict'] = ''
+        V['when_prev'] = g(V, 'pending_when')
+        V['when_for_prev'] = g(V, 'pending_offer_for')
+        V['pending_when'] = ''
+        V['pending_offer_for'] = ''
+        V['when_cutoff'] = ''
         if ev == 'offer':
             ev_offer(V)
         elif ev == 'accept':
@@ -961,7 +1098,8 @@ WRITTEN = ("say_next", "state_line", "offer_question", "offer_text", "offer_verd
            "final_route", "readback_line", "wrap_line", "prop_pid", "prop_amount", "prop_date", "ok_pid", "ok_amount",
            "ok_date", "rec_pid", "rec_amount", "rec_date", "rec_ok", "note_pid", "note_reason", "note_ok",
            "recorded_pids", "pids_csv", "cur_pid", "stage", "mode", "human_count", "notalk_count", "wrap_count",
-           "wrap_human", "vague_all", "hs_offer", "hs_date", "hs_amount", "hs_amount_present", "policy_state", "policy_event")
+           "wrap_human", "vague_all", "hs_offer", "hs_date", "hs_amount", "hs_amount_present", "hs_ref", "policy_state", "policy_event",
+           "pending_when", "when_prev", "pending_offer_for", "when_for_prev", "when_cutoff", "cutoff_count", "small_amount_asked")
 
 
 def _declare():
@@ -1124,20 +1262,25 @@ class Policy:
                       "Set offer_amount to the exact named number, never substitute the current offer.", conf)
 
     @staticmethod
-    def offer_extraction(date_desc, amount_desc, kind_desc, conf=0.5):
+    def offer_extraction(date_desc, amount_desc, kind_desc, conf=0.5, ref_desc=None):
         """T1: offer_date (date), offer_amount (float), offer_kind (exact|vague|none)."""
         return [fl.ext("offer_kind", ["none", "exact", "vague"], kind_desc, conf),
                 {"name": "offer_date", "type": "date", "description": date_desc, "min_confidence": conf},
                 {"name": "offer_when", "type": "string", "description": WHEN_DESC, "min_confidence": conf},
                 {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf},
-                Policy.amount_presence(conf)]
+                Policy.amount_presence(conf),
+                fl.ext("offer_ref", ["none", "floor", "full"], ref_desc or
+                       "floor = names the lowest permitted amount by reference (minimum, lowest, or the brief's name); "
+                       "full = names the whole past-due amount (all of it, full amount); none = no amount reference. "
+                       "Use none when the customer states a number.", conf)]
 
     @staticmethod
     def offer_guard_transitions():
         """offer_kind exact|vague -> check_offer (the guard), stance accept -> accept_offer (the guard on the
         current offer). Put them after the topic transitions and before the stance counter."""
         return [fl.tr("check_offer", "the customer named a date, an amount or a vague period",
-                      fl.cond("offer_kind", "equals", "exact"), fl.cond("offer_kind", "equals", "vague")),
+                      fl.cond("offer_kind", "equals", "exact"), fl.cond("offer_kind", "equals", "vague"),
+                      fl.cond("offer_ref", "equals", "floor"), fl.cond("offer_ref", "equals", "full")),
                 fl.eq("stance", "accept", "accept_offer", "the customer accepted the current offer")]
 
     @staticmethod
@@ -1171,7 +1314,7 @@ class Policy:
         name = name or self.targets["negotiate"]
         extraction = [dict(e, description=e.get("description", "") + " " + self.product_scope_description())
                       if self.multi and e.get("name") == "offer_for" else e for e in extraction]
-        return fl.conv(name, self.state_first(task), on_enter={"type": "tts", "text": "{{say_next}}"},
+        return fl.conv(name, self.state_first(task) + ONCE_RULE, on_enter={"type": "tts", "text": "{{say_next}}"},
                        extraction=fl.with_cutoff(list(extraction) + self.aside_extraction()), transitions=transitions)
 
     @staticmethod
@@ -1183,20 +1326,32 @@ class Policy:
                 "A partial confirmation retains only the confirmed product. 'none' means no product scope is stated.")
 
     def confirm_node(self, task, confirm_desc, date_desc, amount_desc, topic_entry=None, topic_trs=None,
-                     name=None, conf=0.5):
+                     name=None, conf=0.5, ref_desc=None):
         """T22: the read-back. on_enter tts {{readback_line}} (built in code from the agreed values, so what the
         customer hears is what gets written). Extraction confirm in {yes, no, change, other} (+ the new date or
         amount for a change, + the topic entry). yes -> rec_next (record loop), change -> change_offer (offer
         guard, read back again), no -> confirm_no (a flat refusal of the read-back offer). No tools."""
         name = name or self.targets["confirm"]
+        confirm_desc += (" An explicit unqualified 'Yes, I confirm', 'yes', or 'that is correct' in answer to "
+                         "the whole read-back is yes, never other. No means the customer rejects the read-back, "
+                         "not a later 'No, that's all' answer to an anything-else question.")
         if self.multi:
             confirm_desc += (" A confirmation limited to only part of the read-back, or excluding any product, "
                              "is change, not yes. Yes confirms EVERY item read back without an exclusion.")
+        affirmative_desc = ("yes only for an explicit, unconditional agreement to the ENTIRE current read-back, "
+                            "including 'Yes, I confirm', 'yes', or 'that is correct'. An exclusion, correction, "
+                            "changed date or amount, condition, uncertainty, or refusal is none. Otherwise none.")
+        if self.multi:
+            affirmative_desc += " Agreement to only some products is none, even when the customer says yes."
         ext = [fl.ext("confirm", ["other", "yes", "no", "change"], confirm_desc, conf),
+               fl.ext("confirm_affirmative", ["none", "yes"], affirmative_desc, conf),
                {"name": "offer_date", "type": "date", "description": date_desc, "min_confidence": conf},
                {"name": "offer_when", "type": "string", "description": WHEN_DESC, "min_confidence": conf},
                {"name": "offer_amount", "type": "float", "description": amount_desc, "min_confidence": conf},
-                Policy.amount_presence(conf)]
+               Policy.amount_presence(conf),
+               fl.ext("offer_ref", ["none", "floor", "full"], ref_desc or
+                      "floor = the lowest amount for the named product; full = its whole past-due amount; "
+                      "none = no amount named by reference or a number was stated.", conf)]
         if self.multi:
             ext.append(fl.ext("offer_for", ["none", "all"] + self.P["ordinals"],
                               self.product_scope_description(), conf))
@@ -1206,10 +1361,22 @@ class Policy:
         # offer, not a plan request (a different amount or date for this promise is never a restructuring transfer)
         trs = [
             fl.eq("confirm", "change", "change_offer", "the customer changes the date or the amount"),
-            fl.eq("confirm", "yes", "rec_next", "the customer confirmed the read-back"),
             fl.eq("confirm", "no", "confirm_no", "the customer said no to the read-back"),
-        ] + list(topic_trs or [])
-        return fl.conv(name, self.state_first(task), on_enter={"type": "tts", "text": "{{readback_line}}"},
+        ]
+        if self.multi:
+            trs += [fl.eq("offer_for", ordinal, "change_offer", "the customer confirms only one product")
+                    for ordinal in self.P["ordinals"]]
+        trs.append(fl.tr("rec_next", "the customer explicitly confirmed the entire read-back",
+                         fl.cond("confirm", "equals", "yes"),
+                         fl.cond("confirm_affirmative", "equals", "yes")))
+        trs += list(topic_trs or [])
+        record_guard = (" The read-back is only a proposal. After an explicit, unconditional yes to every item "
+                        "read back, use the rec_next transition immediately. Do not say the payment is recorded, "
+                        "scheduled, or confirmed as completed here. Only the successful create_promise result "
+                        "can establish that it was recorded. If the reply is unclear, ask whether the customer "
+                        "confirms the exact read-back; do not infer consent from a later goodbye.")
+        return fl.conv(name, self.state_first(task) + record_guard,
+                       on_enter={"type": "tts", "text": "{{readback_line}}"},
                        extraction=fl.with_cutoff(ext + self.aside_extraction(conf)), transitions=trs)
 
     def promise_assert_pre(self, pid_field="product_id", amount_field="amount", date_field="date"):
@@ -1272,18 +1439,19 @@ class Policy:
                                                       mapping=[{"path": "data.%s" % ok_field, "variable": "note_ok"}])
         return nodes
 
-    def hardship_node(self, task, answer_desc, kind_desc, date_desc, amount_desc, name=None, conf=0.5):
+    def hardship_node(self, task, answer_desc, kind_desc, date_desc, amount_desc, name=None, conf=0.5, ref_desc=None):
         """Hardship (sympathy + support offer spoken from {{say_next}}, no persuasion by routing): hs_answer in
         {support_yes, support_no, accept_offer, none}; a named date or amount still goes through the offer guard
         and the read-back; support_no without a named offer closes the open products as hardship."""
         name = name or self.targets["hardship"]
         ext = [fl.ext("hs_answer", ["none", "support_yes", "support_no", "accept_offer"], answer_desc, conf)] + \
-            self.offer_extraction(date_desc, amount_desc, kind_desc, conf)
+            self.offer_extraction(date_desc, amount_desc, kind_desc, conf, ref_desc)
         trs = [fl.eq("hs_answer", "support_yes", self.targets["xfer_support"], "the customer accepts the support team"),
-               fl.tr("check_offer", "the customer names a date or an amount", fl.cond("offer_kind", "equals", "exact")),
+               fl.tr("check_offer", "the customer names a date or an amount", fl.cond("offer_kind", "equals", "exact"),
+                     fl.cond("offer_ref", "equals", "floor"), fl.cond("offer_ref", "equals", "full")),
                fl.eq("hs_answer", "accept_offer", "accept_offer", "the customer accepts the corrected offer"),
                fl.eq("hs_answer", "support_no", "hs_decline", "the customer declines the support team")]
-        return fl.conv(name, self.state_first(task), on_enter={"type": "tts", "text": "{{say_next}}"},
+        return fl.conv(name, self.state_first(task) + ONCE_RULE, on_enter={"type": "tts", "text": "{{say_next}}"},
                        extraction=fl.with_cutoff(ext + self.aside_extraction(conf)), transitions=trs)
 
     def wrapup_node(self, task, wrap_desc, name=None, conf=0.5, max_turns=3):

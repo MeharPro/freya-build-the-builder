@@ -92,6 +92,20 @@ class LocalTools:
             "stdout": stdout.decode(errors="replace"), "stderr": stderr.decode(errors="replace")}))
 
 
+def promote_child_model_calls(trace, output):
+    """Surface nested customer/judge calls in the readable builder trace, including timed-out commands."""
+    try:
+        result = json.loads(output)
+    except (TypeError, ValueError):
+        return
+    if not isinstance(result, dict):
+        return
+    for stream in ("stderr", "stdout"):
+        for line in str(result.get(stream) or "").splitlines():
+            if line.startswith(("model call:", "model call result:")):
+                trace.line(line[:2000])
+
+
 async def run_agent(root, prompt, slot, trace, inputs, minutes_left, scrub):
     model = model_for("builder")
     deadline = time.monotonic() + minutes_left * 60
@@ -134,6 +148,8 @@ async def run_agent(root, prompt, slot, trace, inputs, minutes_left, scrub):
                 output = await local.call(call["name"], json.loads(call["arguments"]))
             except (ValueError, OSError, asyncio.TimeoutError) as error:
                 output = scrub("Tool failed: %s: %s" % (type(error).__name__, error))
+            if call["name"] == "run_command":
+                promote_child_model_calls(trace, output)
             trace.raw({"type": "OpenAIToolResult", "call_id": call["call_id"], "output": output})
             history.append({"type": "function_call_output", "call_id": call["call_id"],
                             "output": output[:100000] + ("\n[truncated; inspect a smaller range]" if len(output) > 100000 else "")})

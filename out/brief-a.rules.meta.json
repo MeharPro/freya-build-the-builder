@@ -5,7 +5,7 @@
   "B": "gpt-6.1-sol",
   "C": "gpt-6.1-sol"
  },
- "seconds": 138.34040093421936,
+ "seconds": 139.84783625602722,
  "cost_usd": null,
  "calls": 8,
  "self_check": {
@@ -13,18 +13,18 @@
   "missing_tokens": []
  },
  "samples": {
-  "A": 59,
-  "B": 59,
-  "C": 56
+  "A": 58,
+  "B": 58,
+  "C": 58
  },
  "stages": {
   "extract": {
-   "seconds": 82.64851713180542,
+   "seconds": 83.49592590332031,
    "cost_usd": null,
    "calls": 6
   },
   "merge": {
-   "seconds": 19.085421085357666,
+   "seconds": 19.556147813796997,
    "cost_usd": null,
    "calls": 1
   },
@@ -34,7 +34,7 @@
    "calls": 1
   },
   "verify+decide": {
-   "seconds": 36.594752073287964
+   "seconds": 36.780011892318726
   }
  },
  "briefs": [

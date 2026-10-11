@@ -313,8 +313,12 @@ def verify_evidence(judged, sources_text):
     S = _norm(sources_text)
     bad = 0
     for j in judged:
-        e = j.get("evidence") or ""
-        if j.get("status") == "superseded" or not e.strip() or e.strip().lower() == "none":
+        if j.get("status") == "superseded":
+            continue
+        e = j.get("evidence")
+        if not isinstance(e, str) or not e.strip() or e.strip().lower() == "none":
+            j["evidence_found"] = False
+            bad += 1
             continue
         ne = _norm(e)
         found = ne in S or ne.strip("\"'`") in S or ne[:60] in S

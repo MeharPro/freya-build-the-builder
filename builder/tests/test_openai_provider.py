@@ -156,6 +156,19 @@ class OpenAITests(unittest.TestCase):
                 self.assertIn('diagnostic', result['stderr'])
         asyncio.run(scenario())
 
+    def test_nested_model_calls_are_visible_in_plain_trace(self):
+        trace = Log()
+        agent.promote_child_model_calls(trace, json.dumps({
+            'returncode': 124, 'timed_out': True,
+            'stdout': 'PASS PUB-01\n',
+            'stderr': 'model call: gpt-5-mini | purpose: practice customer\n'
+                      'model call result: gpt-5-mini | usage={}\n',
+        }))
+        self.assertEqual(trace.records, [
+            'model call: gpt-5-mini | purpose: practice customer',
+            'model call result: gpt-5-mini | usage={}',
+        ])
+
     def test_driven_smoke_uses_openai_without_claude(self):
         from builder import smoke
         with patch.dict(os.environ, {'OPENAI_API_KEY': 'fixture'}, clear=True), \

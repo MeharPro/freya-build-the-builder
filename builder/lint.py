@@ -955,10 +955,10 @@ class _Linter:
         for path, item in (self.api.get("paths") or {}).items():
             if not isinstance(item, dict):
                 continue
-            name = path.strip("/").split("/")[-1]
             for method, op in item.items():
                 if method.lower() not in {"get", "post", "put", "patch", "delete"} or not isinstance(op, dict):
                     continue
+                name = op.get("operationId") or path.strip("/")
                 schema = {}
                 try:
                     schema = op["requestBody"]["content"]["application/json"]["schema"]
@@ -981,9 +981,9 @@ class _Linter:
             self.err(where, f"api_call tool '{name}' is not an operation of the OpenAPI file ({', '.join(sorted(spec['ops'])) or 'no operations'})")
             return
         url = props.get("url", {}).get("default") if isinstance(props.get("url"), dict) else None
-        expected = f"{spec['base']}/{name}"
+        expected = spec['base'] + next(iter(ops.values()))["path"]
         if isinstance(url, str) and url != expected:
-            self.err(f"{where}.parameters.url", f"url {url!r} is not base_url + '/' + name ({expected!r})")
+            self.err(f"{where}.parameters.url", f"url {url!r} is not base_url + path ({expected!r})")
         method = props.get("method", {}).get("default") if isinstance(props.get("method"), dict) else None
         m = method.upper() if isinstance(method, str) else None
         op = ops.get(m) if m else None

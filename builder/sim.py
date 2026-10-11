@@ -17,7 +17,7 @@ the repo's CLAUDE.md, settings and skills never reach the customer or the judge)
 See builder/SIM.md for how this differs from the organisers' simulation and for the chat route's caveats.
 """
 import argparse, json, os, pathlib, re, socket, subprocess, sys, tempfile, threading, time, urllib.error, urllib.request
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
@@ -120,6 +120,11 @@ def say(*a):
         print(*a, flush=True)
 
 
+def model_log(message):
+    with _print_lock:
+        print(message, file=sys.stderr, flush=True)
+
+
 # ----------------------------------------------------------------------------------------------------- helpers
 def scrub(text):
     """Remove API keys and the bank team key from anything printed, written or sent to a model."""
@@ -179,6 +184,29 @@ def resolve_workflow(arg):
     return arg, None
 
 
+def published_version(workflow_id):
+    """Read the version calls will actually use, rather than assuming the newest draft is live."""
+    result = freya.api("GET", "/api/v2/versions/workflow/%s" % workflow_id,
+                       workspaceId=freya.workspace_id())
+    versions = result.get("versions") or []
+    live = [v for v in versions if v.get("isPublished")]
+    if not live:
+        raise RuntimeError("Workflow has no published version: " + workflow_id)
+    chosen = max(live, key=lambda v: v["versionNumber"])
+    return {"id": chosen["id"], "number": chosen["versionNumber"]}
+
+
+def completed_rows(cases, worker, concurrency, on_complete):
+    """Save each completed case immediately, but return rows in stable input order for scoring."""
+    rows = [None] * len(cases)
+    with ThreadPoolExecutor(max_workers=max(1, concurrency)) as pool:
+        futures = {pool.submit(worker, case): i for i, case in enumerate(cases)}
+        for future in as_completed(futures):
+            rows[futures[future]] = future.result()
+            on_complete([row for row in rows if row is not None])
+    return rows
+
+
 def first_node_info(workflow_id):
     """(initial node name, is it a code node, the variables its code writes). The chat route may skip a first code step."""
     try:
@@ -208,11 +236,11 @@ class Provider:
             return Provider(forced)
         return Provider("openai" if os.environ.get("OPENAI_API_KEY") else "claude")
 
-    def chat(self, model, system, turns, json_mode=False):
+    def chat(self, model, system, turns, json_mode=False, purpose="practice conversation"):
         """`turns` is a list of (role, text), role in ('user', 'assistant'), the last one 'user'. Returns the reply text."""
         if self.kind == "openai":
-            return self._openai(model, [{"role": "system", "content": system}] + [{"role": r, "content": t} for r, t in turns], json_mode)
-        return self._claude(model, system, self._serialize(turns))
+            return self._openai(model, [{"role": "system", "content": system}] + [{"role": r, "content": t} for r, t in turns], json_mode, purpose)
+        return self._claude(model, system, self._serialize(turns), purpose)
 
     @staticmethod
     def _serialize(turns):
@@ -222,18 +250,21 @@ class Provider:
             lines.append(("Agent: " if r == "user" else "You: ") + t)
         return "\n".join(lines)
 
-    def _openai(self, model, messages, json_mode):
+    def _openai(self, model, messages, json_mode, purpose):
         key = os.environ.get("OPENAI_API_KEY", "")
         body = {"model": model, "messages": messages}
         if json_mode:
             body["response_format"] = {"type": "json_object"}
         last = None
         for attempt in range(4):
+            model_log("model call: %s | purpose: %s | attempt %d | provider: openai" % (model, purpose, attempt + 1))
             req = urllib.request.Request(OPENAI_URL + "/chat/completions", data=json.dumps(body).encode(),
                                          headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}, method="POST")
             try:
                 with urllib.request.urlopen(req, timeout=180) as r:
                     out = json.load(r)
+                model_log("model call result: %s | purpose: %s | response_id=%s | usage=%s | invoice cost unavailable" % (
+                    model, purpose, out.get("id"), json.dumps(out.get("usage") or {})))
                 return (out["choices"][0]["message"].get("content") or "").strip()
             except urllib.error.HTTPError as e:
                 text = e.read().decode(errors="replace")[:400]
@@ -249,10 +280,11 @@ class Provider:
                     time.sleep(5 * (attempt + 1)); continue
         raise RuntimeError("openai: no answer (%s)" % last)
 
-    def _claude(self, model, system, prompt):
+    def _claude(self, model, system, prompt, purpose):
         """One `claude -p` call with the persona as the system prompt, no tools, from an empty directory (see cli_dir)."""
         last = None
         for attempt in range(3):
+            model_log("model call: %s | purpose: %s | attempt %d | provider: claude" % (model, purpose, attempt + 1))
             try:
                 r = subprocess.run([CLAUDE_CLI, "-p", "--model", model, "--system-prompt", system, "--tools", "", "--output-format", "text",
                                     "--no-session-persistence", prompt], capture_output=True, text=True, timeout=240, cwd=cli_dir())
@@ -261,6 +293,7 @@ class Provider:
             except FileNotFoundError:
                 raise RuntimeError("the Claude Code binary was not found (%s): install claude-agent-sdk (it bundles one), put `claude` on PATH, or set CLAUDE_CLI" % CLAUDE_CLI)
             if r.returncode == 0 and r.stdout.strip():
+                model_log("model call result: %s | purpose: %s | usage unavailable | invoice cost unavailable" % (model, purpose))
                 return r.stdout.strip()
             last = "claude -p rc=%d: %s" % (r.returncode, (r.stderr or r.stdout)[-300:])
             time.sleep(5)
@@ -281,7 +314,7 @@ class Customer:
 
     def next_line(self):
         count("customer_calls")
-        raw = self.provider.chat(self.model, self.system, self.turns)
+        raw = self.provider.chat(self.model, self.system, self.turns, purpose="practice customer")
         return clean_line(raw)
 
 
@@ -307,14 +340,14 @@ def judge(provider, model, checks, transcript_lines, tool_calls, opening="Hello?
               'Is every criterion true? Answer with JSON only: {"outcome": "pass" or "fail", "reason": "..."}'
               % (criteria, json.dumps(opening, ensure_ascii=False), "\n".join(transcript_lines), tools))
     count("judge_calls")
-    raw = provider.chat(model, JUDGE_SYSTEM, [("user", scrub(prompt))], json_mode=True)
+    raw = provider.chat(model, JUDGE_SYSTEM, [("user", scrub(prompt))], json_mode=True, purpose="practice judge")
     outcome, reason = parse_verdict(raw)
     if outcome is None:
         # Prose without a verdict. OpenAI's json_object mode makes this rare; the CLI path has no such guard: ask once more.
         count("judge_calls"); count("judge_retries")
         nudge = prompt + ("\n\nYour previous answer contained no verdict. Reply with the JSON object only, nothing else: "
                           '{"outcome": "pass" or "fail", "reason": "..."}')
-        outcome, reason = parse_verdict(provider.chat(model, JUDGE_SYSTEM, [("user", scrub(nudge))], json_mode=True))
+        outcome, reason = parse_verdict(provider.chat(model, JUDGE_SYSTEM, [("user", scrub(nudge))], json_mode=True, purpose="practice judge retry"))
         if outcome is None:
             return "fail", "no verdict (the judge answered twice without pass/fail): " + reason
     return outcome, reason
@@ -573,7 +606,8 @@ def run_case(ctx, case, rep):
     """One practice customer on one chat-route call. Returns a row shaped like run_cases.py's rows."""
     cid, chat, ledger = None, None, None
     row = {"id": case["id"], "level": case["level"], "family": case["family"], "pass": False, "failed": [], "call_id": None, "tools": [], "customer_id": None,
-           "transcript": None, "turns": 0, "stop": None, "judge": None, "style": case_style(ctx, case), "mock_case": case.get("mock_case", case["id"])}
+           "transcript": None, "turns": 0, "stop": None, "judge": None, "style": case_style(ctx, case), "mock_case": case.get("mock_case", case["id"]),
+           "published_version": ctx.workflow_version}
 
     def new_session():
         # an extended case reuses a mock customer (fixed identity, products, faults) under its own id and script
@@ -736,7 +770,8 @@ def write_transcript(ctx, case, rep, row, chat, ledger, lines, tools):
     st = case_style(ctx, case)
     head = ["# %s %s%s" % (case["id"], case["title"], " [style: %s]" % st if st else " [style: none]"),
             "# mock customer: %s | style text: %s" % (case.get("mock_case", case["id"]), STYLES[st] if st else "(none)"),
-            "# workflow %s | call %s | customer %s | %s" % (ctx.workflow_id, row.get("call_id"), row.get("customer_id"), time.strftime("%Y-%m-%d %H:%M:%S")),
+            "# workflow %s | published version %s | call %s | customer %s | %s" % (ctx.workflow_id, ctx.workflow_version,
+                row.get("call_id"), row.get("customer_id"), time.strftime("%Y-%m-%d %H:%M:%S")),
             "# customer model %s | judge model %s (%s) | stop: %s | transcript from: %s" % (ctx.customer_model, ctx.judge_model, ctx.provider.kind, row.get("stop"), row.get("transcript_source")),
             "# RESULT: %s%s" % ("PASS" if row["pass"] else "FAIL", "" if row["pass"] else " | " + " | ".join(row["failed"])), ""]
     body = list(lines) or ["(no transcript)"]
@@ -751,7 +786,8 @@ def write_transcript(ctx, case, rep, row, chat, ledger, lines, tools):
     if chat and chat.warnings:
         tail += ["", "## chat route warnings: " + " | ".join(chat.warnings)]
     path.write_text(scrub("\n".join(head + body + tail)) + "\n")
-    rec = {"case": case["id"], "rep": rep + 1, "workflow_id": ctx.workflow_id, "call_id": row.get("call_id"), "customer_id": row.get("customer_id"),
+    rec = {"case": case["id"], "rep": rep + 1, "workflow_id": ctx.workflow_id, "published_version": ctx.workflow_version,
+           "call_id": row.get("call_id"), "customer_id": row.get("customer_id"),
            "variables": chat.variables if chat else None, "turns": chat.log if chat else [], "end": chat.end_result if chat else None,
            "transcript": lines, "tool_calls": tools, "ledger": ledger, "judge": row.get("judge"), "failed": row["failed"], "pass": row["pass"], "stop": row.get("stop")}
     (ctx.transcripts / (stem + ".json")).write_text(scrub(json.dumps(rec, indent=1, ensure_ascii=False, default=str)))
@@ -786,6 +822,7 @@ def main():
         sys.exit("FREYA_API_KEY and FREYA_BANK_TEAM_KEY must be set: source env.sh first.")
     ctx = Ctx()
     ctx.workflow_id, agent_id = resolve_workflow(a.workflow)
+    ctx.workflow_version = published_version(ctx.workflow_id)
     ctx.provider = Provider.pick(a.provider)
     ctx.customer_model = a.customer_model or DEFAULTS[ctx.provider.kind]["customer"]
     ctx.judge_model = a.judge_model or DEFAULTS[ctx.provider.kind]["judge"]
@@ -800,8 +837,9 @@ def main():
     if a.styles:
         cases = styled_cases(cases, a.styles)
     ctx.first_node = first_node_info(ctx.workflow_id)
-    print("sim | workflow %s%s | %d case(s) x %d rep(s) | concurrency %d | customer %s, judge %s (%s)" % (
-        ctx.workflow_id, " (slot %s)" % a.workflow if agent_id else "", len(cases), a.reps, a.concurrency, ctx.customer_model, ctx.judge_model, ctx.provider.kind), flush=True)
+    print("sim | workflow %s%s | published version %s | %d case(s) x %d rep(s) | concurrency %d | customer %s, judge %s (%s)" % (
+        ctx.workflow_id, " (slot %s)" % a.workflow if agent_id else "", ctx.workflow_version["number"], len(cases), a.reps,
+        a.concurrency, ctx.customer_model, ctx.judge_model, ctx.provider.kind), flush=True)
     if ctx.first_node[1]:
         print("NOTE: the first node %r is a code node (writes %s). The chat route may skip a first code step (docs/api.md); checked after the run." % (
             ctx.first_node[0], ", ".join(ctx.first_node[2]) or "nothing"), flush=True)
@@ -809,18 +847,21 @@ def main():
     reps, total_s = [], 0.0
     for rep in range(a.reps):
         t0 = time.time()
-        rows = []
-        with ThreadPoolExecutor(max_workers=max(1, a.concurrency)) as pool:
-            for row in pool.map(lambda c: run_case(ctx, c, rep), cases):
-                rows.append(row)
-                if a.out:   # incremental: a killed run still leaves every finished case on disk
-                    try:
-                        pathlib.Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-                        json.dump({"runner": "sim", "partial": True, "workflow_id": ctx.workflow_id, "agent_id": agent_id, "rep": rep + 1,
-                                   "passed": sum(1 for r in rows if r.get("pass")), "done": len(rows), "total": len(cases), "rows": rows,
-                                   "all_rows": reps + [rows]}, open(a.out, "w"), indent=1)
-                    except Exception:
-                        pass
+        def save_partial(rows):
+            if a.out:   # completion order: a slow first case cannot conceal results from faster later cases
+                try:
+                    path = pathlib.Path(a.out)
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    partial = {"runner": "sim", "partial": True, "workflow_id": ctx.workflow_id,
+                               "published_version": ctx.workflow_version, "agent_id": agent_id, "rep": rep + 1,
+                               "passed": sum(1 for r in rows if r.get("pass")), "done": len(rows), "total": len(cases),
+                               "rows": rows, "all_rows": reps + [rows]}
+                    temp = path.with_name(path.name + ".tmp")
+                    temp.write_text(json.dumps(partial, indent=1))
+                    temp.replace(path)
+                except Exception as e:
+                    model_log("practice partial result could not be saved: %s" % compact(str(e), 160))
+        rows = completed_rows(cases, lambda c: run_case(ctx, c, rep), a.concurrency, save_partial)
         took = time.time() - t0; total_s += took
         waits = sorted(r.get("slowest_turn_s") or 0 for r in rows if r.get("call_id"))
         if waits:
@@ -857,17 +898,27 @@ def main():
     extra = "".join(", %d %s" % (COUNTS[k], label) for k, label in (("judge_retries", "judge retries"), ("ledger_errors", "ledger errors")) if COUNTS[k])
     print("cost: %d chat turns, %d model calls (%d customer on %s, %d judge on %s), %d ledger polls, %d call fetches%s." % (
         COUNTS["chat_turns"], model_calls, COUNTS["customer_calls"], ctx.customer_model, COUNTS["judge_calls"], ctx.judge_model, COUNTS["ledger_polls"], COUNTS["call_fetches"], extra))
+    ending_version = published_version(ctx.workflow_id)
+    version_drift = ending_version != ctx.workflow_version
+    if version_drift:
+        print("WARNING: published workflow version changed during this run; scores are not comparable.", flush=True)
     with open(ROOT / "results" / "log.jsonl", "a") as f:
-        f.write(json.dumps({"at": time.strftime("%Y-%m-%d %H:%M:%S"), "runner": "sim", "workflow_id": ctx.workflow_id, "agent_id": agent_id, "brief": a.brief,
+        f.write(json.dumps({"at": time.strftime("%Y-%m-%d %H:%M:%S"), "runner": "sim", "workflow_id": ctx.workflow_id,
+                            "published_version": ctx.workflow_version, "ending_version": ending_version,
+                            "version_drift": version_drift, "agent_id": agent_id, "brief": a.brief,
                             "runs": a.reps, "passed": n, "total": len(final), "seconds": round(total_s), "failed": [f["id"] for f in final if not f["pass"]],
                             "style": a.style or a.styles, "chat_turns": COUNTS["chat_turns"], "model_calls": model_calls,
                             "customer_model": ctx.customer_model, "judge_model": ctx.judge_model, "provider": ctx.provider.kind}) + "\n")
     if a.out:
         pathlib.Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-        json.dump({"runner": "sim", "workflow_id": ctx.workflow_id, "agent_id": agent_id, "simulation_id": None, "iteration_id": None, "seconds": round(total_s),
+        json.dump({"runner": "sim", "workflow_id": ctx.workflow_id, "published_version": ctx.workflow_version,
+                   "ending_version": ending_version, "version_drift": version_drift, "agent_id": agent_id,
+                   "simulation_id": None, "iteration_id": None, "seconds": round(total_s),
                    "passed": n, "total": len(final), "runs": a.reps, "final": final, "rows": reps[-1], "all_rows": reps,
                    "customer_model": ctx.customer_model, "judge_model": ctx.judge_model, "provider": ctx.provider.kind, "counts": COUNTS},
                   open(a.out, "w"), indent=1)
+    if version_drift:
+        sys.exit(2)
 
 
 if __name__ == "__main__":

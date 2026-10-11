@@ -58,7 +58,8 @@
     },
     {
       "path": "env.example",
-      "matches": true
+      "matches": false,
+      "reason": "Added provider selection and OpenAI credential/model examples; no live credentials"
     },
     {
       "path": "briefs/brief-a.md",

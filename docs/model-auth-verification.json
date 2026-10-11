@@ -5,5 +5,7 @@
   "paid_model_request_made": false,
   "key_validity_verified": false,
   "sdk_inherits_process_environment": true,
-  "fresh_build_verified": false
+  "fresh_build_verified": false,
+  "provider": "claude",
+  "note": "Historical Anthropic configuration-only check. Current OpenAI live evidence is in openai-provider-verification.json."
 }

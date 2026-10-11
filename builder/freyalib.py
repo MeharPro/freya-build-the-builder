@@ -89,26 +89,51 @@ def _norm_props(schema):
     return out, req
 
 
+def _operations(api):
+    """name -> (path, method, operation) for every operation of the API file, in file order.
+    The tool name is the operationId when the file has one, else the path without its leading slash."""
+    out = {}
+    for path, item in (api.get("paths") or {}).items():
+        for method in ("post", "get", "put", "patch", "delete"):
+            op = (item or {}).get(method)
+            if not isinstance(op, dict):
+                continue
+            name = op.get("operationId") or path.lstrip("/")
+            out.setdefault(name, (path, method.upper(), op))
+    return out
+
+
+def tool_path(api, name):
+    """The request path of tool <name> (e.g. '/cards.list' for operationId cards_list)."""
+    return _operations(api)[name][0]
+
+
+def tool_method(api, name):
+    return _operations(api)[name][1]
+
+
 def tool_spec(api, name):
-    """The request and response schema of tool <name>, read from paths["/<name>"]["post"].
+    """The request and response schema of tool <name>: the operation whose operationId is <name>, else POST /<name>.
 
     Returns {"fields": {field: {type, description, enum, required}}, "required": [ordered spec list],
              "summary": str, "response_props": {prop: {type, description, enum, required}}}.
     Missing description -> "", missing enum -> [] (never None)."""
-    op = ((api.get("paths") or {}).get("/" + name) or {}).get("post")
-    if op is None:
-        raise KeyError("tool %r: the API file has no POST /%s" % (name, name))
+    ops = _operations(api)
+    if name not in ops:
+        raise KeyError("tool %r: the API file has no operation %s" % (name, name))
+    path, method, op = ops[name]
     fields, req = _norm_props(_json_schema(op.get("requestBody")))
     missing = set(req) - set(fields)
     if missing:
         raise ValueError("Required API fields have no schema: %s" % sorted(missing))
     resp, _ = _norm_props(_json_schema(((op.get("responses") or {}).get("200"))))
-    return {"fields": fields, "required": req, "summary": op.get("summary", ""), "response_props": resp}
+    return {"fields": fields, "required": req, "summary": op.get("summary", ""), "response_props": resp,
+            "path": path, "method": method}
 
 
 def tool_names(api):
-    """Every tool name in the API file, in file order."""
-    return [p.lstrip("/") for p, item in (api.get("paths") or {}).items() if "post" in (item or {})]
+    """Every tool name in the API file, in file order (operationId when present, else the path)."""
+    return list(_operations(api))
 
 
 # ----------------------------------------------------------------------------------------------- tools
@@ -176,8 +201,8 @@ def api_tool(api, name, baked=None, description="", required=None, retries=0, pr
             "handler": "__function__:api_call",
             "description": description,
             "parameters": {"type": "object", "properties": {
-                "url": {"type": "string", "default": "%s/%s" % (base_url(api), name)},
-                "method": {"type": "string", "default": "POST"},
+                "url": {"type": "string", "default": "%s%s" % (base_url(api), spec["path"])},
+                "method": {"type": "string", "default": spec["method"]},
                 "headers": json.loads(json.dumps(HEADERS)),
                 "body": {"type": "object", "required": list(required), "properties": props},
             }},

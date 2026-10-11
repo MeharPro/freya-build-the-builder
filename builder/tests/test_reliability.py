@@ -10,11 +10,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from builder import build
+from builder import audit, build
 from builder.reliability import (Budget, BuildFailure, archive_previous, run_process,
                                  validate_artifact, validate_audit, workspace_lock, write_manifest)
 
@@ -57,6 +57,24 @@ class ReliabilityTests(unittest.TestCase):
         with self.assertRaises(BuildFailure):
             build.require_unchanged_source(self.root, expected)
 
+    def test_declared_call_variables_are_names_from_briefs_only(self):
+        brief = self.root / 'hidden.md'
+        brief.write_text('## Call variables\n\n| Variable | Example |\n|---|---|\n'
+                         '| `customer_id` | `c_secret` |\n| `first_name`, `last_name` | Ada |\n'
+                         '### Extra call inputs\n| `now` | 2026-10-14 |\n'
+                         '### Later policy\n| `invented` | 1 |\n'
+                         '## Later policy\n| `invented` | 1 |\n')
+        self.assertEqual(build.call_variable_names([brief]), ['customer_id', 'first_name', 'last_name', 'now'])
+        self.assertNotIn('c_secret', build.call_variable_names([brief]))
+
+    def test_provenance_records_uncommitted_source_bytes(self):
+        source = self.write('builder/helper.py', 'v1')
+        expected = build.source_snapshot(self.root)
+        provenance = build.builder_provenance(self.root, expected)
+        self.assertEqual(provenance['source_hashes']['builder/helper.py'], expected[str(source)])
+        self.assertIsNone(provenance['git_commit'])
+        self.assertIsNone(provenance['source_dirty'])
+
     def test_process_timeout_is_not_success(self):
         with self.assertRaises(subprocess.TimeoutExpired):
             run_process([sys.executable, '-c', 'import time; time.sleep(5)'], self.root, .05)
@@ -95,12 +113,25 @@ class ReliabilityTests(unittest.TestCase):
     def test_audit_checks_active_rule_rows_not_claimed_summary(self):
         rules = self.write('rules.json', [{'id': 'R1', 'in_force': True}, {'id': 'R2', 'in_force': False}])
         for rows in ([], [{'id': 'R1', 'status': 'missing'}], [{'id': 'R1', 'status': 'partial'}],
-                     [{'id': 'R1', 'status': 'implemented', 'evidence_found': False}]):
+                     [{'id': 'R1', 'status': 'implemented', 'evidence': 'matching source', 'evidence_found': False}],
+                     [{'id': 'R1', 'status': 'implemented', 'evidence': 'matching source'}],
+                     [{'id': 'R1', 'status': 'implemented', 'evidence': '', 'evidence_found': True}],
+                     [{'id': 'R1', 'status': 'implemented', 'evidence': 'none', 'evidence_found': True}]):
             report = self.write('audit.json', {'summary': {'implemented': 100}, 'rules': rows})
             with self.assertRaises(BuildFailure):
                 validate_audit(report, rules)
-        report = self.write('audit.json', {'rules': [{'id': 'R1', 'status': 'implemented', 'evidence_found': True}]})
+        report = self.write('audit.json', {'rules': [{'id': 'R1', 'status': 'implemented',
+                                                     'evidence': 'matching source', 'evidence_found': True}]})
         validate_audit(report, rules)
+
+    def test_audit_marks_missing_and_unmatched_evidence_unverified(self):
+        rows = [{'id': 'R1', 'status': 'implemented', 'evidence': ''},
+                {'id': 'R2', 'status': 'implemented', 'evidence': 'none'},
+                {'id': 'R3', 'status': 'implemented', 'evidence': 'invented quote'},
+                {'id': 'R4', 'status': 'implemented', 'evidence': 'actual source phrase'},
+                {'id': 'R5', 'status': 'superseded', 'evidence': ''}]
+        self.assertEqual(audit.verify_evidence(rows, 'The actual source phrase is present.'), 3)
+        self.assertEqual([row.get('evidence_found') for row in rows], [False, False, False, True, None])
 
     def test_artifact_gate_rejects_test_variables_and_initial_code(self):
         wf = json.loads((ROOT / 'out/brief-a_v2.notv.workflow.json').read_text())
@@ -153,6 +184,16 @@ class ReliabilityTests(unittest.TestCase):
                 with self.assertRaisesRegex(BuildFailure, 'null value'):
                     validate_artifact(p, ROOT / 'tools/openapi.json', platform_export=True)
 
+    def test_final_lint_checks_platform_export_without_rewriting_it(self):
+        wf = json.loads((ROOT / 'builder/tests/fixtures/brief-a.workflow.json').read_text())
+        wf['nodes'][wf['initial_node']]['max_turn_transition'] = None
+        export = self.write('export.json', {'workflow': wf})
+        original = export.read_bytes()
+        trace = Mock()
+        build.lint_export(trace, Budget(1), export, ROOT / 'tools/openapi.json', None, [], 30, 5)
+        self.assertEqual(export.read_bytes(), original)
+        self.assertIn('lint-export', trace.line.call_args_list[0].args[0])
+
     def test_cli_rejects_unknown_flags_bad_runner_and_unbounded_time(self):
         inputs = [str(ROOT / 'briefs/brief-a.md'), str(ROOT / 'tools/openapi.json')]
         for flags in (['--typo'], ['--runner', 'unknown'], ['--minutes', '31'], ['--minutes', 'nan'], ['--no-rules']):
@@ -183,14 +224,19 @@ class ReliabilityTests(unittest.TestCase):
         self.assertIn('status=failed', (self.root / 'traces/x.log').read_text())
         self.assertTrue(list((self.root / 'build-history').glob('*/submission/x.workflow.json')))
 
-    def run_pipeline(self, fail_stage=None, audit_statuses=None, tamper_rules=False, time_slice=False):
+    def run_pipeline(self, fail_stage=None, audit_statuses=None, tamper_rules=False,
+                     tamper_export_during_audit=False, time_slice=False, timings=None):
         brief = self.write('x.md', 'input')
         api = self.write('api.json', json.loads((ROOT / 'tools/openapi.json').read_text()))
         args = build.parse_args([str(brief), str(api)])
         fixture = json.loads((ROOT / 'out/brief-a_v2.notv.workflow.json').read_text())
         calls = []
+        self.step_commands = []
+        clock = [0.0]
+        generations = [0]
         audit_statuses = list(audit_statuses or ['implemented'])
         async def generate(*args, **kwargs):
+            generations[0] += 1
             self.write('out/x.workflow.json', fixture)
             (self.root / 'out/gen_x.py').write_text('# Generated during this run\n')
             if kwargs.get('repair_feedback'):
@@ -200,9 +246,15 @@ class ReliabilityTests(unittest.TestCase):
                 self.write('out/x.rules.json', [{'id': 'R1', 'in_force': False}])
             if time_slice:
                 raise asyncio.TimeoutError()
+            if timings:
+                clock[0] += timings.get('generation%d' % generations[0], 0)
 
         def step(trace, budget, name, cmd, maximum, reserve=0):
             calls.append(name)
+            self.step_commands.append((name, cmd, maximum, reserve))
+            if timings:
+                budget.timeout(maximum, reserve)
+                clock[0] += timings.get(name, 0)
             if fail_stage == name:
                 raise BuildFailure(name + ' failed')
             if name == 'rules':
@@ -210,10 +262,15 @@ class ReliabilityTests(unittest.TestCase):
             if name == 'export':
                 self.write('submission/x.workflow.json', {'workflow': fixture})
             if name == 'audit':
-                self.write('out/x.audit.json', {'rules': [{'id': 'R1', 'status': audit_statuses[min(calls.count('audit')-1, len(audit_statuses)-1)], 'evidence_found': True}]})
+                self.write('out/x.audit.json', {'rules': [{'id': 'R1',
+                    'status': audit_statuses[min(calls.count('audit')-1, len(audit_statuses)-1)],
+                    'evidence': 'fixture exact code', 'evidence_found': True}]})
+                if tamper_export_during_audit:
+                    self.write('submission/x.workflow.json', {'workflow': fixture, 'changed': True})
             return ''
+        budget_patch = patch.object(build, 'Budget', lambda minutes: Budget(minutes, clock=lambda: clock[0])) if timings else contextlib.nullcontext()
         with patch.object(build, 'ROOT', self.root), patch.object(build, 'run_claude', generate), \
-             patch.object(build, 'required_step', step), contextlib.redirect_stdout(io.StringIO()):
+             patch.object(build, 'required_step', step), budget_patch, contextlib.redirect_stdout(io.StringIO()):
             code = asyncio.run(build.execute_build(args))
         return code, calls
 
@@ -232,6 +289,14 @@ class ReliabilityTests(unittest.TestCase):
         self.assertEqual(calls.count('audit'), 3)
         self.assertFalse((self.root / 'submission/x.workflow.json').exists())
 
+    def test_late_repair_uses_spare_time_and_reserves_last_gate(self):
+        durations = {'rules': 140, 'generation1': 900, 'generation2': 300, 'generation3': 80,
+                     'lint': 3, 'publish': 3, 'export': 3, 'lint-export': 3, 'audit': 50}
+        code, calls = self.run_pipeline(audit_statuses=['partial', 'partial', 'implemented'], timings=durations)
+        self.assertEqual(code, 0)
+        self.assertEqual(calls.count('audit'), 3)
+        self.assertEqual([reserve for name, _, _, reserve in self.step_commands[-5:]], [165, 140, 115, 95, 5])
+
     def test_inventory_tampering_rejected_before_publication(self):
         code, calls = self.run_pipeline(tamper_rules=True)
         self.assertEqual(code, 1)
@@ -246,12 +311,18 @@ class ReliabilityTests(unittest.TestCase):
     def test_full_success_writes_manifest_after_final_trace(self):
         code, calls = self.run_pipeline()
         self.assertEqual(code, 0)
-        self.assertEqual(calls, ['rules', 'lint', 'publish', 'export', 'audit'])
+        self.assertEqual(calls, ['rules', 'lint', 'publish', 'export', 'lint-export', 'audit'])
         manifest = json.loads((self.root / 'submission/x.manifest.json').read_text())
         from builder.reliability import sha256
         for artifact in manifest['artifacts']:
             self.assertEqual(artifact['sha256'], sha256(artifact['path']))
         self.assertTrue(manifest['audited'])
+        self.assertIn('builder_provenance', manifest)
+        self.assertEqual(manifest['builder_provenance']['source_hashes'], {})
+        for name, command, _, _ in self.step_commands:
+            if name in ('lint', 'lint-export'):
+                self.assertIn('--rules', command)
+                self.assertIn('--budget', command)
 
     def test_publish_failure_never_reaches_export(self):
         code, calls = self.run_pipeline('publish')
@@ -265,6 +336,29 @@ class ReliabilityTests(unittest.TestCase):
         self.assertTrue((self.root / 'out/x.rejected-export.json').exists())
         self.assertFalse((self.root / 'submission/x.workflow.json').exists())
         self.assertFalse((self.root / 'submission/x.manifest.json').exists())
+
+    def test_audit_cannot_validate_a_mutated_export(self):
+        code, calls = self.run_pipeline(tamper_export_during_audit=True)
+        self.assertEqual(code, 1)
+        self.assertIn('audit', calls)
+        self.assertFalse((self.root / 'submission/x.workflow.json').exists())
+        self.assertFalse((self.root / 'submission/x.manifest.json').exists())
+        self.assertIn('Validated generator, candidate or export', (self.root / 'traces/x.log').read_text())
+
+    def test_manifest_rejects_artifact_changed_after_final_validation(self):
+        original = build.write_manifest
+        def tamper(*args, **kwargs):
+            payload = original(*args, **kwargs)
+            self.write('submission/x.workflow.json', {'changed': 'after audit'})
+            return payload
+        with patch.object(build, 'write_manifest', tamper):
+            code, calls = self.run_pipeline()
+        self.assertEqual(code, 1)
+        self.assertIn('audit', calls)
+        self.assertFalse((self.root / 'submission/x.workflow.json').exists())
+        self.assertFalse((self.root / 'submission/x.manifest.json').exists())
+        self.assertTrue((self.root / 'out/x.rejected-export.json').exists())
+        self.assertIn('FAILED: manifest publication', (self.root / 'traces/x.log').read_text())
 
     def test_rules_failure_never_reaches_model_or_publish(self):
         code, calls = self.run_pipeline('rules')

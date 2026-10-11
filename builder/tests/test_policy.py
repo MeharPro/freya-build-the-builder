@@ -175,8 +175,11 @@ def floor_boundaries():
     ev(P, V, "offer", offer_kind="exact", offer_amount="699.99", offer_date="2026-10-22")
     assert V["offer_verdict"] == "below_floor" and V["prop_amount"] == "700.0" and V["prop_date"] == "2026-10-22"
     assert V["say_next"].startswith("I cannot record 699.99."), V["say_next"]
-    ev(P, V, "offer", offer_kind="exact", offer_amount="500")                               # below again: refusal
-    assert V["offer_verdict"] == "below_floor" and V["attempts_used_p1"] == "1", V["attempts_used_p1"]
+    ev(P, V, "offer", offer_kind="exact", offer_amount="500")  # another named amount is not a refusal
+    assert V["offer_verdict"] == "below_floor" and V["attempts_used_p1"] == "0", V["attempts_used_p1"]
+    assert V["say_next"] == "I cannot record 500." and V["prop_amount"] == "700.0", V["say_next"]
+    ev(P, V, "refuse")  # a plain no to the floor is the refusal that spends an attempt
+    assert V["attempts_used_p1"] == "1", V["attempts_used_p1"]
     P, V = start([LOAN])
     ev(P, V, "offer", offer_kind="exact", offer_amount="2100", offer_date="2026-10-16")       # = full: ok
     assert V["offer_verdict"] == "ok"
@@ -452,6 +455,46 @@ def test_aside_prefix():
 
 
 @test
+def explicit_confirmation_has_a_safe_fallback_route():
+    """The whole-read-back yes can reach recording even if the main confirm enum is missed."""
+    P, V = start([CARD])
+    n = P.confirm_node("Confirm the offered amount and date.", "read-back answer", "date", "amount")
+    fields = {e["name"]: e for e in n["extraction_schema"]}
+    assert "Yes, I confirm" in fields["confirm"]["description"]
+    assert fields["confirm_affirmative"]["enum_values"] == ["none", "yes"], fields["confirm_affirmative"]
+    routes = n["transitions"]
+    assert [r["target_node"] for r in routes[:3]] == ["change_offer", "confirm_no", "rec_next"], routes
+    yes_conditions = routes[2]["condition"]["conditions"]
+    assert {c["variable"] for c in yes_conditions} == {"confirm", "confirm_affirmative"}, yes_conditions
+    assert all(c["operator"] == "equals" and c["operand"] == "yes" for c in yes_conditions)
+    task = n["task_message"]
+    assert "rec_next transition immediately" in task and "Do not say the payment is recorded" in task
+    assert "successful create_promise result" in task
+
+    ev(P, V, "accept", stance="accept")
+    ev(P, V, "confirm_yes", confirm="other", confirm_affirmative="yes")
+    assert V["route"] == "record" and V["rec_pid"] == "p1", V
+    assert V.get("recorded_pids", "") == ""
+
+
+@test
+def partial_confirmation_never_records_every_product():
+    """A named subset takes the change route before either affirmative signal."""
+    P, V = start([CARD, LOAN], multi=True)
+    n = P.confirm_node("Confirm both offers.", "read-back answer", "date", "amount")
+    routes = n["transitions"]
+    yes_index = next(i for i, r in enumerate(routes) if r["target_node"] == "rec_next")
+    for ordinal in P.P["ordinals"]:
+        partial_index = next(i for i, r in enumerate(routes)
+                             if r["target_node"] == "change_offer"
+                             and r["condition"]["conditions"][0].get("variable") == "offer_for"
+                             and r["condition"]["conditions"][0].get("operand") == ordinal)
+        assert partial_index < yes_index
+    fields = {e["name"]: e for e in n["extraction_schema"]}
+    assert "Agreement to only some products is none" in fields["confirm_affirmative"]["description"]
+
+
+@test
 def test_offer_when_resolved_in_code():
     """'tomorrow' and friends resolve against the CALL's today, not the real clock; a past extracted date is vague."""
     import json, datetime
@@ -481,7 +524,7 @@ def test_offer_when_resolved_in_code():
     assert out["the twenty third"] == ("2026-10-23", "exact"), out
     P2, V2 = start([CARD])
     ev(P2, V2, "offer", offer_kind="exact", offer_date="2026-10-20", offer_when="the twenty", offer_amount="")
-    assert V2.get("offer_verdict") == "vague", (V2.get("offer_verdict"), V2.get("say_next"))
+    assert V2.get("offer_verdict") == "cutoff", (V2.get("offer_verdict"), V2.get("say_next"))
     assert out["end of the month"] == (None, "vague"), out
     assert out[""] == (None, "none"), out
     assert out["monday the 26th"] == ("2026-10-26", "exact"), out      # the number wins over the weekday (PUB-07)
@@ -495,6 +538,129 @@ def test_offer_when_resolved_in_code():
     P, V = start([CARD])
     ev(P, V, "offer", offer_kind="exact", offer_date="2026-10-11", offer_when="", offer_amount="420")
     assert V.get("offer_verdict") == "vague", (V.get("offer_verdict"), V.get("say_next"))
+
+
+@test
+def this_week_date_semantics():
+    """Current-week words preserve the named week, even when the day has passed."""
+    P, V = start([CARD])  # Wednesday 14 October
+    G = {"vars": V}
+    exec(P.core() + "\nout = [resolve_when(vars, x) for x in ('this Monday', 'this Wednesday', 'next Monday')]\n", G)
+    got = [(d.isoformat() if d else None, kind) for d, kind in G["out"]]
+    assert got == [("2026-10-12", "exact"), ("2026-10-14", "exact"), ("2026-10-19", "exact")], got
+    ev(P, V, "offer", offer_kind="exact", offer_when="this Monday", offer_date="2026-10-19")
+    assert V["offer_verdict"] == "before_today" and V["prop_date"] == TODAY, V["say_next"]
+    # The other supported brief mode says both "this" and "next" mean the first day strictly after now.
+    P2 = pol.Policy(HOL, texts=TEXTS, weekday_rule="first_after")
+    V2 = {"today_iso": "2026-10-16", "now": "2026-10-16T11:00"}  # Friday
+    G2 = {"vars": V2}
+    exec(P2.core() + "\nout = [resolve_when(vars, x) for x in ('this Friday', 'next Friday')]\n", G2)
+    got2 = [(d.isoformat() if d else None, kind) for d, kind in G2["out"]]
+    assert got2 == [("2026-10-23", "exact"), ("2026-10-23", "exact")], got2
+
+
+@test
+def once_only_spoken_state():
+    P, V = start([LOAN])
+    ev(P, V, "too_much")
+    assert "already been spoken once" in V["state_line"] and "Current offer, ask exactly" not in V["state_line"], V["state_line"]
+    ev(P, V, "offer", offer_kind="exact", offer_amount="200", offer_amount_present="yes")
+    assert V["say_next"] == "I cannot record 200." and "ask exactly" not in V["state_line"], V["state_line"]
+    P2, V2 = start([LOAN])
+    ev(P2, V2, "hardship")
+    assert "already spoken once" in V2["state_line"] and "do not repeat" in V2["state_line"], V2["state_line"]
+    assert "do not repeat it in dialogue" in P.negotiate_node("t", [], [])["task_message"]
+    assert "do not repeat it in dialogue" in P.hardship_node("t", "h", "k", "d", "a")["task_message"]
+
+
+@test
+def amount_references_use_current_product():
+    """A named minimum/full amount is resolved from the selected product, including after read-back."""
+    P, V = start([LOAN])
+    ev(P, V, "offer", offer_kind="none", offer_ref="floor", offer_amount_present="no")
+    assert V["route"] == "confirm" and V["ok_amount"] == "700.0" and V["offer_ref"] == "none", V
+    ev(P, V, "change", confirm="change", offer_ref="full", offer_amount_present="no")
+    assert V["route"] == "confirm" and V["ok_amount"] == "2100.0", V["readback_line"]
+    P2, V2 = start([CARD, LOAN], multi=True)
+    ev(P2, V2, "offer", offer_kind="none", offer_for="second", offer_ref="floor", offer_amount_present="no")
+    assert V2["state_p2"] == "agreed" and V2["agreed_p2"].startswith("700.0|") and V2["state_p1"] == "open", V2
+    P4, V4 = start([CARD, LOAN], multi=True)
+    ev(P4, V4, "offer", offer_kind="none", offer_for="none", offer_ref="floor", offer_amount_present="no")
+    assert V4["route"] == "negotiate" and V4["stage"] == "one", V4
+    assert V4["state_p1"] == V4["state_p2"] == "open", V4
+    P3, V3 = start([LOAN])
+    ev(P3, V3, "offer", offer_kind="exact", offer_ref="floor", offer_amount="0", offer_amount_present="yes")
+    assert V3["offer_verdict"] == "below_floor" and V3["prop_amount"] == "700.0", V3["say_next"]
+
+
+@test
+def amount_reference_after_hardship_and_with_too_much():
+    P, V = start([LOAN])
+    ev(P, V, "hardship", offer_kind="none", offer_ref="floor", offer_amount_present="no")
+    assert V["hs_offer"] == "yes" and V["hs_ref"] == "floor", V
+    ev(P, V, "hs_decline")
+    assert V["route"] == "confirm" and V["ok_amount"] == "700.0", V["readback_line"]
+    P2, V2 = start([LOAN])
+    ev(P2, V2, "offer", offer_kind="exact", stance="too_much", offer_ref="floor",
+       offer_amount_present="no", offer_when="Friday 16 October")
+    assert V2["route"] == "confirm" and V2["ok_amount"] == "700.0", V2
+    assert "rest stays overdue" in V2["readback_line"], V2["readback_line"]
+
+
+@test
+def reference_extraction_routes_to_guard():
+    names = {e["name"] for e in pol.Policy.offer_extraction("d", "a", "k")}
+    assert "offer_ref" in names and "offer_amount_present" in names
+    transitions = pol.Policy.offer_guard_transitions()
+    assert "offer_ref" in str(transitions[0]) and "floor" in str(transitions[0]), transitions
+    P = mk()
+    assert any(e["name"] == "offer_ref" for e in P.confirm_node("t", "c", "d", "a")["extraction_schema"])
+    hs = P.hardship_node("t", "h", "k", "d", "a")
+    assert any(e["name"] == "offer_ref" for e in hs["extraction_schema"])
+    assert "offer_ref" in str(hs["transitions"]), hs["transitions"]
+
+
+@test
+def cut_off_days_complete_once_without_spending_vague_retry():
+    P, V = start([CARD, LOAN], multi=True)
+    ev(P, V, "offer", offer_kind="exact", offer_for="all", offer_when="thirty", offer_date="2026-10-30")
+    assert V["offer_verdict"] == "cutoff" and V["vague_all"] == "no" and V["pending_when"] == "thirty", V
+    ev(P, V, "offer", offer_kind="vague", offer_for="none", offer_when="October", offer_date="2026-10-30")
+    assert V["route"] == "confirm" and V["agreed_p1"].startswith("420.0|2026-10-30"), V
+    assert V["agreed_p2"].startswith("2100.0|2026-10-23"), V["agreed_p2"]
+    assert V["when_prev"] == "thirty" and V["pending_when"] == "", V
+    P2, V2 = start([CARD])
+    ev(P2, V2, "offer", offer_kind="exact", offer_when="Monday the twenty", offer_date="2026-10-19")
+    assert V2["offer_verdict"] == "cutoff" and V2["vague_asked_p1"] == "no", V2
+    ev(P2, V2, "offer", offer_kind="exact", offer_when="sixth", offer_date="2026-10-06")
+    assert V2["offer_verdict"] == "weekend_or_holiday" and V2["prop_date"] == "2026-10-27", V2["say_next"]
+
+
+@test
+def cardinal_days_and_day_sized_amounts():
+    P, V = start([LOAN])
+    G = {"vars": V}
+    exec(P.core() + "\nout=[resolve_when(vars,w) for w in ('thirty October','October twenty six','Friday twenty three')]\n", G)
+    got = [(d.isoformat() if d else None, k) for d, k in G["out"]]
+    assert got == [("2026-10-30", "exact"), ("2026-10-26", "exact"), ("2026-10-23", "exact")], got
+    ev(P, V, "offer", offer_kind="exact", offer_amount="20", offer_when="Friday twenty")
+    assert V["offer_verdict"] == "cutoff" and V["offered_floor_p1"] == "no", V
+    ev(P, V, "offer", offer_kind="exact", offer_amount="3", offer_when="Three")
+    assert V["route"] == "confirm" and V["ok_date"] == "2026-10-23" and V["ok_amount"] == "2100.0", V
+    P2, V2 = start([LOAN])
+    ev(P2, V2, "offer", offer_kind="exact", offer_amount="20")
+    assert V2["offer_verdict"] == "cutoff_amount" and V2["offered_floor_p1"] == "no", V2
+    ev(P2, V2, "offer", offer_kind="exact", offer_amount="20")
+    assert V2["offer_verdict"] == "below_floor" and V2["offered_floor_p1"] == "yes", V2
+
+
+@test
+def right_now_requires_a_positive_payment_offer():
+    P, V = start([CARD])
+    G = {"vars": V}
+    exec(P.core() + "\nout=[resolve_when(vars,w) for w in ('too much for me right now','I can pay right now','I cannot pay right now','I can not pay right now','pay it now')]\n", G)
+    got = [(d.isoformat() if d else None, k) for d, k in G["out"]]
+    assert got == [(None, "none"), (TODAY, "exact"), (None, "none"), (None, "none"), (TODAY, "exact")], got
 
 
 if __name__ == "__main__":

@@ -1,0 +1,75 @@
+{
+  "run_id": "20261011T041350Z-10cf302d",
+  "status": "rejected",
+  "seconds": 1391,
+  "provider": "openai",
+  "builder_model": "gpt-6.1-sol",
+  "rules": {
+    "implemented": 58,
+    "partial": 1,
+    "missing": 0,
+    "contradicted": 1,
+    "superseded": 0,
+    "total": 60,
+    "evidence_unverified": 0
+  },
+  "unresolved": [
+    {
+      "id": "R33",
+      "status": "contradicted"
+    },
+    {
+      "id": "R48",
+      "status": "partial"
+    }
+  ],
+  "practice": {
+    "complete": false,
+    "runs": 1,
+    "passed_cases": 3,
+    "total_cases": 4,
+    "rows": [
+      {
+        "case": "PUB-01",
+        "pass": true,
+        "failed": []
+      },
+      {
+        "case": "PUB-02",
+        "pass": true,
+        "failed": []
+      },
+      {
+        "case": "PUB-06",
+        "pass": true,
+        "failed": []
+      },
+      {
+        "case": "PUB-10",
+        "pass": false,
+        "failed": [
+          "conversation: The agent said 'this call is recorded' at the opening before any successful API call, violating the 'agent does not say recorded before a successful call' criterion. There was exactly one successful promise created after the retry."
+        ]
+      }
+    ],
+    "artifact": {
+      "path": "results/builds/20261011T041350Z-10cf302d/practice-summary.json",
+      "sha256": "e7ad4a08198b99eb25bd3ce798c93121d529acda0bb1cd18d2bb363e50af30b1"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "traces/brief-a-20261011T041350Z-10cf302d.log",
+      "sha256": "95731e4a43f2edbb8da6a7506defb85a59e0c60c40c90cde8c38b19108a7d553"
+    },
+    {
+      "path": "traces/brief-a-20261011T041350Z-10cf302d.jsonl",
+      "sha256": "750639f0f3eae2f7f81f58b5f5049aa097f10b8d532fd39e5d7dc464439df42f"
+    },
+    {
+      "path": "results/builds/20261011T041350Z-10cf302d/rejected-export.json",
+      "sha256": "75ec1d69f0f657f0e9d11db9aae1dea2ce9c77605f3a562fe669603aa9e86753"
+    }
+  ],
+  "note": "Failed run. No submission export or success manifest was created; audit coverage is not a hidden-case score."
+}

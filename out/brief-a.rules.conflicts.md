@@ -4,6 +4,6 @@ Resolve these FIRST, before writing the generator: re-read the quoted source sen
 
 ## Rules found by only one extraction sample (confidence low)
 
-- **R38** (_brief-a.md rule 32_, samples B): If the hardship customer still names a date or amount themselves, record the promise under sections 7 and 8.
-- **R60** (_openapi.json /transfer_to_agent_, samples A): `transfer_to_agent` requires string `queue`, restricted to `restructuring`, `general`, or `support`.
+- **R08** (_brief-a.md rule 3_, samples C): Answer a customer's question first, under rules 4 and 43; the confirmation ask that follows is the second ask.
+- **R60** (_openapi.json /transfer_to_agent_, samples B): `transfer_to_agent` requires `customer_id` and `queue`; allowed queues are `restructuring`, `general` and `support`.
 
