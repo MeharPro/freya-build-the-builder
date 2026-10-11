@@ -34,9 +34,12 @@ class RuleIntegrityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'cyclic'):
             normalise([rule('a', 'b'), rule('b', 'c'), rule('c', 'a')])
 
-    def test_competing_replacements_require_explicit_order(self):
-        with self.assertRaisesRegex(ValueError, 'multiple replacements'):
-            normalise([rule('original'), rule('memo1', 'original'), rule('memo2', 'original')])
+    def test_competing_replacements_chain_in_document_order(self):
+        # Two later documents overriding the same rule: the later one (by date, then position) is in force.
+        out = normalise([rule('original'), rule('memo1', 'original'), rule('memo2', 'original')])
+        self.assertEqual([r['in_force'] for r in out], [False, False, True])
+        self.assertEqual(out[2]['overrides'], out[1]['id'])
+        self.assertEqual(out[0]['superseded_by'], out[1]['id'])
 
     def test_uncovered_numbers_fail_but_metadata_tokens_are_diagnostic(self):
         with self.assertRaisesRegex(ValueError, 'omits numbered'):

@@ -516,10 +516,25 @@ def normalise(rules, keep_flags=False):
             c["doc_date"] = ""
         clean.append(c)
     by_id = {r["id"]: r for r in clean}
+    # Several later documents may each override the same earlier rule (an analysis, then a meeting, then a mail):
+    # chain them in document order (date, then position), so the latest one is the rule in force.
+    if not keep_flags:
+        by_target = {}
+        for r in clean:
+            if r["overrides"]:
+                tgt = old_to_new.get(r["overrides"], r["overrides"])
+                by_target.setdefault(tgt, []).append(r)
+        order = {r["id"]: i for i, r in enumerate(clean)}
+        for tgt, lst in by_target.items():
+            if len(lst) > 1:
+                lst.sort(key=lambda x: (x.get("doc_date") or "", order[x["id"]]))
+                for prev, nxt in zip(lst, lst[1:]):
+                    nxt["overrides"] = prev["id"]
+                    nxt["_override_resolved"] = True
     replacements = {}
     for r in clean:
         if r["overrides"]:
-            tgt = old_to_new.get(r["overrides"], r["overrides"])
+            tgt = r["overrides"] if r.pop("_override_resolved", False) else old_to_new.get(r["overrides"], r["overrides"])
             if tgt not in by_id:
                 raise ValueError("unknown override: " + r["overrides"])
             if tgt == r["id"]:
