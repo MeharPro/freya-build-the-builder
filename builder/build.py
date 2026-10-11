@@ -451,7 +451,7 @@ async def execute_build(a):
         (ROOT / "out").mkdir(exist_ok=True)
         if not a.no_rules:
             required_step(trace, budget, "rules", [PY, "builder/rules.py", *a.briefs, "--api", a.tool_api,
-                                                   "--out", str(rules_path)], 420, reserve=180)
+                                                   "--out", str(rules_path)], 660, reserve=180)
         inventory_hashes = {str(p): sha256(p) for p in (ROOT / "out").glob(slot + ".rules*") if p.is_file()}
         spec_path = ROOT / "out" / (slot + ".spec.json")
         if spec_path.is_file():

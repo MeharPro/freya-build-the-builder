@@ -119,7 +119,8 @@ def response_text(response):
     return "\n".join(text)
 
 
-def request_response(payload, timeout=180):
+def request_response(payload, timeout=None):
+    timeout = timeout or float(os.getenv("OPENAI_READ_TIMEOUT", "600"))  # long documents need long answers
     key = os.getenv("OPENAI_API_KEY")
     if not key:
         raise RuntimeError("OPENAI_API_KEY is not set; source your local env file")
