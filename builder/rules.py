@@ -487,6 +487,10 @@ _EXTRA = ("topic", "doc", "doc_date", "author_role", "status", "status_words", "
           "verification", "origin", "members", "value_difference_resolved", "stale_values")
 
 
+def _warn(msg):
+    print("normalise: " + msg, file=sys.stderr, flush=True)
+
+
 def normalise(rules, keep_flags=False):
     """Validate shape, renumber ids in order, resolve overrides, mark in_force / superseded_by.
     keep_flags: keep in_force / superseded_by as they are (after T14) instead of recomputing them from overrides."""
@@ -496,12 +500,14 @@ def normalise(rules, keep_flags=False):
         raise ValueError("inventory is not a non-empty list")
     clean, old_to_new = [], {}
     for i, r in enumerate(rules):
-        if not isinstance(r, dict) or not r.get("text"):
-            raise ValueError("rule %d has no text" % i)
-        new_id = "R%02d" % (i + 1)
+        if not isinstance(r, dict) or not str(r.get("text") or "").strip():
+            _warn("rule %d has no text; skipped" % i)
+            continue
+        new_id = "R%02d" % (len(clean) + 1)
         old_id = str(r.get("id", new_id))
         if old_id in old_to_new:
-            raise ValueError("duplicate rule id: " + old_id)
+            _warn("duplicate rule id %s; the later one is renumbered" % old_id)
+            old_id = old_id + "#%d" % i
         old_to_new[old_id] = new_id
         cat = r.get("category") if r.get("category") in CATEGORIES else "other"
         verb = r.get("verbatim") or []
@@ -522,51 +528,54 @@ def normalise(rules, keep_flags=False):
             c["doc_date"] = ""
         clean.append(c)
     by_id = {r["id"]: r for r in clean}
-    # Several later documents may each override the same earlier rule (an analysis, then a meeting, then a mail):
-    # chain them in document order (date, then position), so the latest one is the rule in force.
-    if not keep_flags:
-        by_target = {}
-        for r in clean:
-            if r["overrides"]:
-                tgt = old_to_new.get(r["overrides"], r["overrides"])
-                by_target.setdefault(tgt, []).append(r)
-        order = {r["id"]: i for i, r in enumerate(clean)}
-        for tgt, lst in by_target.items():
-            if len(lst) > 1:
-                lst.sort(key=lambda x: (x.get("doc_date") or "", order[x["id"]]))
-                for prev, nxt in zip(lst, lst[1:]):
-                    nxt["overrides"] = prev["id"]
-                    nxt["_override_resolved"] = True
-    replacements = {}
+    # Resolve every "overrides" to a new id; an unknown or self reference is dropped with a warning (never a crash).
     for r in clean:
         if r["overrides"]:
-            tgt = r["overrides"] if r.pop("_override_resolved", False) else old_to_new.get(r["overrides"], r["overrides"])
-            if tgt not in by_id:
-                raise ValueError("unknown override: " + r["overrides"])
-            if tgt == r["id"]:
-                raise ValueError("rule overrides itself: " + r["id"])
-            if tgt in replacements and not keep_flags:
-                raise ValueError("multiple replacements for " + tgt + "; resolve their order explicitly")
-            replacements[tgt] = r["id"]
-            if tgt in by_id and tgt != r["id"]:
-                r["overrides"] = tgt
-                if not keep_flags:
-                    by_id[tgt]["in_force"] = False
-                    by_id[tgt]["superseded_by"] = r["id"]
-            else:
-                r["overrides"] = ""
+            tgt = old_to_new.get(r["overrides"], r["overrides"])
+            if tgt not in by_id or tgt == r["id"]:
+                _warn("rule %s overrides unknown or self id %r; override dropped" % (r["id"], r["overrides"]))
+                tgt = ""
+            r["overrides"] = tgt
         if keep_flags and r["superseded_by"]:
             r["superseded_by"] = old_to_new.get(r["superseded_by"], r["superseded_by"])
             if r["superseded_by"] not in by_id:
                 r["superseded_by"] = ""
-    for r in clean:
-        visited = set()
-        cursor = r
-        while cursor.get("overrides"):
-            if cursor["id"] in visited:
-                raise ValueError("cyclic override chain")
-            visited.add(cursor["id"])
-            cursor = by_id[cursor["overrides"]]
+    if not keep_flags:
+        # Several later documents may each override the same earlier rule (an analysis, then a meeting, then a mail):
+        # chain them in document order (date, then position), so the latest one is the rule in force. Chaining can
+        # create a new shared target (a rule that was already overridden by another), so repeat to a fixed point.
+        order = {r["id"]: i for i, r in enumerate(clean)}
+        for _ in range(len(clean) + 1):
+            by_target = {}
+            for r in clean:
+                if r["overrides"]:
+                    by_target.setdefault(r["overrides"], []).append(r)
+            changed = False
+            for tgt, lst in by_target.items():
+                if len(lst) > 1:
+                    lst.sort(key=lambda x: (x.get("doc_date") or "", order[x["id"]]))
+                    for prev, nxt in zip(lst, lst[1:]):
+                        if nxt["overrides"] != prev["id"] and prev["id"] != nxt["id"]:
+                            nxt["overrides"] = prev["id"]
+                            changed = True
+            if not changed:
+                break
+        # break cycles: the member latest in document order keeps its override, the one that closes the loop drops it
+        for r in clean:
+            visited, cursor = [], r
+            while cursor.get("overrides"):
+                if cursor["id"] in visited:
+                    loop = visited[visited.index(cursor["id"]):]
+                    worst = min(loop, key=lambda i: (by_id[i].get("doc_date") or "", order[i]))
+                    _warn("cyclic override chain %s; override of %s dropped" % (" -> ".join(loop), worst))
+                    by_id[worst]["overrides"] = ""
+                    break
+                visited.append(cursor["id"])
+                cursor = by_id[cursor["overrides"]]
+        for r in clean:
+            if r["overrides"]:
+                by_id[r["overrides"]]["in_force"] = False
+                by_id[r["overrides"]]["superseded_by"] = r["id"]
     if not keep_flags:
         for r in clean:
             if r["status"] != "decided" and r["in_force"]:
