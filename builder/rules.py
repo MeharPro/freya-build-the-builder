@@ -450,11 +450,14 @@ def example_tokens(text):
 def self_check(rules, briefs):
     """Deterministic completeness check. Returns {"missing_numbers": {file: [n,...]}, "missing_tokens": [...]}"""
     dump = "\n".join(_flatten_text(rules)).lower()
-    missing_numbers, missing_tokens = {}, []
+    missing_numbers, missing_tokens, advisory_numbers = {}, [], {}
     for b in briefs:
         text = pathlib.Path(b).read_text()
         fname = pathlib.Path(b).name
         nums = numbered_rules(text)
+        # A bundle of several documents (a case folder: mails, transcripts, prompt sheets) numbers lists that are
+        # not rules (menu codes, meeting points, section lists). Its numbers are advisory, never a hard gate.
+        bundle = "DOCUMENT FILE:" in text
         cited = set()
         for r in rules:
             src = r.get("source", "")
@@ -462,7 +465,9 @@ def self_check(rules, briefs):
             if fname in src or pathlib.Path(b).stem in src or len(briefs) == 1:
                 cited |= cited_numbers(r, fname)
         miss = sorted(n for n in nums if n not in cited)
-        if miss:
+        if miss and bundle:
+            advisory_numbers[fname] = miss
+        elif miss:
             missing_numbers[fname] = miss
         for tok in sorted(set(re.findall(r"\d{4}-\d{2}-\d{2}", text))):
             if tok not in dump:
@@ -472,7 +477,8 @@ def self_check(rules, briefs):
             t = tok.lower()
             if t not in dump and t.replace("`", "") not in dump:
                 missing_tokens.append(tok)
-    return {"missing_numbers": missing_numbers, "missing_tokens": sorted(set(missing_tokens))}
+    return {"missing_numbers": missing_numbers, "missing_tokens": sorted(set(missing_tokens)),
+            "advisory_numbers": advisory_numbers}
 
 
 # ----------------------------------------------------------------------------------------------- normalise
@@ -570,9 +576,13 @@ def normalise(rules, keep_flags=False):
     return clean
 
 
-def require_numbered_coverage(check):
+def require_numbered_coverage(check, log=None):
+    """A clean single-document brief must cover every numbered rule. In a bundle of several documents the
+    numbered items are advisory (logged), because a numbered list there is often not a rule at all."""
     if check.get("missing_numbers"):
         raise ValueError("Inventory omits numbered rules: %s" % check["missing_numbers"])
+    if check.get("advisory_numbers") and log:
+        log("numbered items of the bundle not cited by any rule (advisory): %s" % check["advisory_numbers"])
 
 
 # ----------------------------------------------------------------------------------------------- atoms (values to compare)
@@ -1589,7 +1599,7 @@ async def extract_rules_async(briefs, api_path, out_path, model=None, log=None, 
             log("gap-fill failed: %s" % e)
         stages.setdefault("gap-fill", {})["seconds"] = time.time() - t1
 
-    require_numbered_coverage(chk)
+    require_numbered_coverage(chk, log)
     # 3. T14 dated decisions and T15 chain-of-verification, in parallel
     decisions, verifs, call_range = [], [], {"earliest": "", "latest": "", "basis": ""}
     if verify:

@@ -46,6 +46,21 @@ class RuleIntegrityTests(unittest.TestCase):
             require_numbered_coverage({'missing_numbers': {'brief.md': [7]}, 'missing_tokens': []})
         require_numbered_coverage({'missing_numbers': {}, 'missing_tokens': ['2026-10-10']})
 
+    def test_bundle_numbered_items_are_advisory(self):
+        import tempfile, pathlib
+        from builder.rules import self_check
+        bundle = ("=" * 20 + " DOCUMENT FILE: sources/notes.txt " + "=" * 20 + "\n"
+                  "Meeting points\n1. coffee\n2. the menu code list\n8. second factor was never built\n")
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d) / 'final.brief.md'
+            p.write_text(bundle)
+            chk = self_check([{'id': 'R1', 'text': 'x', 'source': 'notes.txt'}], [str(p)])
+        self.assertEqual(chk['missing_numbers'], {})
+        self.assertEqual(chk['advisory_numbers'], {'final.brief.md': [1, 2, 8]})
+        logged = []
+        require_numbered_coverage(chk, log=logged.append)
+        self.assertTrue(logged and 'advisory' in logged[0])
+
 
 if __name__ == '__main__':
     unittest.main()
