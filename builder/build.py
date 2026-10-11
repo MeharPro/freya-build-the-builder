@@ -318,9 +318,16 @@ def parse_args(argv):
     ap.add_argument("--runner", choices=("sim", "freya"), default="sim")
     ap.add_argument("--minutes", type=float, default=29)
     ap.add_argument("--no-rules", action="store_true")
+    ap.add_argument("--rules-from", help="Reuse a completed rule inventory and its companion files from an earlier extraction")
     ap.add_argument("--no-audit", action="store_true")
     ap.add_argument("--preflight", action="store_true", help="Check inputs, environment and SDK without model/API calls")
     a = ap.parse_args(argv)
+    if a.rules_from:
+        a.rules_from = str(Path(a.rules_from).resolve())
+        if not a.rules_from.endswith(".rules.json") or not Path(a.rules_from).is_file():
+            ap.error("--rules-from needs an existing .rules.json file")
+        if a.no_rules:
+            ap.error("--rules-from and --no-rules cannot be combined")
     a.case_folder = None
     if len(a.inputs) >= 1 and Path(a.inputs[0]).is_dir():
         if len(a.inputs) > 2 or (len(a.inputs) == 2 and Path(a.inputs[1]).suffix.lower() != ".json"):
@@ -481,7 +488,31 @@ async def execute_build(a):
     validated_hashes = {}
     try:
         (ROOT / "out").mkdir(exist_ok=True)
-        if not a.no_rules:
+        if a.rules_from:
+            source = Path(a.rules_from)
+            if source == rules_path:
+                raise BuildFailure("--rules-from must be a separate saved inventory")
+            source_base = str(source)[:-len(".rules.json")]
+            target_base = str(rules_path)[:-len(".rules.json")]
+            meta_source = Path(source_base + ".rules.meta.json")
+            if not meta_source.is_file():
+                raise BuildFailure("Saved inventory has no metadata: " + str(meta_source))
+            meta = json.loads(meta_source.read_text())
+            if ([str(Path(p).resolve()) for p in meta.get("briefs", [])] !=
+                    [str(Path(p).resolve()) for p in a.briefs] or
+                    str(Path(meta.get("api", "")).resolve()) != str(Path(a.tool_api).resolve())):
+                raise BuildFailure("Saved inventory was extracted from different inputs")
+            check = meta.get("self_check") or {}
+            if check.get("missing_numbers") or check.get("missing_tokens"):
+                raise BuildFailure("Saved inventory has unresolved rule coverage gaps")
+            for suffix in (".rules.json", ".rules.md", ".rules.meta.json", ".rules.conflicts.md", ".spec.json"):
+                previous = Path(source_base + suffix)
+                if not previous.is_file():
+                    raise BuildFailure("Saved inventory is missing " + str(previous))
+                shutil.copy2(previous, Path(target_base + suffix))
+            trace.line("reused completed rule inventory from %s | sha256=%s" % (source, sha256(source)))
+            log_decisions(trace, rules_path)
+        elif not a.no_rules:
             # Long document bundles are split over more extraction calls so no single answer overruns the model's output limit.
             brief_bytes = sum(Path(b).stat().st_size for b in a.briefs)
             split = str(min(6, max(2, -(-brief_bytes // 45000))))
