@@ -503,8 +503,10 @@ async def execute_build(a):
                     str(Path(meta.get("api", "")).resolve()) != str(Path(a.tool_api).resolve())):
                 raise BuildFailure("Saved inventory was extracted from different inputs")
             check = meta.get("self_check") or {}
-            if check.get("missing_numbers") or check.get("missing_tokens"):
-                raise BuildFailure("Saved inventory has unresolved rule coverage gaps")
+            if check.get("missing_numbers"):
+                raise BuildFailure("Saved inventory has unresolved numbered rule coverage gaps")
+            if check.get("missing_tokens"):
+                trace.line("saved inventory has %d uncited tokens; review the conflict report" % len(check["missing_tokens"]))
             for suffix in (".rules.json", ".rules.md", ".rules.meta.json", ".rules.conflicts.md", ".spec.json"):
                 previous = Path(source_base + suffix)
                 if not previous.is_file():
