@@ -12,7 +12,7 @@ prefix). Nothing bank-specific lives here; every name and value comes from the d
 import argparse, json, pathlib, re, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from rules import ask_json  # noqa: E402  (provider-neutral JSON model call)
+from rules import ask_json, _parse_json_text  # noqa: E402  (provider-neutral JSON model call)
 import freyalib  # noqa: E402
 
 SYSTEM = ("You write the OpenAPI 3.0 description of the services a voice assistant calls, from a bank's own documents "
@@ -31,20 +31,16 @@ Rules for the output (the builder's library parses exactly this shape):
 - `x-notes` (top level, array of strings): the facts about the services that a generator must know and that do not fit the schema: envelope rules, how success is recognised, status codes and their meaning per service, timeouts/latency warnings, which fields are strings vs numbers, which calls have side effects and must not be retried, lookups the mock does, what the test environment ignores, and the exact wording of anything the documents say about calling order.
 - `x-call-variables` (top level, object): the variables every call gives the agent, name -> description, exactly as the documents name them.
 - Do NOT include token/auth endpoints, health checks or the mock example from a README. Only the bank's business services.
-- Output JSON only.
+- Output: a JSON object with one field, `openapi_json`, whose value is the complete OpenAPI document serialised as a JSON string.
 
 DOCUMENTS:
 {docs}
 """
 
+# Structured-output endpoints reject open-ended object schemas, so the document travels as one JSON string.
 SCHEMA = {"type": "object", "properties": {
-    "openapi": {"type": "string"},
-    "info": {"type": "object", "properties": {"title": {"type": "string"}, "version": {"type": "string"}}, "required": ["title", "version"]},
-    "servers": {"type": "array", "items": {"type": "object", "properties": {"url": {"type": "string"}}, "required": ["url"]}},
-    "paths": {"type": "object"},
-    "x-notes": {"type": "array", "items": {"type": "string"}},
-    "x-call-variables": {"type": "object"},
-}, "required": ["openapi", "info", "servers", "paths"]}
+    "openapi_json": {"type": "string", "description": "The complete OpenAPI 3.0 document, serialised as a JSON string."}},
+    "required": ["openapi_json"]}
 
 
 def check(api):
@@ -70,8 +66,17 @@ def derive(bundle_path, mock_url, out_path, log=print):
     prompt = PROMPT.format(mock_url=mock_url.rstrip("/"), docs=docs)
     last = None
     for attempt in range(2):
-        obj, info = ask_json(prompt if not attempt else prompt + "\n\nYour previous answer had these problems: %s. Fix them." % last,
-                             SYSTEM, SCHEMA, "derive the tool API (OpenAPI) from the case documents", log=lambda s: log(s))
+        wrapped, info = ask_json(prompt if not attempt else prompt + "\n\nYour previous answer had these problems: %s. Fix them." % last,
+                                 SYSTEM, SCHEMA, "derive the tool API (OpenAPI) from the case documents", log=lambda s: log(s))
+        try:
+            raw = wrapped.get("openapi_json") if isinstance(wrapped, dict) else wrapped
+            obj = json.loads(raw) if isinstance(raw, str) else raw
+        except ValueError:
+            obj = _parse_json_text(raw)
+        if not isinstance(obj, dict):
+            last = "openapi_json is not a JSON object"
+            log("api file problems: " + last)
+            continue
         if "servers" in obj and obj["servers"]:
             url = obj["servers"][0].get("url", "")
             if not url.startswith(mock_url.rstrip("/")):
